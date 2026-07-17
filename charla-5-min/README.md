@@ -115,7 +115,7 @@ flowchart LR
 
 - **No existía ninguna base de datos previa:** tuve que definir desde cero qué tablas necesitaba, cuáles debían ser históricas (con snapshot mensual) y cuáles de catálogo/clasificación, y cómo relacionarlas de forma consistente. No había ningún esquema previo del que partir.
 - **Errores de carga históricos:** al migrar la información desde los archivos de origen aparecieron inconsistencias invisibles hasta ese momento — nombres de capacitación con variaciones de tipeo, registros duplicados, datos que no coincidían con el catálogo oficial. Construí un proceso de validación que separa los registros válidos de los que no cumplen el formato esperado, para poder revisarlos antes de incorporarlos a la base definitiva.
-- **Formalizar "quién capacita a quién":** no existía ninguna tabla que asignara explícitamente qué capacitador era responsable de qué unidad organizativa (y por lo tanto, de qué personas). Tuve que relevar esa información y modelarla como una tabla propia, para que dejara de ser un dato informal en la cabeza de cada capacitador y pasara a ser algo consultable por cualquier usuario del sistema.
+- **Formalizar "quién capacita a quién":** no existía ninguna tabla que asignara explícitamente qué capacitador era responsable de qué unidad organizativa (y por lo tanto, de qué personas). Tuve que relevar esa información junto a los capacitadores y superiores de los mismos y modelarla como una tabla propia, para que dejara de ser un dato informal en la cabeza de cada capacitador y pasara a ser algo consultable por cualquier usuario del sistema.
 - **Calcular avance con datos que cambian en el tiempo:** las personas cambian de unidad organizativa y hasta de perfil (operativo/administrativo) mes a mes, y la necesidad de capacitación depende de esa unidad. Tuve que resolver cómo calcular, para cualquier rango de fechas, un universo de "necesidad" consistente, sin mezclar el estado actual de una persona con su estado histórico en el momento de cada capacitación.
 - **Rendimiento sobre un volumen de datos considerable:** el histórico de capacitaciones y el histórico de plantilla acumulan decenas de miles de registros. Filtrar por fecha, unidad y capacitador en cada interacción del dashboard de forma ingenua hubiese sido lento. La solución fue separar el cálculo pesado (determinar qué universo de personas corresponde a cada capacitación, que cambia poco) del cálculo liviano (contar cuántas de esas personas se capacitaron en el rango de fechas elegido, que cambia todo el tiempo), cacheando el primero y dejando el segundo como una consulta simple.
 
@@ -125,7 +125,7 @@ flowchart LR
 
 ```mermaid
 flowchart TD
-    APP["Dashboard Charla 5 Min"] --> T1["📊 Resumen<br/>Ejecutivo"]
+    APP["Dashboard Charla de Seguridad"] --> T1["📊 Resumen<br/>Ejecutivo"]
     APP --> T2["👤 Por<br/>Capacitador"]
     APP --> T3["🔍 Por Persona<br/>/ Unidad"]
     APP --> T4["🗺️ Avance por<br/>Capacitador"]
@@ -133,15 +133,15 @@ flowchart TD
 
     T1 --- T1d["Necesidad vs. cumplimiento<br/>por capacitación · export a PNG"]
     T2 --- T2d["Charlas dictadas · evolución<br/>mensual · distribución por tipo<br/>(vista propia de cada capacitador)"]
-    T3 --- T3d["Historial individual de una<br/>persona o unidad · export CSV"]
+    T3 --- T3d["Historial individual de una<br/>persona o unidad y asignaciones individuales de esa unidad· export CSV"]
     T4 --- T4d["Mapa de calor por unidad<br/>+ listado de pendientes,<br/>nombre y apellido"]
     T5 --- T5d["Cobertura de un sistema de<br/>gestión de seguridad y salud<br/>ocupacional (independiente<br/>de la obligación formal)"]
 ```
 
-- **Resumen ejecutivo:** vista general del programa completo — cuántas personas (operativas y administrativas) necesitan capacitación, cuántas ya la recibieron, comparación por capacitación con distinción visual de las consideradas prioritarias, y exportación de reportes en PNG para presentaciones.
+- **Resumen ejecutivo:** vista general del programa completo — cuántas personas (operativas y administrativas) necesitan capacitación, cuántas ya la recibieron, comparación por capacitación con distinción visual de las consideradas prioritarias segun cada semestre, y exportación de reportes en PNG para presentaciones como asi tambien un tablero mostrando el avance de cada capacitador unicamente teniendo en cuenta las capacitaciones prioritarias del semestre tambien exportable.
 - **Vista por capacitador:** pensada para que cada capacitador haga seguimiento de su propia gestión — cantidad de charlas dictadas, personas únicas capacitadas, evolución mensual y distribución por tipo de capacitación.
-- **Vista por persona / unidad:** consulta puntual del historial de capacitaciones de un individuo o de una unidad completa, con exportación a CSV.
-- **Avance por capacitador:** cruza el universo formal de personas a cargo de cada capacitador (ahora un dato real, no una estimación) contra las capacitaciones prioritarias, mostrando un mapa de calor por unidad y el listado concreto de quién falta capacitar.
+- **Vista por persona / unidad:** consulta puntual del historial de capacitaciones de un individuo o de una unidad completa y las asignaciones que tienen y dependiendo de la unidad a la que pertencen que capacitaciones deben realizar y si las han hecho o no en el periodo de tiempo estimado, con exportación a CSV.
+- **Avance por capacitador:** cruza el universo formal de personas a cargo de cada capacitador (ahora un dato real, no una estimación) contra las capacitaciones, mostrando un mapa de calor por unidad y tambien cuenta graficos de barra mostrando el avance de cada capacitación haciendo capacitados/necesidad. Luego tambien tablas de que personas deben ser capacitadas por unidad y quienes todavia no han recibido que capacitaciones dentro de esa unidad. Por ultimo un listado de las personas pendientes de capacitar con el fin de poder ser exportado de la platafomra en csv.
 - **SG-SST:** identifica quién recibió al menos una capacitación asociada a un sistema de gestión de seguridad y salud ocupacional, sin depender de que exista una obligación formal registrada para esa persona.
 
 Todas las vistas comparten un filtro global de rango de fechas y componentes de tarjetas de indicadores reutilizables, para mantener consistencia visual y de comportamiento en toda la aplicación.
@@ -168,11 +168,12 @@ El **universo de necesidad** (quién debería estar capacitado) se reconstruye c
 
 ## Resultados Obtenidos
 
-> Como se mencionó antes, la empresa no contaba con ningún proceso de medición confiable previo al proyecto, por lo que no existe una línea de base numérica válida contra la cual comparar. Los indicadores que arrojaba el Excel anterior no eran trazables ni auditables, así que cualquier comparación porcentual "antes vs. después" sería engañosa. El foco de esta primera etapa estuvo puesto en poder reflejar correctamente la situación real por primera vez, no en demostrar una mejora sobre una métrica previa que, en los hechos, no existía.
+> Como se mencionó antes, la empresa no contaba con ningún proceso de medición confiable previo al proyecto, por lo que no existe una línea de base numérica válida contra la cual comparar. Los indicadores que arrojaba el Excel anterior no eran facilmente trazables ni auditables, así que cualquier comparación porcentual "antes vs. después" sería engañosa. El foco de esta primera etapa estuvo puesto en poder reflejar correctamente la situación real por primera vez, no en demostrar una mejora sobre una métrica previa que, en los hechos, no existía.
 
 - **Beneficio operativo:** cada capacitador dejó de trabajar con una estimación informal de su universo a cargo — ahora tiene, con nombre y apellido, exactamente quién debe capacitarse y quién está pendiente.
 - **Beneficio de gestión:** los jefes de área pueden, por primera vez, hacer seguimiento individual del avance de una persona puntual y comparar el desempeño entre distintos capacitadores — algo que antes no existía en ninguna forma.
 - **Beneficio analítico:** el proceso de normalización permitió detectar rápidamente errores de carga (nombres de capacitación mal cargados u otras inconsistencias) que antes pasaban inadvertidos dentro de las fórmulas del Excel, y habilitó el cálculo reproducible de un porcentaje de avance real.
+- **Beneficio estadistico:** se pueden hacer comparaciones anualmente de los avances de las capacitaciones, que competencias deberian ya estar conseguidas y ahora al tener una base solida, empezar a hacer analisis estadistico mas complejo, comparando como estan impactando las capacitaciones frente a los accidentes y si estan ocurriendo disminuiciones estacionales, si hay que mejorar la prioridad de las capacitaciones con respecto a distintas etapas del año.
 
 ## Lecciones Aprendidas
 
@@ -194,9 +195,9 @@ El **universo de necesidad** (quién debería estar capacitado) se reconstruye c
 
 ## Próximos Pasos
 
-- [ ] Modularizar la interfaz del dashboard, separándola de la orquestación de datos.
+- [ ] Modularizar la interfaz del dashboard, separándola de la orquestación de datos. Hoy el UI todavia tiene algunas cuestiones logicas de calculo y estan compartidas con 1000 lineas de codigo y todavia no se han separado todas las funciones.
 - [ ] Generar el diagrama completo de dependencias entre vistas SQL y funciones de carga.
-- [ ] Terminar de documentar la tabla de asignación de capacitadores por unidad organizativa.
+- [ ] Añadir historico de las necesidades de capacitación para tener trazabilidad y saber en que organización estaba esa persona cuando recibio esa capacitacion y cual era la necesidad de capacitacion de esa unidad en ese momento en especifico ques e esta filtrando con las fechas.
 - [ ] Una vez consolidada la situación actual, incorporar métricas de trazabilidad histórica (por ejemplo, tiempos de resolución de pendientes) ahora que existe una fuente de datos confiable sobre la cual construirlas.
 
 ## Disclaimer
