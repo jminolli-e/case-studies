@@ -1,4 +1,4 @@
-# Charla 5 Min — Sistema de Seguimiento de Capacitaciones de Seguridad Industrial
+# Charlas de Seguridad — Sistema de Seguimiento de Capacitaciones de Seguridad Industrial
 
 ## Resumen Ejecutivo
 
