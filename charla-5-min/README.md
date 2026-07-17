@@ -2,13 +2,13 @@
 
 ## Resumen Ejecutivo
 
-En la empresa donde trabajo existe un programa interno de seguridad industrial llamado **"Charla 5 Minutos"**: capacitaciones breves y obligatorias que el personal debe recibir periódicamente sobre riesgos específicos de su tarea (por ejemplo, uso de herramientas, trabajo en altura, manejo de cargas, protecciones eléctricas, etc.). No todo el personal necesita las mismas capacitaciones — depende de su perfil laboral (si es personal de campo/operativo o de oficina/administrativo) y de la unidad a la que pertenece dentro de la organización.
+En la empresa donde trabajo existe un programa interno de seguridad industrial llamado **"Charla 5 Minutos"**: capacitaciones breves y obligatorias que el personal debe recibir periódicamente sobre riesgos específicos de su tarea. No todo el personal necesita las mismas capacitaciones — depende de su perfil laboral (si es personal de campo/operativo o de oficina/administrativo) y de la unidad a la que pertenece dentro de la organización.
 
 El programa es dictado por un grupo de personas del área de Seguridad Industrial a quienes en este documento voy a llamar **capacitadores**: son quienes recorren las distintas unidades y dictan estas charlas al personal a su cargo.
 
-Diseñé y desarrollé de punta a punta la solución que hoy sostiene este programa: una **base de datos SQLite construida desde cero** (no existía ninguna base de datos antes) que centraliza y normaliza toda la información, y un **dashboard interactivo en Streamlit** que calcula y muestra en tiempo real quién necesita cada capacitación, quién ya la recibió, y cuánto falta.
+Diseñé y desarrollé de punta a punta la solución que hoy sostiene este programa: una **base de datos SQLite construida desde cero** que centraliza y normaliza toda la información, y un **dashboard interactivo en Streamlit** que calcula y muestra en tiempo real quién necesita cada capacitación, quién ya la recibió, y cuánto falta.
 
-Antes de este proyecto, todo esto se resolvía con un archivo Excel gigante alimentado por Power Query, sin base de datos real detrás, sin poder saber con certeza cuándo se había capacitado a alguien, y sin que ningún capacitador tuviera un listado formal y confiable de qué personas tenía a su cargo. El resultado de este proyecto fue reemplazar ese proceso informal por una fuente de datos confiable y auditable, y por una herramienta que le permite a cualquier capacitador o jefe de área responder en segundos preguntas que antes eran, directamente, imposibles de contestar con certeza.
+Antes de este proyecto, todo esto se resolvía con un archivo Excel gigante alimentado por Power Query, sin base de datos real detrás, sin poder saber con certeza cuándo se había capacitado a alguien, y sin que ningún capacitador tuviera un listado formal y confiable de qué personas tenía a su cargo. El resultado de este proyecto fue reemplazar ese proceso informal por una fuente de datos confiable y auditable, y por una herramienta que le permite a cualquier capacitador o jefe de área responder en segundos preguntas que antes eran, complicadas de contestar con certeza.
 
 ## Contexto del Problema
 
