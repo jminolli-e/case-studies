@@ -33,8 +33,8 @@ El capacitador filtraba manualmente la planilla por su unidad, y a partir de un 
 
 - **El universo de personas de cada capacitador era una estimación, no un dato certero.** No existía ninguna tabla que dijera formalmente "esta unidad organizativa está a cargo de tal capacitador". Cada capacitador sabía, de memoria y por experiencia, más o menos qué unidades le correspondían.
 - **Cero trazabilidad histórica.** El semáforo mostraba un estado actual aparente, pero no había forma de auditar fecha ni responsable de cada capacitación dictada.
-- **Errores de carga heredados y nunca corregidos.** Las fórmulas de Power Query normalizaban la información hasta cierto punto, pero aun asi, no era un sistema robusto y arrastraba durante años registros duplicados o inconsistentes, sin que nadie los hubiera detectado ni corregido.
-- **Errores de software silenciosos por límite de procesamiento** A medida que crecía el volumen de registros históricos, Power Query dejó de procesar el conjunto completo de datos: operaba sobre una ventana de tamaño fijo, tomando los registros ordenados del más reciente al más antiguo. El resultado fue que, con cada nueva tanda de capacitaciones cargadas, los registros más viejos quedaban empujados fuera de esa ventana y dejaban de normalizarse — y por lo tanto, de contabilizarse — aunque seguían existiendo en el archivo de origen. Capacitaciones reales, ya dictadas, iban "desapareciendo" progresivamente de los reportes sin que nadie lo notara, porque el error no arrojaba ningún mensaje: el Excel simplemente mostraba cada vez menos historial a medida que pasaba el tiempo.
+- **Errores de carga heredados y nunca corregidos.** Las fórmulas de Power Query normalizaban la información hasta cierto punto, pero no era un sistema robusto: arrastraba durante años registros duplicados o con inconsistencias de formato, sin que nadie los hubiera detectado ni corregido.
+- **Un segundo problema, más grave y silencioso, por límite de procesamiento.** Más allá de esos errores puntuales, a medida que crecía el volumen de registros históricos, Power Query dejó de procesar el conjunto completo de datos: operaba sobre una ventana de tamaño fijo, tomando los registros ordenados del más reciente al más antiguo. El resultado fue que, con cada nueva tanda de capacitaciones cargadas, los registros más viejos quedaban empujados fuera de esa ventana y dejaban de normalizarse — y por lo tanto, de contabilizarse — aunque seguían existiendo en el archivo de origen. Capacitaciones reales, ya dictadas, iban "desapareciendo" progresivamente de los reportes sin que nadie lo notara, porque el error no arrojaba ningún mensaje: el Excel simplemente mostraba cada vez menos historial a medida que pasaba el tiempo.
 - **Los jefes de área no tenían ninguna vista consolidada.** No podían ver el avance de una persona en particular, ni comparar el desempeño entre distintos capacitadores. Solo existía la planilla completa, que había que filtrar manualmente para sacar cualquier conclusión. Lo cual para cual ejecutivo era una perdida de tiempo, por ende no se analizaba esa información.
 - **El sistema no escalaba.** Cualquier cambio en la estructura organizativa (una persona que cambiaba de unidad, una unidad que sumaba una capacitación nueva a su lista de necesidades) implicaba reconstruir a mano las conexiones de Power Query.
 - **Lentitud en el sistema** Debido a la cantidad de excels y el volumen de cada archivo, provocaba gran lentitud a la hora de generar cambios estructurales en las consultas de Power Query, haciendo la consulta de información una verdadera pesadilla.
@@ -89,6 +89,19 @@ flowchart TB
 **El dashboard**, construido en Streamlit, se organiza en cinco vistas funcionales con filtros globales de fecha y componentes de indicadores reutilizables entre pestañas.
 
 **La capa de reporting** genera exportaciones en PNG (tablas redibujadas con Matplotlib, pensadas para verse bien fuera del navegador, por ejemplo en una presentación) y en CSV.
+
+### Normalización en el origen: un proyecto complementario
+
+La calidad de la información que llega a este dashboard no depende solo del diseño de la base de datos, sino también de cómo se cargan, día a día, los registros de charlas y capacitaciones dictadas. Para atacar el problema desde el origen y no solo corregirlo después, desarrollé un segundo proyecto — documentado por separado como su propio caso de estudio en este repositorio — que reemplaza la inserción manual de registros por una aplicación web con validación incorporada.
+
+Antes, cargar una capacitación dictada implicaba insertar el registro directamente, sin ningún control automático de consistencia — la misma causa raíz de buena parte de los errores descriptos más arriba. Con esta segunda herramienta, el personal de Seguridad Industrial encargado del data entry completa un formulario guiado que:
+
+- Valida que la persona exista y que pertenezca a la unidad organizativa declarada, antes de aceptar el registro.
+- Obliga a elegir la charla o capacitación desde un catálogo único y normalizado, en vez de escribir el nombre a mano — eliminando de raíz las variaciones de tipeo.
+- Detecta y descarta automáticamente los registros duplicados.
+- Escribe sobre la misma base de datos SQLite que consume este dashboard, sin pasos intermedios.
+
+En otras palabras: este dashboard resuelve el problema de **visualizar y medir** el cumplimiento; el proyecto complementario resuelve el problema de **cargar bien los datos desde el primer momento**, para que la normalización no dependa únicamente de corregir errores después de que ya ocurrieron.
 
 ## Tecnologías Utilizadas
 
@@ -199,6 +212,7 @@ El **universo de necesidad** (quién debería estar capacitado) se reconstruye c
 - [ ] Generar el diagrama completo de dependencias entre vistas SQL y funciones de carga.
 - [ ] Añadir historico de las necesidades de capacitación para tener trazabilidad y saber en que organización estaba esa persona cuando recibio esa capacitacion y cual era la necesidad de capacitacion de esa unidad en ese momento en especifico ques e esta filtrando con las fechas.
 - [ ] Una vez consolidada la situación actual, incorporar métricas de trazabilidad histórica (por ejemplo, tiempos de resolución de pendientes) ahora que existe una fuente de datos confiable sobre la cual construirlas.
+- [ ] Seguir cerrando el círculo entre este dashboard y el proyecto de carga normalizada: usar lo que se detecta acá (inconsistencias, catálogos incompletos) para retroalimentar y ajustar las validaciones del formulario de carga.
 
 ## Disclaimer
 
