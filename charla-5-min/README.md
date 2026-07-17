@@ -7,7 +7,7 @@ Sistema de seguimiento de capacitaciones de seguridad industrial, desarrollado e
 | | Antes | Después |
 |---|---|---|
 | Fuente de datos | Excel + Power Query | Base de datos SQLite normalizada |
-| Universo por inspector | Estimado, informal | Tabla formal, con nombre y apellido |
+| Universo por capacitador | Estimado, informal | Tabla formal, con nombre y apellido |
 | Trazabilidad | Semáforo rojo/verde, sin fecha ni responsable | Registro histórico auditable |
 | Consulta | Filtrar manualmente una planilla enorme | Dashboard de autoservicio, 5 vistas |
 | Errores de carga | Invisibles, arrastrados por años | Detectados y auditados en el proceso de normalización |
