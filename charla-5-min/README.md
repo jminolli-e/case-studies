@@ -8,13 +8,11 @@ El programa es dictado por un grupo de personas del área de Seguridad Industria
 
 Diseñé y desarrollé de punta a punta la solución que hoy sostiene este programa: una **base de datos SQLite construida desde cero** que centraliza y normaliza toda la información, y un **dashboard interactivo en Streamlit** que calcula y muestra en tiempo real quién necesita cada capacitación, quién ya la recibió, y cuánto falta.
 
-Antes de este proyecto, todo esto se resolvía con un archivo Excel gigante alimentado por Power Query, sin base de datos real detrás, sin poder saber con certeza cuándo se había capacitado a alguien, y sin que ningún capacitador tuviera un listado formal y confiable de qué personas tenía a su cargo. El resultado de este proyecto fue reemplazar ese proceso informal por una fuente de datos confiable y auditable, y por una herramienta que le permite a cualquier capacitador o jefe de área responder en segundos preguntas que antes eran, complicadas de contestar con certeza.
-
 ## Contexto del Problema
 
 ### ¿Cómo se trabajaba antes de este proyecto?
 
-Todo el seguimiento se hacía sobre un único archivo Excel, compuesto por tres solapas (personal operativo, personal administrativo, y una matriz de "qué capacitación necesita cada unidad organizativa"). Ese Excel no leía de una base de datos: se armaba con conexiones de **Power Query** que combinaban, mediante fórmulas, otros archivos Excel de origen. En los hechos, la "base de datos" del programa eran archivos planos pegoteados con fórmulas.
+Todo el seguimiento se hacía sobre un único archivo Excel, compuesto por cuatro solapas (personal operativo, personal administrativo, una matriz de "qué capacitación necesita cada unidad organizativa" y un avance estadistico de capacitados/necesidad para cada capacitación). Ese Excel no leía de una base de datos: se armaba con conexiones de **Power Query** que combinaban, mediante fórmulas, otros archivos Excel de origen.
 
 El flujo de trabajo de un capacitador era manual:
 
@@ -23,9 +21,10 @@ flowchart LR
     A["Archivos Excel<br/>de distintas áreas"] -->|"Power Query<br/>(fórmulas de combinación)"| B["Excel maestro<br/>3 solapas"]
     B --> C["El capacitador filtra<br/>su unidad a cargo"]
     C --> D["Revisa persona por persona<br/>un semáforo 🔴 / 🟢<br/>(formato condicional)"]
-    D -.->|"¿Cuándo se dio<br/>esa capacitación?"| Q1(("❓ Sin dato"))
-    D -.->|"¿Quién la dictó?"| Q2(("❓ Sin dato"))
-    D -.->|"¿Es realmente todo mi<br/>universo de personas?"| Q3(("❓ Estimación"))
+    D --> E["Capacitaba aquellos en rojo"]
+    E -.->|"¿Cuándo se dio<br/>esa capacitación?"| Q1(("❓ Sin dato"))
+    E -.->|"¿Quién la dictó?"| Q2(("❓ Sin dato"))
+    E -.->|"¿Es realmente todo mi<br/>universo de personas?"| Q3(("❓ Estimación"))
 ```
 
 El capacitador filtraba manualmente la planilla por su unidad, y a partir de un semáforo rojo/verde (formato condicional de Excel) intentaba estimar si cada persona estaba o no capacitada. Ese semáforo no decía **cuándo** se había dictado la capacitación ni **quién** la había dictado — solo mostraba un estado aparente, sin ninguna trazabilidad real detrás.
@@ -34,9 +33,11 @@ El capacitador filtraba manualmente la planilla por su unidad, y a partir de un 
 
 - **El universo de personas de cada capacitador era una estimación, no un dato certero.** No existía ninguna tabla que dijera formalmente "esta unidad organizativa está a cargo de tal capacitador". Cada capacitador sabía, de memoria y por experiencia, más o menos qué unidades le correspondían.
 - **Cero trazabilidad histórica.** El semáforo mostraba un estado actual aparente, pero no había forma de auditar fecha ni responsable de cada capacitación dictada.
-- **Errores de carga heredados y nunca corregidos.** Las fórmulas de Power Query arrastraban durante años nombres de capacitaciones mal tipeados, registros duplicados o inconsistentes, sin que nadie los hubiera detectado ni corregido.
-- **Los jefes de área no tenían ninguna vista consolidada.** No podían ver el avance de una persona en particular, ni comparar el desempeño entre distintos capacitadores. Solo existía la planilla completa, que había que filtrar manualmente para sacar cualquier conclusión.
+- **Errores de carga heredados y nunca corregidos.** Las fórmulas de Power Query normalizaban la información hasta cierto punto, pero aun asi, no era un sistema robusto y arrastraba durante años registros duplicados o inconsistentes, sin que nadie los hubiera detectado ni corregido.
+- **Los jefes de área no tenían ninguna vista consolidada.** No podían ver el avance de una persona en particular, ni comparar el desempeño entre distintos capacitadores. Solo existía la planilla completa, que había que filtrar manualmente para sacar cualquier conclusión. Lo cual para cual ejecutivo era una perdida de tiempo, por ende no se analizaba esa información.
 - **El sistema no escalaba.** Cualquier cambio en la estructura organizativa (una persona que cambiaba de unidad, una unidad que sumaba una capacitación nueva a su lista de necesidades) implicaba reconstruir a mano las conexiones de Power Query.
+- **Lentitud en el sistema** Debido a la cantidad de excels y el volumen de cada archivo, provocaba gran lentitud a la hora de generar cambios estructurales en las consultas de Power Query, haciendo la consulta de información una verdadera pesadilla.
+- **Personal no contemplado** Al ser el universo de personas a capacitar tan extenso y no tener asignado formalmente a cada capacitador a una unidad, quedaba bastante personal sin capacitar por grandes periodos de tiempo ya que formalmente no le correspondia a nadie. 
 
 ### Lo que se necesitaba
 
