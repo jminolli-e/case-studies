@@ -74,7 +74,7 @@ flowchart TB
     DB --> V["Vistas SQL<br/>snapshot vigente de plantilla · universo por capacitador · SG-SST"]
     V --> L["Capa de acceso a datos<br/>(consultas + cache)"]
     L --> N["Capa de lógica de negocio<br/>(cálculo de universos y % de avance)"]
-    N --> UI["Dashboard Streamlit<br/>5 vistas"]
+    N --> UI["Dashboard Streamlit<br/>5 tabs"]
     N --> R["Reportes exportables<br/>PNG / CSV"]
 ```
 
