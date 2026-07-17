@@ -17,7 +17,7 @@ Sistema de seguimiento de capacitaciones de seguridad industrial, desarrollado e
 ```mermaid
 flowchart LR
     A[Archivos Excel de origen] -->|Power Query| B[Excel maestro<br/>3 solapas]
-    B --> C[Inspector filtra<br/>su organización]
+    B --> C[Capacitador filtra<br/>su organización]
     C --> D["Semáforo 🔴🟢<br/>formato condicional"]
     D -.->|"¿Cuándo se capacitó?"| E((❓))
     D -.->|"¿Quién dictó la charla?"| F((❓))
@@ -25,10 +25,10 @@ flowchart LR
 ```
 
 **Limitaciones clave:**
-- Universo de cada inspector = estimación, no dato certero (no existía tabla de asignación).
+- Universo de cada capacitador = estimación, no dato certero (no existía tabla de asignación).
 - Sin fecha ni responsable por capacitación → cero trazabilidad.
 - Errores de carga heredados nunca auditados (nombres mal tipeados, duplicados).
-- Jefes sin vista consolidada individual ni comparativa entre inspectores.
+- Jefes sin vista consolidada individual ni comparativa entre capacitadores.
 - Cada cambio organizativo rompía las conexiones de Power Query.
 
 **Necesidad:** una base de datos real como fuente única de verdad, con universos formales, registro auditable y cálculo reproducible de avance.
