@@ -18,7 +18,7 @@ El flujo de trabajo de un capacitador era manual:
 
 ```mermaid
 flowchart LR
-    A["Archivos Excel<br/>de distintas áreas"] -->|"Power Query<br/>(fórmulas de combinación)"| B["Excel maestro<br/>3 solapas"]
+    A["Archivos Excel<br/>de distintas áreas"] -->|"Power Query<br/>(fórmulas de combinación)"| B["Excel maestro<br/>4 solapas"]
     B --> C["El capacitador filtra<br/>su unidad a cargo"]
     C --> D["Revisa persona por persona<br/>un semáforo 🔴 / 🟢<br/>(formato condicional)"]
     D --> E["Capacitaba aquellos en rojo"]
@@ -34,6 +34,7 @@ El capacitador filtraba manualmente la planilla por su unidad, y a partir de un 
 - **El universo de personas de cada capacitador era una estimación, no un dato certero.** No existía ninguna tabla que dijera formalmente "esta unidad organizativa está a cargo de tal capacitador". Cada capacitador sabía, de memoria y por experiencia, más o menos qué unidades le correspondían.
 - **Cero trazabilidad histórica.** El semáforo mostraba un estado actual aparente, pero no había forma de auditar fecha ni responsable de cada capacitación dictada.
 - **Errores de carga heredados y nunca corregidos.** Las fórmulas de Power Query normalizaban la información hasta cierto punto, pero aun asi, no era un sistema robusto y arrastraba durante años registros duplicados o inconsistentes, sin que nadie los hubiera detectado ni corregido.
+- **Errores de software silenciosos por límite de procesamiento** A medida que crecía el volumen de registros históricos, Power Query dejó de procesar el conjunto completo de datos: operaba sobre una ventana de tamaño fijo, tomando los registros ordenados del más reciente al más antiguo. El resultado fue que, con cada nueva tanda de capacitaciones cargadas, los registros más viejos quedaban empujados fuera de esa ventana y dejaban de normalizarse — y por lo tanto, de contabilizarse — aunque seguían existiendo en el archivo de origen. Capacitaciones reales, ya dictadas, iban "desapareciendo" progresivamente de los reportes sin que nadie lo notara, porque el error no arrojaba ningún mensaje: el Excel simplemente mostraba cada vez menos historial a medida que pasaba el tiempo.
 - **Los jefes de área no tenían ninguna vista consolidada.** No podían ver el avance de una persona en particular, ni comparar el desempeño entre distintos capacitadores. Solo existía la planilla completa, que había que filtrar manualmente para sacar cualquier conclusión. Lo cual para cual ejecutivo era una perdida de tiempo, por ende no se analizaba esa información.
 - **El sistema no escalaba.** Cualquier cambio en la estructura organizativa (una persona que cambiaba de unidad, una unidad que sumaba una capacitación nueva a su lista de necesidades) implicaba reconstruir a mano las conexiones de Power Query.
 - **Lentitud en el sistema** Debido a la cantidad de excels y el volumen de cada archivo, provocaba gran lentitud a la hora de generar cambios estructurales en las consultas de Power Query, haciendo la consulta de información una verdadera pesadilla.
@@ -44,19 +45,19 @@ El capacitador filtraba manualmente la planilla por su unidad, y a partir de un 
 Una base de datos real y normalizada, que sirviera como única fuente de verdad, capaz de:
 
 1. Definir formalmente qué universo de personas le corresponde a cada capacitador (no una estimación).
-2. Registrar de forma auditable cada capacitación dictada: a quién, cuándo y por quién.
+2. Poder visualizar la información ya existente de cada capacitación dictada: a quién, cuándo y por quién.
 3. Calcular el porcentaje de avance de cumplimiento de forma reproducible, sin depender de fórmulas manuales.
-4. Servir de base a una herramienta de consulta accesible para capacitadores, jefes de área y gestión.
+4. Servir de base a una herramienta de consulta accesible para capacitadores, jefes de área y auditores de los capacitadores.
 
 ## Objetivo de Negocio
 
-- Reemplazar el proceso manual de Excel + Power Query por una base de datos relacional real, versionable y auditable.
+- Reemplazar el proceso manual de Excel + Power Query por una base de datos relacional real, versionable y sencillamente auditable.
 - Darle a cada capacitador el universo exacto (nombre y apellido) de personas que debe capacitar, eliminando la estimación informal.
 - Calcular el porcentaje de avance comparando, de forma consistente, personas con necesidad de capacitación contra personas efectivamente capacitadas en un período determinado.
-- Construir un dashboard de autoservicio para que cada perfil de usuario (capacitador, jefe de área, gestión) resuelva sus propias consultas sin depender de un cruce manual de archivos.
+- Construir un dashboard de autoservicio para que cada perfil de usuario (capacitador, jefe de área, gestión) resuelva sus propias consultas.
 - Detectar y corregir, durante el proceso de normalización, los errores de carga histórica que se habían acumulado durante años.
 
-> **Sobre los indicadores de éxito:** al momento de este proyecto, la empresa no contaba con ninguna métrica confiable previa (lo que mostraba el Excel anterior no era trazable ni auditable). Por eso el criterio de éxito no fue "mejorar un número existente", sino **habilitar por primera vez la posibilidad de medir con confianza**: que cada capacitador supiera con nombre y apellido quién tiene pendiente, que el porcentaje de avance fuera reproducible, y que un jefe de área pudiera hacer seguimiento individual y comparar capacitadores — algo que antes no existía en ninguna forma.
+> **Sobre los indicadores de éxito:** al momento de este proyecto, la empresa no contaba con ninguna métrica confiable previa (si bien lo que mostraba el Excel era trazable y auditable, en la práctica era irrealizable debido a la complejidad y al tiempo que conllevaria). Por eso el criterio de éxito no fue "mejorar un número existente", sino **habilitar por primera vez la posibilidad de medir con confianza**: que cada capacitador supiera con nombre y apellido quién tiene pendiente, que el porcentaje de avance fuera reproducible, y que un jefe pudiera hacer seguimiento individual y comparar capacitadores — algo que antes se podia llegar a estimar pero con un gran margen de error.
 
 ## Arquitectura General
 
@@ -77,12 +78,12 @@ flowchart TB
     N --> R["Reportes exportables<br/>PNG / CSV"]
 ```
 
-**Qué contiene la base de datos** que diseñé y construí:
+**Algunas de las cosas qué contiene la base de datos** que diseñé y construí:
 - El histórico mensual de la estructura organizativa de cada persona.
 - La clasificación de cada persona en un perfil (operativo, administrativo, o un caso especial fuera de esos dos universos).
-- Una matriz de necesidades de capacitación por unidad organizativa (qué capacitaciones exige cada unidad).
+- Una matriz de necesidades de capacitación por unidad organizativa (qué capacitaciones se exige a cada unidad).
 - Una tabla de asignación formal de capacitadores por unidad organizativa — el dato que antes era solo "conocimiento tácito".
-- El registro histórico, capacitación por capacitación, de cada evento dictado (fecha, persona, capacitador responsable).
+- El registro histórico, capacitación por capacitación, de cada evento dictado (fecha, persona, capacitador responsable, entre otras cosas).
 - Vistas SQL que encapsulan las combinaciones de datos más usadas por el dashboard.
 
 **El dashboard**, construido en Streamlit, se organiza en cinco vistas funcionales con filtros globales de fecha y componentes de indicadores reutilizables entre pestañas.
