@@ -2,11 +2,11 @@
 
 ## Resumen Ejecutivo
 
-Diseñé y construí, íntegramente en solitario, la base de datos SQLite que hoy funciona como fuente única de verdad para todo el programa de capacitaciones de seguridad industrial de la empresa. Antes de este proyecto no existía ninguna base de datos: la información vivía repartida en archivos Excel individuales, sin relación formal entre sí.
+Diseñé y construí la base de datos SQLite que hoy funciona como fuente única de verdad para todo el programa de capacitaciones de seguridad industrial de la empresa. Antes de este proyecto no existía ninguna base de datos: la información vivía repartida en archivos Excel individuales, sin relación formal entre sí.
 
 Esta base de datos es el cimiento sobre el que se apoyan otros dos proyectos que ya documenté por separado en este mismo repositorio:
 
-- **El dashboard de seguimiento** (`charla_5_min`), que la consulta para calcular y visualizar el cumplimiento de capacitaciones.
+- **El dashboard de seguimiento** (`charla_5_min`), que es la consulta para calcular y visualizar el cumplimiento de capacitaciones.
 - **La aplicación de carga normalizada** (`carga_capacitaciones`), que la alimenta con nuevos registros validados.
 
 Este documento se enfoca en la base de datos en sí: cómo estaba organizada la información antes, qué diseño construí, qué reglas de negocio quedaron modeladas en el esquema, y qué ventajas concretas trajo por sobre trabajar con archivos Excel sueltos.
