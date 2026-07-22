@@ -103,6 +103,35 @@ Antes, cargar una capacitación dictada implicaba insertar el registro directame
 
 En otras palabras: este dashboard resuelve el problema de **visualizar y medir** el cumplimiento; el proyecto complementario resuelve el problema de **cargar bien los datos desde el primer momento**, para que la normalización no dependa únicamente de corregir errores después de que ya ocurrieron.
 
+### Estructura del proyecto
+
+El código está organizado por responsabilidad, versionado en Git, para que cada capa de la arquitectura descripta arriba tenga su propia carpeta:
+
+```text
+charla_5_min/
+│
+├── .streamlit/          
+│    ├──config.toml      # Configuración visual del dashboard (tema, colores)
+├── config/             
+│   ├── settings.py      # Configuración central: constantes de negocio, estilos
+│   └── styles.py        # Colores de componentes individuales (Graficos, Heatmaps, Matrices,etc)
+├── database/            
+│   ├── loaders.py       # Consultas a la base de datos y modelado de los datos especificos para graficos con pandas
+│   └── connection.py    # Conexión con la base de datos
+├── services/            
+│   └── adv_service.py   # Lógica de negocio reutilizable: cálculo de universos y % de avance
+├── reports/             
+│   └── exports.py       # Generación de exportaciones (PNG, CSV)
+├── ui/
+│   ├── cards.py         # Tarjetas de indicadores reutilizables entre pestañas
+│   └── sidebar.py       # Filtros globales (rango de fechas)
+├── utils/              
+│   ├── helpers.py       # Funciones auxiliares de formato e interfaz
+└── app.py               # Punto de entrada: navegación entre pestañas
+```
+
+Esta separación es también la base del plan de modularización mencionado en "Próximos Pasos": hoy `app.py` todavía concentra parte de la lógica de armado de interfaz que, a futuro, debería vivir dentro de `ui/`.
+
 ## Tecnologías Utilizadas
 
 | Tecnología | Propósito dentro del proyecto |
@@ -110,10 +139,12 @@ En otras palabras: este dashboard resuelve el problema de **visualizar y medir**
 | Python | Lenguaje principal: acceso a datos, lógica de negocio e interfaz. |
 | SQLite | Motor de base de datos relacional embebido; almacena y normaliza toda la información histórica. |
 | Streamlit | Framework para construir el dashboard interactivo sin desarrollar un frontend desde cero. |
+| GitHub | Control de versiones y documentación técnica del proyecto (Intentamos seguir para todos los proyectos 'uv documentation'). |
 | Pandas | Transformación y agregación de los datos leídos desde SQL antes de graficarlos. |
 | Plotly | Visualizaciones interactivas dentro del dashboard (barras, series temporales, mapas de calor). |
 | Matplotlib | Generación de tablas exportables en PNG para reportes fuera del dashboard. |
 | NumPy | Cálculos numéricos de soporte en el procesamiento de datos. |
+
 
 ## Principales Desafíos
 
