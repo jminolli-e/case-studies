@@ -127,6 +127,7 @@ charla_5_min/
 │   └── sidebar.py       # Filtros globales (rango de fechas)
 ├── utils/              
 │   ├── helpers.py       # Funciones auxiliares de formato e interfaz
+├── requeriments.txt     # Versiones de las librerias para que el tablero funcione correctamente 
 └── app.py               # Punto de entrada: navegación entre pestañas
 ```
 
@@ -242,6 +243,7 @@ El **universo de necesidad** (quién debería estar capacitado) se reconstruye c
 - [ ] Modularizar la interfaz del dashboard, separándola de la orquestación de datos. Hoy el UI todavia tiene algunas cuestiones logicas de calculo y estan compartidas con 1000 lineas de codigo y todavia no se han separado todas las funciones.
 - [ ] Generar el diagrama completo de dependencias entre vistas SQL y funciones de carga.
 - [ ] Añadir historico de las necesidades de capacitación para tener trazabilidad y saber en que unidad estaba ese operario cuando recibio esa capacitacion y cual era la necesidad de capacitacion de esa unidad en ese momento en especifico que se esta filtrando con las fechas.
+- [ ] Desarrollar un entorno virtual con uv para el proyecto, de modo que el tablero se ejecute de forma aislada y utilice versiones específicas de las dependencias, evitando depender de las librerías instaladas en el entorno global de Python.
 
 ## Disclaimer
 
