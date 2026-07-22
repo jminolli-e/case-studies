@@ -210,11 +210,9 @@ El **universo de necesidad** (quién debería estar capacitado) se reconstruye c
 
 - [ ] Modularizar la interfaz del dashboard, separándola de la orquestación de datos. Hoy el UI todavia tiene algunas cuestiones logicas de calculo y estan compartidas con 1000 lineas de codigo y todavia no se han separado todas las funciones.
 - [ ] Generar el diagrama completo de dependencias entre vistas SQL y funciones de carga.
-- [ ] Añadir historico de las necesidades de capacitación para tener trazabilidad y saber en que organización estaba esa persona cuando recibio esa capacitacion y cual era la necesidad de capacitacion de esa unidad en ese momento en especifico ques e esta filtrando con las fechas.
-- [ ] Una vez consolidada la situación actual, incorporar métricas de trazabilidad histórica (por ejemplo, tiempos de resolución de pendientes) ahora que existe una fuente de datos confiable sobre la cual construirlas.
-- [ ] Seguir cerrando el círculo entre este dashboard y el proyecto de carga normalizada: usar lo que se detecta acá (inconsistencias, catálogos incompletos) para retroalimentar y ajustar las validaciones del formulario de carga.
+- [ ] Añadir historico de las necesidades de capacitación para tener trazabilidad y saber en que unidad estaba ese operario cuando recibio esa capacitacion y cual era la necesidad de capacitacion de esa unidad en ese momento en especifico que se esta filtrando con las fechas.
 
 ## Disclaimer
 
 Este caso de estudio describe conceptos, metodologías y decisiones técnicas aplicadas en un entorno corporativo.
-No se incluyen datos reales, información confidencial, propiedad intelectual ni detalles sensibles de la organización donde fue desarrollado.
+No se incluyen datos reales, información confidencial, propiedad intelectual ni detalles sensibles de la organización donde fue desarrollado esta solución.
