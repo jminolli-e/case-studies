@@ -1,196 +1,173 @@
-# Capacitaciones.db — Base de Datos Central de Capacitaciones de Seguridad Industrial
+# Capacitaciones.db — Desarrollo de un Ecosistema de Datos propio.
 
-README EN PROCESO DE CONSTRUCCIÓN
-Ultima modificación: 23/07/2026
+> **Aclaración de alcance:** lo que se documenta acá es un desarrollo interno del área adonde trabaje y trabajo. **No es la base de datos corporativa de la empresa ni un reemplazo de ella** — es una capa propia del departamento, pensada para poder trabajar con información que la empresa administra en otro sistema, al que el área no tenía forma de acceder de manera masiva.
 
 ## Resumen Ejecutivo
 
-Diseñé y construí la base de datos SQLite que hoy funciona como fuente única de verdad para todo el programa de capacitaciones de seguridad industrial de la empresa. Antes de este proyecto no existía ninguna base de datos: la información vivía repartida en archivos Excel individuales, sin relación formal entre sí.
+La empresa adonde se realizo el trabajo lleva el registro y asignaciones de su personal (identificación, a qué unidad, puesto, localización, etc.) en un sistema corporativo centralizado. El departamento donde estoy situado, no contaba con acceso a ese entorno: en la práctica, solo podía consultarlo persona por persona, de forma manual, sin ninguna vía para extraer información en volumen ni para integrarla de manera programática a los procesos propios del área. Para cubrir esa brecha, Recursos Humanos enviaba mensualmente un archivo Excel con una fotografía del estado de la plantilla en ese momento, que después se cruzaba a mano con otros archivos del departamento mediante Power Query.
 
-Esta base de datos es el cimiento sobre el que se apoyan otros dos proyectos que ya documenté por separado en este mismo repositorio:
+De esa limitación nace este proyecto: una base de datos **propia del departamento** — no de la empresa — construida en SQLite, que toma ese envío mensual, lo depura y lo convierte en un histórico consultable. La decisión de trabajar con SQLite no fue casual: el departamento no dispone de un servidor propio, así que se evaluó la posibilidad de alojar una base con servidor en algún servicio gratuito, pero el volumen de información que maneja el área a lo largo del tiempo hacía inviable esa alternativa dentro de los límites gratuitos disponibles. SQLite, al ser un motor embebido y sin servidor, resolvió esa restricción sin sacrificar la posibilidad de tener una base relacional real.
 
-- **El dashboard de seguimiento** (`charla_5_min`), que es la consulta para calcular y visualizar el cumplimiento de capacitaciones.
-- **La aplicación de carga normalizada** (`carga_capacitaciones`), que la alimenta con nuevos registros validados.
-
-Este documento se enfoca en la base de datos en sí: cómo estaba organizada la información antes, qué diseño construí, qué reglas de negocio quedaron modeladas en el esquema, y qué ventajas concretas trajo por sobre trabajar con archivos Excel sueltos.
+Aunque el disparador inicial fue el seguimiento de capacitaciones que dicta el departamento a los empleados de la empresa, esta base terminó funcionando como la columna vertebral de datos de personal para varios procesos del departamento. Hoy conviven varios archivos `.db` independientes — algunos armados por mí y otros por un compañero del área  que se combinan entre sí mediante `ATTACH DATABASE` según lo que necesite cada consulta o cada herramienta puntual. Este documento se enfoca en el módulo de capacitaciones, que es el más maduro, pero el mismo patrón de trabajo se repite en otros procesos del área que iré documentando por separado a medida que estén en condiciones de compartirse.
 
 ## Contexto del Problema
 
-### Situación inicial
+### Un dato que existía, pero al que no podíamos llegar a escala
 
-Toda la información del programa de capacitaciones — quién es cada persona, en qué organización está, qué capacitaciones dictó cada quién y cuándo — vivía en **archivos Excel independientes**, sin ninguna relación formal entre ellos. Cada archivo se mantenía y actualizaba por separado, y para responder cualquier pregunta que cruzara dos fuentes (por ejemplo, "¿esta persona pertenece a una organización que necesita esta capacitación?") había que combinar archivos manualmente, con fórmulas de búsqueda o con Power Query.
+La información de plantilla — unidad de pertenencia, categoría, otros atributos de revista — vivía en un sistema corporativo centralizado. El acceso del departamento a ese sistema era de consulta puntual: buscar a una persona a la vez, sin posibilidad de extraer un volumen de registros ni de automatizar nada sobre esa fuente.
 
 ```mermaid
 flowchart LR
-    E1["Excel: plantilla<br/>de empleados"]
-    E2["Excel: clasificación<br/>de personas"]
-    E3["Excel: necesidades por<br/>organización"]
-    E4["Excel: registro de<br/>charlas dictadas"]
-    E1 -.->|combinación manual /<br/>Power Query| X(("¿Cómo se cruzan<br/>entre sí?"))
-    E2 -.-> X
-    E3 -.-> X
-    E4 -.-> X
-    X -.-> P["Sin relaciones formales,<br/>sin tipos de dato consistentes,<br/>sin validación"]
+    ORA[("Sistema corporativo<br/>(gestión centralizada<br/>de personal)")]
+    ORA -->|"consulta manual,<br/>persona por persona"| U1["Uso puntual<br/>desde el área"]
+    ORA -->|"envío mensual<br/>(Excel), vía RRHH"| SNAP["Fotografía mensual<br/>de la plantilla"]
+    SNAP -->|"Power Query +<br/>otros archivos del área"| EXC["Excel maestro<br/>del departamento"]
+    EXC -.->|"sin base de datos<br/>real detrás"| P(("¿Cómo se sostiene<br/>esto a largo plazo - Complicado de hacer uso de información historica en herramientas como Query?"))
 ```
 
-### Limitaciones detectadas
+El único canal disponible para trabajar con la plantilla completa era, entonces, ese envío mensual — una foto fija — que luego se mezclaba de forma manual con otros insumos propios del departamento.
 
-- **Sin relaciones formales entre archivos.** Un mismo identificador de persona podía estar guardado como texto en un archivo y como número en otro, lo que obligaba a conversiones manuales propensas a error cada vez que se cruzaba información.
-- **Sin historia real.** Los archivos reflejaban, en el mejor de los casos, el estado "actual" de la plantilla. No había una forma sistemática de reconstruir a qué organización pertenecía una persona en un mes específico del pasado.
-- **Reglas de negocio dispersas y no auditables.** Qué capacitaciones necesitaba cada organización, o quién era responsable de dictarlas a quién, no estaba modelado en ningún lado de forma explícita — era, en el mejor de los casos, conocimiento informal de quien mantenía cada archivo.
-- **Sin capa de validación de calidad.** Cualquier fila mal cargada (un nombre de capacitación mal tipeado, un identificador de persona inexistente) se incorporaba igual al archivo, sin ningún mecanismo que la señalara para revisión.
-- **Cero escalabilidad.** Agregar un nuevo tipo de capacitación, una nueva organización, o un nuevo cruce de información implicaba modificar fórmulas y conexiones manualmente en varios archivos a la vez.
+### Restricciones que arrastraba este esquema
 
-### Necesidad identificada
+- **Ningún acceso masivo a la fuente original.** Todo análisis que necesitara la plantilla completa quedaba atado a ese archivo mensual, sin posibilidad de refrescarlo antes del siguiente envío.
+- **Sin memoria de los meses anteriores.** Un archivo nuevo reemplazaba al anterior dentro de power query, si bien los historicos existian en formato Excel, vivian como archivos aparte que no se podian utilizar para hacer trazabilidad de nada, se tenian que consultar individualmente, sin una estructura que permitiera consultarlo de forma unificada junto con el resto.
+- **Sin trazabilidad de las capacitaciones.** No era dinamico, para saber a que unidad estaba asignado ese empleado cuando recibio la capacitación habia que manualmente ver la fecha que recibio la capacitación y buscar en el archivo de Excel individual de esa fecha para ver.
+- **Gran Lentitud en Power Query** Al ser tan extenso el volumen de historico de las capacitaciones, archivos como charlas-5-min referenciado dentro del portafolio, tardaban gran tiempo en poder implementar logicas nuevas, mantener o hacer consultas.
+- **Modelo de información basico** El modelo de la información al ser a traves de Power Query era muy basico, no se podia depurar la información comodamente para poder hacer analisis de datos real. Cada sistema dependia de otro y generaba gran molestia actualizarlo o desarrollar tableros debido a que todo acudia a distintos excels pasaban por power query para salir de excel y capaz dirigirse a un Power BI. La cadena estaba saturadisima y arrojaba multiples errores.
 
-Había que reemplazar ese conjunto de archivos sueltos por una **base de datos relacional real**, que impusiera tipos de dato consistentes, permitiera reconstruir el estado histórico de la plantilla mes a mes, modelara explícitamente las reglas de negocio (qué necesita cada organización, quién es responsable de qué) y ofreciera un mecanismo propio para poner en cuarentena los registros de mala calidad en lugar de incorporarlos sin más.
+### Qué hacía falta
+
+Una base propia del departamento, sin dependencia de servidor, que absorbiera esa fotografía mensual y la transformara en un histórico confiable — y que, además, sirviera como fuente común para los distintos procesos del área, en lugar de que cada uno mantuviera su propia copia parcial de lo mismo.
 
 ## Objetivo de Negocio
 
-- Constituir una única fuente de verdad para todo el programa de capacitaciones, reemplazando el conjunto de archivos Excel independientes.
-- Normalizar los identificadores clave (por ejemplo, el legajo de una persona) para que tengan un tipo de dato único y consistente en toda la base.
-- Modelar explícitamente, en tablas propias, reglas de negocio que antes eran informales: qué necesita cada organización y quién es responsable de capacitar a quién.
-- Conservar el histórico mensual de la estructura organizativa, para poder reconstruir el estado de cualquier persona en cualquier período pasado.
-- Incorporar un mecanismo de calidad de datos: separar los registros válidos de los que no cumplen el formato esperado, en lugar de aceptar todo sin control.
-- Servir como base común para otros sistemas (el dashboard de seguimiento y la aplicación de carga), sin que cada uno tuviera que reinventar su propia fuente de datos.
+- Construir una base de datos propia del departamento — explícitamente no la corporativa — que absorba el envío mensual de plantilla y lo convierta en un histórico estructurado.
+- Resolver esa necesidad sin infraestructura de servidor propia, aprovechando un motor embebido que pudiera vivir en la misma red de archivos que ya usa el área.
+- Depurar esa información una sola vez para que los distintos procesos internos la consuman desde el mismo lugar, en vez de reconstruir el cruce cada uno por su cuenta.
+- Dar a los integrantes del departamento una forma de cargar información nueva sin necesidad de tocar la base directamente ni de escribir SQL, evitando así los errores de carga típicos de trabajar sobre planillas sueltas.
+- Modelar en tablas propias las reglas específicas de capacitaciones: qué necesita cada unidad, quién es responsable de dictarlas.
+- Distinguir y registrar por separado las capacitaciones breves ("charlas de seguridad") de las capacitaciones extensas con evaluación, dado que tienen atributos y ciclos de vigencia distintos.
 
 ## Arquitectura General
 
-El modelo de datos se organiza en cuatro dominios lógicos, cada uno resolviendo una pregunta de negocio distinta:
-
 ```mermaid
 flowchart TB
-    D1["1️⃣ Clasificación de personas<br/>¿Es operativa o administrativa?"]
-    D2["2️⃣ Necesidades por organización<br/>¿Qué capacitación requiere cada unidad?"]
-    D3["3️⃣ Asignación de responsables<br/>¿Quién capacita a quién?"]
-    D4["4️⃣ Registro de ejecución<br/>¿Qué se dictó, a quién y cuándo?"]
+    ORA[("Sistema corporativo<br/>(fuera del alcance<br/>de este proyecto)")]
+    ORA -->|"envío mensual"| SNAP["Fotografía mensual<br/>de plantilla (Excel)"]
+    SNAP --> DB[("Capacitaciones.db<br/>SQLite — sin servidor")]
 
-    D1 --> CALC["Cálculo de necesidad<br/>y cumplimiento"]
-    D2 --> CALC
-    D3 --> CALC
-    D4 --> CALC
+    subgraph Interfaces["Interfaces propias de carga"]
+        CC["Carga_Capacitaciones<br/>(data entry normalizado)"]
+        OTRAS["Otras interfaces del área<br/>(a documentar)"]
+    end
+    CC --> DB
+    OTRAS -.-> DB
 
-    CALC --> APP1["📊 Dashboard de seguimiento<br/>(consume la base)"]
-    CALC --> APP2["📝 App de carga normalizada<br/>(alimenta la base)"]
+    DB <-->|"ATTACH DATABASE"| OTHERDB[("Otras bases .db<br/>del departamento<br/>(propias y de Saguirre)")]
+
+    DB --> M1["📊 Módulo Capacitaciones<br/>(dashboard + carga)"]
+    DB -.-> M2["🚧 Otros procesos del área<br/>(a documentar)"]
 ```
 
-**Capas del esquema:**
+**En criollo, qué resuelve esta capa:** no reemplaza al sistema corporativo, lo complementa. Toma lo único que el departamento puede recibir de ese sistema — la fotografía mensual — y construye, a partir de eso, un histórico propio, sin necesitar un servidor que el área no tiene, y reutilizable por más de un proceso interno.
 
-- **Tablas de hechos (fact tables):** registran eventos — cada capacitación dictada, a quién, cuándo y por quién. Son tablas que solo crecen con el tiempo, nunca se actualizan retroactivamente.
-- **Tablas históricas con snapshot:** conservan una fotografía mensual de la estructura organizativa de cada persona, para poder reconstruir su situación en cualquier período pasado, no solo la actual.
-- **Tablas de catálogo y clasificación:** definen qué es cada cosa — el perfil de una persona, el catálogo oficial de capacitaciones con su código único.
-- **Tablas de configuración de reglas de negocio:** la matriz de qué organización necesita qué capacitación, y la asignación de responsables por organización.
-- **Tablas de calidad (staging):** almacenan los registros que no pasaron la validación de carga, para su revisión posterior en lugar de descartarlos silenciosamente o aceptarlos sin control.
-- **Vistas SQL:** encapsulan las combinaciones de tablas más usadas (por ejemplo, "estado vigente de la plantilla" o "universo de personas de un responsable"), para que el resto del sistema no tenga que repetir esa lógica de cruce en cada consulta.
+**Cómo está organizada la información:**
+
+- **Histórico de plantilla:** una fotografía por persona y por mes, tal como llega el envío mensual, pero consultable de forma unificada, con el estado vigente siempre disponible como "el mes más reciente".
+- **Clasificación de personas:** el perfil de cada persona dentro del programa de capacitaciones.
+- **Reglas propias del proceso:** qué necesita cada unidad y quién es responsable de dictarlo — información que no viene de ninguna fuente externa, sino que se define y mantiene dentro del departamento.
+- **Dos históricos de ejecución en paralelo:** uno para charlas breves y otro para capacitaciones extensas con evaluación, porque no comparten estructura (una charla no tiene "modalidad" ni "nota", por ejemplo).
+- **Vistas de abstracción:** encapsulan los cruces más repetidos (estado vigente de plantilla, universo de un responsable, etc.) para que ningún proceso tenga que reconstruir esa lógica desde cero.
+
+**Un matiz sobre el estado actual:** el histórico de capacitaciones extensas con evaluación ya vive dentro de esta base, pero todavía **no está integrado al tablero visual** de seguimiento — se consulta por otra vía. Es trabajo pendiente de unificación, no una limitación del diseño.
+
+### Un ecosistema de bases, no una sola
+
+`Capacitaciones.db` no vive aislada. El departamento fue armando, con el tiempo, distintos archivos `.db` independientes — cada uno resolviendo una necesidad puntual, algunos de mi autoría y otros de Saguirre — que se combinan entre sí según lo requiera cada consulta o cada herramienta, usando `ATTACH DATABASE` para leer de más de una base en la misma sesión sin duplicar información entre ellas. Este patrón permitió que cada base creciera de forma independiente, sin forzar todo a vivir en un único archivo monolítico, manteniendo igual la posibilidad de cruzar información entre bases cuando hace falta.
+
+### Interfaces de carga: normalizar el dato antes de que entre
+
+Tener una base bien diseñada no alcanza si la forma de cargar información sigue siendo una planilla suelta. Por eso, en paralelo a la base, se fueron desarrollando pequeñas aplicaciones de escritorio pensadas para que el personal del departamento pueda ingresar información nueva sin escribir una sola línea de SQL y sin margen para los errores típicos de tipeo libre. `Carga_Capacitaciones` es la primera de esas interfaces: una pantalla simple donde cargar una charla o capacitación dictada, con los valores ya validados contra los catálogos de la base, así que lo que entra ya llega normalizado. Existen otras herramientas del mismo estilo para otros procesos del área, que se irán documentando como casos de estudio independientes a medida que estén listas para compartirse.
 
 ## Tecnologías Utilizadas
 
 | Tecnología | Propósito |
 |---|---|
-| SQLite | Motor de base de datos relacional embebido, sin necesidad de un servidor dedicado. |
-| SQL (DDL / DML / Vistas) | Definición del esquema, escritura de vistas de abstracción y consultas de migración. |
-| Python | Scripts de migración y validación de datos desde los archivos de origen hacia la base. |
-| Pandas | Limpieza y transformación de los datos de origen antes de insertarlos. |
-| GitHub | Versionado y documentación del esquema (este caso de estudio y el DDL general). |
+| SQLite | Motor de base de datos relacional embebido y sin servidor — elegido, entre otras razones, porque el departamento no cuenta con infraestructura propia para alojar una base tradicional. |
+| SQL (DDL / DML / Vistas) | Definición del esquema y de las vistas de abstracción sobre los cruces más frecuentes. |
+| `ATTACH DATABASE` | Mecanismo para combinar, dentro de una misma sesión, información que vive repartida en distintos archivos `.db` del departamento. |
+| Python | Scripts de migración y depuración de la fotografía mensual antes de incorporarla a la base, y motor de las interfaces de carga de datos. |
+| Pandas | Limpieza y transformación de los datos de origen. |
+| Excel + Power Query | Formato en el que se recibe la fotografía mensual desde RRHH — fuente externa, fuera del control del departamento. |
+| GitHub | Versionado y documentación del esquema. |
 
 ## Principales Desafíos
 
 ```mermaid
 flowchart LR
-    D1["🔢 Un mismo identificador<br/>guardado con tipos<br/>de dato distintos"] --> S1["Normalizar el tipo en<br/>toda la base + castear<br/>explícitamente donde<br/>aún conviven ambos"]
-    D2["📛 Un campo descriptivo se<br/>usaba como si fuera<br/>clave estable"] --> S2["Separar el campo<br/>descriptivo (texto, puede<br/>cambiar) de la clave<br/>numérica real"]
-    D3["🧩 Reglas de necesidad muy<br/>distintas entre unidades,<br/>demasiadas para modelar<br/>una por una"] --> S3["Matriz de necesidades<br/>por organización, en vez<br/>de reglas por puesto"]
-    D4["🗓️ La estructura organizativa<br/>cambia mes a mes"] --> S4["Tablas históricas con<br/>snapshot mensual, no<br/>un único estado 'actual'"]
-    D5["🧹 Registros mal cargados<br/>se colaban sin control"] --> S5["Tablas de staging para<br/>poner en cuarentena lo<br/>que no pasa validación"]
+    D1["📦 Solo se recibe una<br/>fotografía mensual,<br/>sin acceso masivo<br/>al sistema de origen"] --> S1["Diseñar la base como<br/>histórico propio, sin<br/>depender de refrescos<br/>en tiempo real"]
+    D2["🖥️ Sin servidor propio<br/>del departamento"] --> S2["Motor embebido<br/>(SQLite), evaluado<br/>frente a hosting<br/>gratuito descartado<br/>por volumen"]
+    D3["🔁 Cada proceso repetía<br/>su propio cruce del<br/>mismo envío mensual"] --> S3["Una única capa de<br/>depuración, reutilizable<br/>por todos los procesos"]
+    D4["✍️ Carga manual sobre<br/>planillas, sin control<br/>de consistencia"] --> S4["Interfaces propias de<br/>data entry, con<br/>catálogos validados"]
+    D5["📋 Charlas breves y<br/>capacitaciones extensas<br/>no comparten estructura"] --> S5["Dos históricos de<br/>ejecución en paralelo"]
 ```
 
-- **Identificadores con tipos de dato inconsistentes entre tablas.** El identificador de persona llegaba, según la fuente, unas veces como texto y otras como número. Esto obligaba a decisiones explícitas de conversión (`CAST`) en cada combinación de tablas que lo necesitara, y a documentar claramente en qué tabla el campo es de qué tipo, para que nadie asuma lo contrario al escribir una consulta nueva.
-- **Un campo descriptivo usado, por error, como si fuera una clave.** Existía un campo de texto que describe la unidad de pertenencia de una persona, pero ese texto podía variar (redactarse distinto) aunque la unidad real fuera la misma. Tuve que identificar y documentar cuál era la clave numérica estable a usar en su lugar para cualquier agrupación o cruce, dejando el campo de texto solo para mostrarlo en pantalla, nunca para relacionar tablas.
-- **Modelar la necesidad de capacitación por organización, no por persona.** Mantener una regla distinta por cada puesto de trabajo era inviable dada la cantidad de combinaciones posibles. La solución fue una matriz (organización × capacitación) con un valor binario que indica si esa unidad necesita esa capacitación — una única fuente de reglas, más fácil de mantener y de auditar que cientos de reglas individuales.
-- **Reconstruir el estado histórico, no solo el actual.** Las personas cambian de organización y de perfil mes a mes. Modelé la plantilla como una tabla de snapshots mensuales (una fila por persona y por período), de forma que el estado "vigente" es simplemente el período más reciente, pero el histórico completo queda disponible para reconstruir cualquier cálculo retroactivo.
-- **Calidad de los datos migrados.** Al migrar el historial acumulado durante años aparecieron registros con nombres de capacitación mal escritos, duplicados o inconsistentes con el catálogo oficial. En vez de descartarlos o forzarlos a entrar, diseñé tablas de staging que reciben esos registros por separado, para poder auditarlos y corregirlos sin perder trazabilidad de qué falló y por qué.
+- **Trabajar con una fuente que no podíamos refrescar a demanda.** Sin acceso masivo al sistema corporativo, la base se diseñó asumiendo que la plantilla es, por naturaleza, un dato que llega una vez por mes, en vez de intentar simular algo en tiempo real que no estaba disponible.
+- **No contar con servidor propio del área.** Se llegó a evaluar la posibilidad de alojar una base con servidor en algún servicio gratuito, pero el volumen de información que el departamento acumula con el tiempo excedía cómodamente los límites de esas opciones gratuitas. SQLite resolvió el problema sin requerir infraestructura adicional, a costa de renunciar a funciones propias de un motor cliente-servidor — una decisión consciente, no una limitación no evaluada.
+- **Evitar que cada proceso reinventara su propio cruce.** Depurar la plantilla una sola vez, dentro de esta base, evitó que capacitaciones y los demás procesos del área terminaran con versiones distintas de la misma información.
+- **Que cargar datos no fuera una fuente de errores en sí misma.** La solución fue construir interfaces de carga propias, con los valores posibles ya definidos por catálogo, en vez de dejar el ingreso de datos abierto a texto libre.
+- **Modelar dos tipos de capacitación con reglas distintas.** Charlas breves y capacitaciones extensas con evaluación no comparten estructura, así que quedaron como dos históricos separados desde el diseño, evitando columnas vacías o forzadas en cualquiera de los dos casos.
+- **Necesidades de capacitación heterogéneas entre unidades.** Se resolvió con una configuración a nivel de unidad, consultable como dato y no enterrada en una fórmula.
+- **Calidad de los datos heredados.** Al migrar el historial acumulado aparecieron inconsistencias de carga previas (nombres mal escritos, duplicados); se diseñó un mecanismo de cuarentena para poder revisarlas sin perder trazabilidad.
 
 ## Solución Implementada
 
-### El esquema en capas
+### Una base pensada para más de un proceso
 
-```mermaid
-flowchart TB
-    subgraph Hechos["Tablas de hechos"]
-        F1["Registro de charlas breves<br/>dictadas (fecha, persona,<br/>capacitación, responsable)"]
-        F2["Registro de capacitaciones<br/>extensas (código, duración,<br/>modalidad, evaluación)"]
-    end
-    subgraph Historicas["Tablas históricas (snapshot)"]
-        H1["Estructura organizativa<br/>de cada persona, mes a mes"]
-    end
-    subgraph Catalogos["Catálogos y clasificación"]
-        C1["Perfil de cada persona<br/>(operativo / administrativo)"]
-        C2["Catálogo único de<br/>capacitaciones, con código"]
-    end
-    subgraph Reglas["Configuración de reglas de negocio"]
-        R1["Matriz de necesidades<br/>por organización"]
-        R2["Asignación de responsables<br/>por organización"]
-    end
-    subgraph Staging["Calidad de datos"]
-        Q1["Registros rechazados,<br/>pendientes de revisión"]
-    end
-    subgraph Vistas["Vistas de abstracción"]
-        V1["Estado vigente de<br/>la plantilla"]
-        V2["Universo de personas<br/>por responsable"]
-        V3["Universos de sub-módulos<br/>(ej. gestión de seg. y salud)"]
-    end
+Aunque el primer consumidor formal de esta base es el módulo de capacitaciones, el diseño no asume que sea el único. La capa que depura y organiza el histórico de plantilla es genérica: cualquier otro proceso del área que necesite saber a qué unidad pertenece una persona en determinado período puede apoyarse en la misma base, sin reconstruir esa lógica de nuevo. Procesos como accidentes, auditorías, correspondencia interna o sanciones, hoy resueltos con sus propias bases `.db` independientes, se combinan puntualmente con esta a través de `ATTACH DATABASE` cuando necesitan ese mismo dato de plantilla, en lugar de mantener su propia copia.
 
-    Historicas --> Vistas
-    Catalogos --> Vistas
-    Reglas --> Vistas
-    Vistas --> Consumo["Dashboard / App de carga"]
-    Hechos --> Consumo
-    Hechos -.->|"registros inválidos"| Staging
-```
+### El módulo de capacitaciones, en concreto
 
-- **Tablas de hechos:** una para las capacitaciones breves ("charlas de 5 minutos") y otra, en paralelo, para capacitaciones de mayor duración — cada una con su propia estructura, porque registran información distinta (una charla breve no tiene "modalidad" ni "evaluación", por ejemplo).
-- **Tabla histórica de plantilla:** una fila por persona y por período, con la unidad organizativa vigente en ese momento. El estado "actual" se obtiene siempre tomando el período más reciente, sin necesidad de una tabla separada para eso.
-- **Catálogos:** el perfil de cada persona (qué la clasifica como operativa o administrativa) y el catálogo único de capacitaciones, cada una con un código propio — pensado para que cargar una capacitación nueva implique elegirla de una lista cerrada, no escribir su nombre a mano.
-- **Configuración de reglas de negocio:** la matriz de necesidades por organización y la tabla de asignación de responsables — ambas pensadas para que una regla de negocio compleja (quién necesita qué, quién es responsable de quién) se pueda consultar con una sola lectura de tabla, en vez de estar dispersa en fórmulas.
-- **Vistas de abstracción:** encapsulan las combinaciones más usadas, para que el dashboard y otros consumidores no tengan que repetir la lógica de cruce (por ejemplo, combinar plantilla + clasificación + matriz de necesidades) en cada consulta.
-- **Tablas de staging:** reciben los registros que no pasan la validación de formato al momento de la carga, sin bloquear el resto del proceso ni perder el dato — quedan disponibles para revisión y corrección posterior.
+Dentro de esta base conviven:
 
-### Ventajas concretas sobre trabajar con archivos Excel sueltos
+- El histórico de charlas de seguridad dictadas (fecha, persona, capacitación, responsable).
+- El histórico de capacitaciones extensas con evaluación (que además registra duración, modalidad y nota).
+- La configuración de qué necesita cada unidad y quién es responsable de capacitarla.
+- Vistas que combinan esta información con el estado vigente de la plantilla, para calcular necesidad y cumplimiento sin repetir la lógica de cruce en cada consulta.
 
-| Antes (archivos Excel independientes) | Ahora (base de datos normalizada) |
-|---|---|
-| Identificadores con tipos de dato inconsistentes entre archivos | Tipos de dato unificados y documentados por tabla |
-| Sin relación formal entre archivos; cruces armados a mano cada vez | Relaciones explícitas + vistas que encapsulan los cruces más usados |
-| Solo existía el estado "actual"; sin forma sistemática de ver el pasado | Snapshots mensuales; se puede reconstruir cualquier período histórico |
-| Reglas de negocio informales, no documentadas en ningún lado | Reglas modeladas en tablas propias, consultables y auditables |
-| Registros mal cargados se mezclaban con los válidos, sin aviso | Tablas de staging separan lo válido de lo dudoso, sin perder trazabilidad |
-| Cada consumidor de la información arma su propio cruce desde cero | Una única base sirve como fuente común para todos los sistemas que la consultan |
+Solo el histórico de charlas breves alimenta hoy el tablero visual de seguimiento; el de capacitaciones extensas queda disponible en la base pero se consulta por otro medio, a la espera de integrarse al mismo dashboard más adelante.
+
+### Cómo entra la información nueva
+
+La carga de charlas y capacitaciones no se hace escribiendo directamente sobre la base ni sobre una planilla suelta. `Carga_Capacitaciones` — una de las interfaces mencionadas más arriba — es el punto de entrada pensado para que cualquier integrante del área pueda registrar una charla dictada eligiendo entre valores ya validados (persona, tipo de capacitación, responsable), en vez de tipear texto libre. Eso resuelve, de entrada, buena parte de los problemas de normalización que antes había que corregir después, en la etapa de depuración.
 
 ## Resultados Obtenidos
 
-- Se estableció, por primera vez, una **fuente única de verdad** para todo el programa de capacitaciones, reemplazando el conjunto de archivos Excel independientes que existía antes.
-- El proceso de migración y normalización permitió **detectar errores de carga acumulados durante años** (nombres de capacitación mal escritos, registros duplicados) que antes pasaban completamente inadvertidos.
-- La base quedó diseñada para **servir a más de un consumidor**: hoy alimenta tanto un dashboard de seguimiento como una aplicación de carga de datos, sin que ninguno de los dos tenga que mantener su propia copia de la información.
-- Se documentaron explícitamente reglas de negocio (necesidades por organización, asignación de responsables) que antes existían solo como conocimiento informal disperso entre distintas personas.
+- Se dejó de depender exclusivamente de consultas manuales, persona por persona, contra el sistema corporativo, para cualquier análisis que necesitara ver la plantilla completa.
+- La fotografía mensual, antes combinada a mano con Power Query, ahora se depura una sola vez y queda disponible como histórico estructurado y consultable.
+- Se resolvió la necesidad de una base relacional sin depender de un servidor que el departamento no tiene, tras descartar por volumen las alternativas de hosting gratuito evaluadas.
+- Se sentó una base común pensada para más de un proceso interno, evitando que cada necesidad futura reconstruya su propio cruce con la información de plantilla desde cero.
+- Se redujeron los errores de carga al reemplazar el ingreso manual sobre planillas por interfaces con catálogos validados.
+- El proceso de depuración permitió detectar errores de carga heredados que antes pasaban inadvertidos.
 
 ## Lecciones Aprendidas
 
 | Tipo | Aprendizaje |
 |---|---|
-| Técnica | Cuando un identificador conviene con más de un tipo de dato entre fuentes, conviene normalizarlo cuanto antes; documentar dónde hace falta un `CAST` no reemplaza corregirlo en la fuente. |
-| Técnica | Un campo de texto descriptivo nunca debería usarse como clave para relacionar tablas, aunque "en la práctica" identifique lo mismo — su valor puede cambiar sin que cambie lo que representa. |
-| Diseño | Modelar reglas de negocio como una matriz o tabla de configuración (en vez de código o fórmulas dispersas) las hace auditables por cualquier persona, no solo por quien las escribió. |
-| Diseño | Separar "lo que no pasa validación" en tablas de staging, en vez de rechazarlo sin dejar rastro, es lo que permite auditar errores de carga después, sin perder el dato original. |
-| Gestión | Diseñar la base pensando en más de un consumidor desde el principio (dashboard y app de carga) evitó que cada sistema mantuviera su propia copia parcial de la verdad. |
+| Técnica | Cuando la fuente externa solo se puede recibir como una fotografía periódica, conviene diseñar el histórico propio alrededor de esa cadencia, en vez de simular algo que la fuente no ofrece. |
+| Técnica | No tener servidor propio no es necesariamente un impedimento: un motor embebido puede sostener una base relacional completa siempre que el volumen de datos sea compatible con esa elección. |
+| Arquitectura | Repartir la información en varias bases `.db` independientes, combinadas por demanda con `ATTACH DATABASE`, permite que cada una evolucione a su ritmo sin forzar un único archivo monolítico. |
+| Diseño | Construir una capa de depuración común, en vez de que cada proceso resuelva su propio cruce, evita que dos áreas del mismo departamento terminen con números distintos para la misma pregunta. |
+| Diseño | El punto más eficaz para evitar errores de carga es la interfaz de entrada, no la corrección posterior: validar contra catálogo al momento de cargar ahorra trabajo de depuración más adelante. |
+| Gestión | Diseñar pensando en más de un consumidor desde el principio deja la puerta abierta a extender la base a otros procesos sin rediseñarla de nuevo. |
 
 ## Próximos Pasos
 
-- [ ] Completar la documentación de la tabla de asignación de responsables por organización.
-- [ ] Evaluar migrar la matriz de necesidades (organización × capacitación) a un modelo relacional de tabla intermedia si la cantidad de capacitaciones sigue creciendo, en vez de seguir agregando columnas.
-- [ ] Incorporar restricciones de integridad referencial explícitas (claves foráneas) donde hoy la relación es solo lógica.
-- [ ] Evaluar unificar el modelo de capacitaciones breves y capacitaciones extensas bajo un esquema común, si ambas terminan necesitando los mismos cruces de información.
+- [ ] Integrar el histórico de capacitaciones extensas con evaluación al mismo tablero visual que hoy solo muestra charlas breves.
+- [ ] Documentar como casos de estudio independientes las demás bases `.db` del departamento y las interfaces de carga asociadas, a medida que estén en condiciones de compartirse.
+- [ ] Evaluar mecanismos de actualización más frecuente de la plantilla, si en algún momento se habilita un canal de acceso distinto al envío mensual.
+- [ ] Incorporar restricciones de integridad referencial explícitas donde hoy la relación entre tablas y entre bases es solo lógica.
 
 ## Disclaimer
 
-Este caso de estudio describe conceptos, metodologías y decisiones técnicas de diseño de base de datos aplicadas en un entorno corporativo.
-No se incluyen datos reales, información confidencial, propiedad intelectual, rutas de servidores internos ni detalles sensibles de la organización donde fue desarrollado.
+Este caso de estudio describe conceptos, metodologías y decisiones técnicas de diseño de un conjunto de bases de datos **departamentales e internas**, distintas de la base de datos corporativa de la empresa. No se incluyen datos reales, información confidencial, propiedad intelectual, rutas de servidores internos ni detalles sensibles de la organización donde fue desarrollado.
