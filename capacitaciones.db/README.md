@@ -1,5 +1,8 @@
 # Capacitaciones.db — Base de Datos Central de Capacitaciones de Seguridad Industrial
 
+README EN PROCESO DE CONSTRUCCIÓN
+Ultima modificación: 23/07/2026
+
 ## Resumen Ejecutivo
 
 Diseñé y construí la base de datos SQLite que hoy funciona como fuente única de verdad para todo el programa de capacitaciones de seguridad industrial de la empresa. Antes de este proyecto no existía ninguna base de datos: la información vivía repartida en archivos Excel individuales, sin relación formal entre sí.
