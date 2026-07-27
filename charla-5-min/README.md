@@ -1,180 +1,251 @@
-# Capacitaciones.db — Modelar en SQL lo que antes se resolvía a fuerza de Excel y Power Query
-
-> **Aclaración de alcance:** lo que se documenta acá es un desarrollo interno del área donde trabajé y trabajo, dentro de una empresa más grande. **No es la base de datos corporativa de la empresa ni un reemplazo de ella** — es una capa propia del departamento, pensada para procesar y consultar información que antes se resolvía por fuera de cualquier base de datos real.
-
-## De qué se trata este proyecto, antes de entrar en detalle
-
-El departamento donde trabajo dicta y registra dos tipos de actividad formativa de seguridad: **charlas breves** (el programa "Charla 5 Minutos", una charla corta y periódica que se dicta al personal operativo sobre un riesgo puntual de su tarea) y **capacitaciones extensas con evaluación**, de mayor duración. Cada persona pertenece a una unidad organizativa dentro de la empresa, y esa unidad es la que define qué capacitaciones necesita — así que casi cualquier pregunta de gestión termina cruzando tres cosas: la persona, la capacitación, y a qué unidad pertenecía esa persona en el momento en que se dictó.
-
-`Capacitaciones.db` es el proyecto que le dio a esa información una estructura real. No es, en el fondo, un proyecto sobre "los datos de los empleados" — es un proyecto de **modelado de datos**: tomar un proceso que vivía disperso en Excel y Power Query y pasarlo a una base de datos relacional, para que ese tipo de cruces se puedan resolver con una consulta en vez de con horas de trabajo manual. Una vez que la información está bien modelada — con relaciones claras entre las tablas, en vez de fórmulas apiladas — se pueden hacer análisis mucho más finos: cruzar escenarios específicos, filtrar por ventanas de tiempo puntuales, y llegar al detalle de una persona o de una unidad sin tener que reconstruir esa lógica cada vez desde cero.
-
-Un ejemplo real ilustra bien esto. En un momento me consultaron por una capacitación específica: qué personas de una unidad puntual la habían recibido dentro de una franja de fechas determinada. Para responder eso hacía falta reconstruir quién pertenecía a esa unidad durante ese período (no necesariamente quién pertenece hoy), cruzar eso contra el historial de capacitaciones dictadas en esa misma ventana de tiempo, y así identificar tanto a quienes sí la habían recibido como a quienes, perteneciendo a esa unidad en ese momento, no la habían recibido. Con la base ya modelada, esa consulta se resolvió con un cruce (`JOIN`) entre el histórico de plantilla y el histórico de capacitaciones, en cuestión de segundos.
-
-Y acá va la aclaración importante, porque es central para entender qué resuelve realmente este proyecto: **esa consulta siempre se pudo hacer.** No es que antes fuera imposible — con Power Query hubiera llevado bastante más tiempo, y hecha completamente a mano (abriendo Excels de distintos meses y cruzando uno por uno) podía perfectamente insumir media jornada de trabajo completa. La base de datos no habilitó un análisis nuevo: lo que hizo fue bajar el costo de responder ese tipo de pregunta de "media jornada" a "segundos", gracias a que la información está modelada correctamente de base. Esa es la ventaja real de este proyecto: claridad y velocidad, no capacidades que no existieran antes.
+# Charlas de Seguridad — Sistema de Seguimiento de Capacitaciones de Seguridad Industrial
 
 ## Resumen Ejecutivo
 
-`Capacitaciones.db` es una base **SQLite propia del departamento** — no la base corporativa de la empresa — que centraliza el histórico completo de charlas y capacitaciones dictadas, entre otras cosas, junto con el histórico de empleados, que cuenta con la información necesaria para saber a qué unidad pertenecía cada persona en cada momento. El proyecto se apoya en una decisión de diseño central: separar el **modelado** de los datos del **procesamiento** de los datos. El modelado — qué tablas existen, cómo se relacionan, qué es catálogo y qué es histórico — vive en SQL. La lógica de negocio específica se resuelve aparte, con Python y Pandas.
+En la empresa donde trabajo existe un programa interno de seguridad industrial llamado **"Charla 5 Minutos"**: capacitaciones breves y obligatorias que el personal debe recibir periódicamente sobre riesgos específicos de su tarea. No todo el personal necesita las mismas capacitaciones — depende de su perfil laboral (si es personal de campo/operativo o de oficina/administrativo) y de la unidad a la que pertenece dentro de la organización.
 
-Un punto central del modelo son las **tablas catálogo**: cinco o seis tablas que existen únicamente para identificar de forma unívoca entidades que se repiten en todo el histórico (por ejemplo, cada capacitador que pasó por el área, cada tipo de capacitación), cada una con su propio Id. Al estar el resto de la base relacionada con esos catálogos por Id, corregir o completar un dato faltante se hace una sola vez, en un solo lugar, y se refleja automáticamente en todo el histórico relacionado — en vez de tener que salir a buscarlo y reemplazarlo manualmente en decenas de miles de filas.
+El programa es dictado por un grupo de personas del área de Seguridad Industrial a quienes en este documento voy a llamar **capacitadores**: son quienes recorren las distintas unidades y dictan estas charlas al personal a su cargo.
 
-Sobre esa estructura se construyeron además **vistas SQL con índices**, cada una resolviendo la lógica de un análisis puntual pero masivo y reiterativo (avance por unidad, universo de un capacitador, cobertura de un sistema de gestión), que hoy alimentan el tablero **Charla 5 Minutos** (documentado por separado como su propio caso de estudio en este portafolio).
-
-La plantilla que envía Recursos Humanos, en cambio, se carga con un procesamiento deliberadamente liviano — un script simplemente agrega la fecha del envío y la inserta como filas nuevas — porque el peso real del proyecto, y donde vale la pena invertir en modelado, está del lado de las capacitaciones, no de la plantilla.
+Diseñé y desarrollé de punta a punta la solución que hoy sostiene este programa: una **base de datos SQLite construida desde cero** que centraliza y normaliza toda la información, y un **dashboard interactivo en Streamlit** que calcula y muestra en tiempo real quién necesita cada capacitación, quién ya la recibió, y cuánto falta.
 
 ## Contexto del Problema
 
-### Power Query no combinaba datos: hacía de base de datos, y no daba abasto
+### ¿Cómo se trabajaba antes de este proyecto?
 
-Lo que existía anteriormente era una cadena de archivos Excel conectados entre sí por Power Query, que intentaba resolver todo el procesamiento necesario para sostener un tablero de seguimiento de las capacitaciones (el actual "Charla 5 Minutos").
+Todo el seguimiento se hacía sobre un único archivo Excel, compuesto por cuatro solapas (personal operativo, personal administrativo, una matriz de "qué capacitación necesita cada unidad organizativa" y un avance estadistico de capacitados/necesidad para cada capacitación). Ese Excel no leía de una base de datos: se armaba con conexiones de **Power Query** que combinaban, mediante fórmulas, otros archivos Excel de origen.
 
-Power Query intentaba cumplir, al mismo tiempo, el rol que debería cumplir un motor de base de datos y el de un tablero: normalizar la información, cruzar el histórico, y resolver la lógica de negocio y la estadística necesaria para después mostrar todo eso en un Excel a modo de tablero.
-
-El proceso recibía como entrada distintas tablas sin normalizar ni estandarizar, repartidas en múltiples Excels (históricos de charlas, segmentación de personal entre operativos y administrativos, necesidades de capacitación por unidad, entre otras cosas).
-
-Por encima de esto estaba montada toda la lógica de negocio, resuelta a través de múltiples consultas sobre todo ese volumen de datos. Esto ralentizaba muchísimo el procesamiento y dificultaba muchísimo el mantenimiento, debido a la cantidad de errores que se generaban por la fragilidad del software a la hora de modelar esta cantidad de información.
-
-De aqui origina la idea de empezar a utilizar una base de datos para resolver este problema en particular. Luego se fue moldeando y se fueron agregando usos adicionales que la convirtieron en lo que es hoy.
+El flujo de trabajo de un capacitador era manual:
 
 ```mermaid
 flowchart LR
-    subgraph Fuentes["Múltiples Excels sin normalizar"]
-        F1["Histórico de charlas"]
-        F2["Segmentación operativos<br/>/ administrativos"]
-        F3["Necesidades de capacitación<br/>por unidad"]
-    end
-    Fuentes -->|"Power Query intenta ser,<br/>a la vez, motor de base<br/>de datos y motor de<br/>lógica de negocio"| PQ["Power Query<br/>(normaliza, cruza histórico,<br/>calcula estadísticas)"]
-    PQ --> TAB["Excel maestro<br/>a modo de 'tablero'"]
-    TAB -.-> P(("Cada vez más lento, frágil<br/>y difícil de mantener a<br/>medida que crece el volumen"))
+    A["Archivos Excel<br/>de distintas áreas"] -->|"Power Query<br/>(fórmulas de combinación)"| B["Excel maestro<br/>4 solapas"]
+    B --> C["El capacitador filtra<br/>su unidad a cargo"]
+    C --> D["Revisa persona por persona<br/>un semáforo 🔴 / 🟢<br/>(formato condicional)"]
+    D --> E["Capacitaba aquellos en rojo"]
+    E -.->|"¿Cuándo se dio<br/>esa capacitación?"| Q1(("❓ Sin dato"))
+    E -.->|"¿Quién la dictó?"| Q2(("❓ Sin dato"))
+    E -.->|"¿Es realmente todo mi<br/>universo de personas?"| Q3(("❓ Estimación"))
 ```
 
-### Restricciones concretas del modelo
+El capacitador filtraba manualmente la planilla por su unidad, y a partir de un semáforo rojo/verde (formato condicional de Excel) intentaba estimar si cada persona estaba o no capacitada. Ese semáforo no decía **cuándo** se había dictado la capacitación ni **quién** la había dictado — solo mostraba un estado aparente, sin ninguna trazabilidad real detrás.
 
-- **Catálogos deducidos del dato, en vez de definidos de antemano.** En lugar de partir de una lista cerrada y válida de capacitaciones existentes, Power Query intentaba construir ese catálogo a partir de lo que ya estaba cargado en los Excels de origen. El resultado era un catálogo tan confiable como el dato más inconsistente que hubiera entrado alguna vez al sistema — bastaba una capacitación mal tipeada para que se propagara como si fuera una categoría más.
-- **Modelado y procesamiento mezclados en una misma herramienta.** Power Query no solo combinaba archivos: intentaba también resolver ahí mismo la limpieza y la estructura de la información, dos tareas de naturaleza distinta compitiendo entre sí dentro de una herramienta pensada, ante todo, para combinar planillas y hacer normalización sencilla de datos.
-- **Lentitud creciente con el volumen.** Con varias fuentes de origen y un histórico de charlas que ya rondaba las 80.000 filas, cualquier ajuste a esa lógica se volvía cada vez más pesado de aplicar y de mantener.
-- **Sin memoria histórica — pero del lado de la plantilla, no de las capacitaciones.** Conviene ser preciso acá: el histórico de capacitaciones sí se conservaba completo en ese Excel único. Lo que no tenía memoria era la plantilla de personal: el envío mensual de RRHH reemplazaba al anterior en cada actualización, sin dejar una estructura que permitiera consultar meses previos de forma unificada.
-- **Acceso limitado a la fuente de plantilla.** La información de a qué unidad pertenece cada persona vive en un sistema corporativo centralizado al que el departamento no tenía acceso masivo — solo consulta manual, persona por persona. RRHH cubría esa brecha con el envío mensual mencionado arriba, que era, a su vez, uno de los insumos que alimentaba la cadena de Power Query.
-- **Lógica duplicada.** Debido a la poca claridad y la fragilidad de lo que estaba armado, había mucha lógica repetida, pero era complicado de ordenar porque había muchas cosas montadas sobre cada uno de esos procesos repetidos.
-- **Información no documentada.** No había nada documentado, así que cada vez que hacía falta una modificación —ya fuera por un cambio a nivel organizacional o por un error— había que volver a interiorizarse en la lógica expresada, comprender de nuevo sus limitaciones y tratar de razonar por qué las cosas estaban armadas como estaban, para después intentar resolver sobre una lógica mal montada desde el inicio: había nacido con otro fin, sin pensar que terminaría escalando tanto.
-- **Bugs silenciosos** Más allá de esos errores puntuales, a medida que crecía el volumen de registros históricos, Power Query dejó de procesar el conjunto completo de datos: operaba sobre una ventana de tamaño fijo, tomando los registros ordenados del más reciente al más antiguo. El resultado fue que, con cada nueva tanda de capacitaciones cargadas, los registros más viejos quedaban empujados fuera de esa ventana y dejaban de normalizarse — y por lo tanto, de contabilizarse — aunque seguían existiendo en el archivo de origen. Capacitaciones reales, ya dictadas, iban "desapareciendo" progresivamente de los reportes sin que nadie lo notara, porque el error no arrojaba ningún mensaje: el Excel simplemente mostraba cada vez menos historial a medida que pasaba el tiempo.
+### Limitaciones concretas que esto generaba
 
-### Qué hacía falta
+- **El universo de personas de cada capacitador era una estimación, no un dato certero.** No existía ninguna tabla que dijera formalmente "esta unidad organizativa está a cargo de tal capacitador". Cada capacitador sabía, de memoria y por experiencia, más o menos qué unidades le correspondían.
+- **Cero trazabilidad histórica.** El semáforo mostraba un estado actual aparente, pero no había forma de auditar fecha ni responsable de cada capacitación dictada.
+- **Errores de carga heredados y nunca corregidos.** Las fórmulas de Power Query normalizaban la información hasta cierto punto, pero no era un sistema robusto: arrastraba durante años registros duplicados o con inconsistencias de formato, sin que nadie los hubiera detectado ni corregido.
+- **Un segundo problema, más grave y silencioso, por límite de procesamiento.** Más allá de esos errores puntuales, a medida que crecía el volumen de registros históricos, Power Query dejó de procesar el conjunto completo de datos: operaba sobre una ventana de tamaño fijo, tomando los registros ordenados del más reciente al más antiguo. El resultado fue que, con cada nueva tanda de capacitaciones cargadas, los registros más viejos quedaban empujados fuera de esa ventana y dejaban de normalizarse — y por lo tanto, de contabilizarse — aunque seguían existiendo en el archivo de origen. Capacitaciones reales, ya dictadas, iban "desapareciendo" progresivamente de los reportes sin que nadie lo notara, porque el error no arrojaba ningún mensaje: el Excel simplemente mostraba cada vez menos historial a medida que pasaba el tiempo.
+- **Los jefes de área no tenían ninguna vista consolidada.** No podían ver el avance de una persona en particular, ni comparar el desempeño entre distintos capacitadores. Solo existía la planilla completa, que había que filtrar manualmente para sacar cualquier conclusión. Lo cual para cual ejecutivo era una perdida de tiempo, por ende no se analizaba esa información.
+- **El sistema no escalaba.** Cualquier cambio en la estructura organizativa (una persona que cambiaba de unidad, una unidad que sumaba una capacitación nueva a su lista de necesidades) implicaba reconstruir a mano las conexiones de Power Query.
+- **Lentitud en el sistema** Debido a la cantidad de excels y el volumen de cada archivo, provocaba gran lentitud a la hora de generar cambios estructurales en las consultas de Power Query, haciendo la consulta de información una verdadera pesadilla.
+- **Personal no contemplado** Al ser el universo de personas a capacitar tan extenso y no tener asignado formalmente a cada capacitador a una unidad, quedaba bastante personal sin capacitar por grandes periodos de tiempo ya que formalmente no le correspondia a nadie. 
 
-Separar dos responsabilidades que en el esquema anterior estaban mezcladas dentro de una misma herramienta: por un lado, un modelo de datos correcto, con catálogos definidos de antemano y relaciones explícitas; por otro, un procesamiento de datos real, capaz de limpiar y transformar la información de origen antes de que llegara a esas tablas. En paralelo, había que resolver un problema puntual pero distinto: darle a la plantilla de RRHH la memoria histórica que nunca tuvo, así como también a las capacitaciones históricas, que estaban divididas por año, se remontaban hasta 2019 y no se utilizaban en absoluto.
+### Lo que se necesitaba
 
-Más allá de las capacitaciones puntualmente, esto respondía a una necesidad más amplia del departamento. El área genera un volumen de información considerable, repartido entre varios procesos (capacitaciones, y otros que fueron surgiendo con el tiempo), y no es razonable esperar que cada persona del equipo resuelva su porción con su propia lógica de Power Query — incluso si así se hiciera, relacionar esa información entre distintos procesos sería, en la práctica, muy difícil de sostener. Hacía falta una infraestructura de datos propia del departamento, no una colección de soluciones individuales inconexas entre sí.
+Una base de datos real y normalizada, que sirviera como única fuente de verdad, capaz de:
+
+1. Definir formalmente qué universo de personas le corresponde a cada capacitador (no una estimación).
+2. Poder visualizar la información ya existente de cada capacitación dictada: a quién, cuándo y por quién.
+3. Calcular el porcentaje de avance de cumplimiento de forma reproducible, sin depender de fórmulas manuales.
+4. Servir de base a una herramienta de consulta accesible para capacitadores, jefes de área y auditores de los capacitadores.
 
 ## Objetivo de Negocio
 
-- Migrar el modelado del histórico de capacitaciones (tanto para las capacitaciones como para las charlas) desde Power Query hacia una base propia en SQLite, con tablas catálogo definidas de antemano en lugar de deducidas sobre la marcha.
-- Separar el modelado de datos (SQL) del procesamiento de datos (Python/Pandas), como dos etapas distintas del mismo flujo, para no sobrecargar la base de datos ni inhabilitar el uso simultáneo entre los empleados, dado que SQLite es una base de datos serverless.
-- Sostener un histórico de capacitaciones consultable y trazable, donde cualquier registro se pueda cruzar con la unidad organizativa vigente de esa persona **en el momento en que la capacitación ocurrió**, no solo con su situación actual.
-- Dar memoria histórica a la plantilla de RRHH, acumulando cada envío mensual en lugar de reemplazar al anterior.
-- Dar soporte, mediante vistas, a un tablero real (Charla 5 Minutos) capaz de responder preguntas de análisis que el esquema anterior no podía sostener con agilidad.
-- Dar a los integrantes del departamento una forma de cargar información nueva sin escribir SQL, evitando los errores de carga típicos de trabajar sobre planillas sueltas.
-- Sentar una base de datos pensada para más de un proceso del área, no solo para capacitaciones — de forma que otros procesos del departamento puedan apoyarse en la misma infraestructura en vez de resolver cada uno su propia versión aislada.
+- Reemplazar el proceso manual de Excel + Power Query por una base de datos relacional real, versionable y sencillamente auditable.
+- Darle a cada capacitador el universo exacto (nombre y apellido) de personas que debe capacitar, eliminando la estimación informal.
+- Calcular el porcentaje de avance comparando, de forma consistente, personas con necesidad de capacitación contra personas efectivamente capacitadas en un período determinado.
+- Construir un dashboard de autoservicio para que cada perfil de usuario (capacitador, jefe de área, gestión) resuelva sus propias consultas.
+- Detectar y corregir, durante el proceso de normalización, los errores de carga histórica que se habían acumulado durante años.
+
+> **Sobre los indicadores de éxito:** al momento de este proyecto, la empresa no contaba con ninguna métrica confiable previa (si bien lo que mostraba el Excel era trazable y auditable, en la práctica era irrealizable debido a la complejidad y al tiempo que conllevaria). Por eso el criterio de éxito no fue "mejorar un número existente", sino **habilitar por primera vez la posibilidad de medir con confianza**: que cada capacitador supiera con nombre y apellido quién tiene pendiente, que el porcentaje de avance fuera reproducible, y que un jefe pudiera hacer seguimiento individual y comparar capacitadores — algo que antes se podia llegar a estimar pero con un gran margen de error.
 
 ## Arquitectura General
 
+La solución se apoya en dos fuentes de información externas (las únicas que recibo de otras áreas): el histórico mensual de dónde está asignada cada persona dentro de la organización, y una tabla que clasifica a cada persona como operativa o administrativa. A partir de ahí, todo el resto del diseño — el esquema de la base de datos, las vistas, la matriz de necesidades por unidad y la asignación formal de capacitadores — es autoría propia.
+
 ```mermaid
 flowchart TB
-    RRHH["Envío mensual de RRHH<br/>(Excel)"] -->|"script Python:<br/>columnas relevantes<br/>+ fecha por fila"| PLANT["Tabla de plantilla<br/>(carga liviana, poco modelado)"]
-    ORIG["Fuentes de capacitaciones<br/>(antes: 5-7 Excels + Power Query)"] -->|"limpieza y transformación<br/>con Python / Pandas"| HIST["Histórico de<br/>capacitaciones"]
-    CARGA["Carga_Capacitaciones<br/>(interfaz local de data entry)"] --> HIST
-
-    PLANT --> DB[("Capacitaciones.db<br/>SQLite — sin servidor")]
-    HIST --> DB
-    CAT["Tablas catálogo<br/>(capacitadores, capacitaciones,<br/>categorías, etc.)"] --> DB
-
-    DB --> V["Vistas SQL + índices<br/>(una lógica de negocio<br/>por cada análisis)"]
-    V --> DASH["📊 Tablero Charla 5 Minutos<br/>(Streamlit, documentado aparte)"]
+    subgraph Entrada["Fuentes de entrada (recibidas mensualmente)"]
+        A1["Histórico de plantilla<br/>(unidad organizativa de cada persona, mes a mes)"]
+        A2["Clasificación de personas<br/>(Operativo / Administrativo)"]
+    end
+    A1 --> DB[("Base de datos SQLite<br/>normalizada — diseño propio")]
+    A2 --> DB
+    DB --> V["Vistas SQL<br/>snapshot vigente de plantilla · universo por capacitador · SG-SST"]
+    V --> L["Capa de acceso a datos<br/>(consultas + cache)"]
+    L --> N["Capa de lógica de negocio<br/>(cálculo de universos y % de avance)"]
+    N --> UI["Dashboard Streamlit<br/>5 tabs"]
+    N --> R["Reportes exportables<br/>PNG / CSV"]
 ```
 
-**Cómo se dividen las responsabilidades:** el modelado — qué tablas existen, cómo se relacionan, qué es catálogo y qué es histórico — se resuelve en SQL. El procesamiento — unificar formatos y construir los dataframes específicos que necesita cada análisis — se resuelve en Python con Pandas. Esa separación es, en buena medida, lo que el esquema anterior en Power Query no lograba sostener, al intentar resolver ambas cosas a la vez con una herramienta pensada principalmente para combinar planillas y hacer normalización básica de datos.
+**Algunas de las cosas qué contiene la base de datos** que diseñé y construí:
+- El histórico mensual de la estructura organizativa de cada persona.
+- La clasificación de cada persona en un perfil (operativo, administrativo, o un caso especial fuera de esos dos universos).
+- Una matriz de necesidades de capacitación por unidad organizativa (qué capacitaciones se exige a cada unidad).
+- Una tabla de asignación formal de capacitadores por unidad organizativa — el dato que antes era solo "conocimiento tácito".
+- El registro histórico, capacitación por capacitación, de cada evento dictado (fecha, persona, capacitador responsable, entre otras cosas).
+- Vistas SQL que encapsulan las combinaciones de datos más usadas por el dashboard.
 
-**Cómo está organizada la información:**
+**El dashboard**, construido en Streamlit, se organiza en cinco vistas funcionales con filtros globales de fecha y componentes de indicadores reutilizables entre pestañas.
 
-- **Tablas catálogo:** identifican de forma unívoca entidades recurrentes — capacitadores, tipos de capacitación, categorías, nóminas de SG-SST —, cada una con su Id, relacionadas con el resto de la base por ese Id.
-- **Histórico de plantilla:** una fotografía por persona y por mes, cargada casi tal cual llega desde RRHH, con la fecha de esa fotografía como único agregado. El estado vigente queda disponible tomando siempre "el mes más reciente".
-- **Histórico de capacitaciones:** el registro real de cada charla o capacitación dictada — fecha, persona, tipo, responsable —, heredado del histórico previo de ~80.000 filas y depurado contra las tablas catálogo antes de incorporarse.
-- **Vistas de abstracción con índices:** encapsulan la lógica específica de cada análisis (quién debería estar capacitado, quién ya lo está, avance por unidad o por capacitador), para que el tablero no tenga que reconstruir ese cruce en cada consulta.
+**La capa de reporting** genera exportaciones en PNG (tablas redibujadas con Matplotlib, pensadas para verse bien fuera del navegador, por ejemplo en una presentación) y en CSV.
 
-**Sobre trabajar con más de una base a la vez:** como metodología de trabajo, cuando una consulta necesita combinar información que vive en distintos archivos `.db` del departamento, se usa `ATTACH DATABASE` de SQLite para leer de más de una base dentro de la misma sesión, sin duplicar información entre ellas. Es más una forma de trabajo que una arquitectura formal: permite que cada base se mantenga y evolucione por separado, y aun así cruzar lógica de una hacia la otra cuando hace falta.
+### Normalización en el origen: un proyecto complementario
 
-**Cómo entra la información nueva:** la carga de charlas y capacitaciones no se hace escribiendo directamente sobre la base ni sobre una planilla suelta. `Carga_Capacitaciones` — documentada por separado como su propio caso de estudio — es una interfaz local pensada para que cualquier integrante del área registre una charla o capacitación dictada eligiendo entre valores ya validados contra las tablas catálogo, en vez de tipear texto libre. Esa misma información, una vez cargada ahí, es la que después consume el tablero Charla 5 Minutos construido en Streamlit.
+La calidad de la información que llega a este dashboard no depende solo del diseño de la base de datos, sino también de cómo se cargan, día a día, los registros de charlas y capacitaciones dictadas. Para atacar el problema desde el origen y no solo corregirlo después, desarrollé un segundo proyecto — documentado por separado como su propio caso de estudio en este repositorio — que reemplaza la inserción manual de registros por una aplicación web con validación incorporada.
+
+Antes, cargar una capacitación dictada implicaba insertar el registro directamente, sin ningún control automático de consistencia — la misma causa raíz de buena parte de los errores descriptos más arriba. Con esta segunda herramienta, el personal de Seguridad Industrial encargado del data entry completa un formulario guiado que:
+
+- Valida que la persona exista y que pertenezca a la unidad organizativa declarada, antes de aceptar el registro.
+- Obliga a elegir la charla o capacitación desde un catálogo único y normalizado, en vez de escribir el nombre a mano — eliminando de raíz las variaciones de tipeo.
+- Detecta y descarta automáticamente los registros duplicados.
+- Escribe sobre la misma base de datos SQLite que consume este dashboard, sin pasos intermedios.
+
+En otras palabras: este dashboard resuelve el problema de **visualizar y medir** el cumplimiento; el proyecto complementario resuelve el problema de **cargar bien los datos desde el primer momento**, para que la normalización no dependa únicamente de corregir errores después de que ya ocurrieron.
+
+### Estructura del proyecto
+
+El código está organizado por responsabilidad, versionado en Git, para que cada capa de la arquitectura descripta arriba tenga su propia carpeta:
+
+```text
+charla_5_min/
+│
+├── .streamlit/          
+│    ├──config.toml      # Configuración visual del dashboard (tema, colores)
+├── config/             
+│   ├── settings.py      # Configuración central: constantes de negocio, estilos
+│   └── styles.py        # Colores de componentes individuales (Graficos, Heatmaps, Matrices,etc)
+├── database/            
+│   ├── loaders.py       # Consultas a la base de datos y modelado de los datos especificos para graficos con pandas
+│   └── connection.py    # Conexión con la base de datos
+├── services/            
+│   └── adv_service.py   # Lógica de negocio reutilizable: cálculo de universos y % de avance
+├── reports/             
+│   └── exports.py       # Generación de exportaciones (PNG, CSV)
+├── ui/
+│   ├── cards.py         # Tarjetas de indicadores reutilizables entre pestañas
+│   └── sidebar.py       # Filtros globales (rango de fechas)
+├── utils/              
+│   ├── helpers.py       # Funciones auxiliares de formato e interfaz
+├── requeriments.txt     # Versiones de las librerias para que el tablero funcione correctamente 
+└── app.py               # Punto de entrada: navegación entre pestañas
+```
+
+Esta separación es también la base del plan de modularización mencionado en "Próximos Pasos": hoy `app.py` todavía concentra parte de la lógica de armado de interfaz que, a futuro, debería vivir dentro de `ui/`.
 
 ## Tecnologías Utilizadas
 
-| Tecnología | Propósito |
+| Tecnología | Propósito dentro del proyecto |
 |---|---|
-| SQLite | Motor de base de datos relacional embebido y sin servidor — el departamento no cuenta con infraestructura propia para alojar una base tradicional. |
-| SQL (Tablas catálogo + Vistas + Índices) | El modelado de la información: catálogos definidos de antemano, relaciones explícitas, y vistas que resuelven la lógica de cada análisis del tablero. |
-| Python + Pandas | El procesamiento de la información: limpieza y transformación de los datos de origen antes de insertarlos, separado deliberadamente del modelado en SQL. |
+| Python | Lenguaje principal: acceso a datos, lógica de negocio e interfaz. |
+| SQLite | Motor de base de datos relacional embebido; almacena y normaliza toda la información histórica. |
+| Streamlit | Framework para construir el dashboard interactivo sin desarrollar un frontend desde cero. |
+| GitHub | Control de versiones y documentación técnica del proyecto (Intentamos seguir para todos los proyectos 'uv documentation'). |
+| Pandas | Transformación y agregación de los datos leídos desde SQL antes de graficarlos. |
+| Plotly | Visualizaciones interactivas dentro del dashboard (barras, series temporales, mapas de calor). |
+| Matplotlib | Generación de tablas exportables en PNG para reportes fuera del dashboard. |
+| NumPy | Cálculos numéricos de soporte en el procesamiento de datos. |
+
 
 ## Principales Desafíos
 
 ```mermaid
 flowchart LR
-    D1["🐌 Power Query modelaba<br/>y procesaba a la vez,<br/>sin escalar"] --> S1["Separar modelado (SQL)<br/>de procesamiento<br/>(Python/Pandas)"]
-    D2["📋 Catálogos deducidos<br/>del propio dato,<br/>frágiles ante errores"] --> S2["Tablas catálogo<br/>definidas de antemano<br/>y relacionadas por Id"]
-    D3["🗂️ Plantilla de RRHH sin<br/>memoria de meses previos"] --> S3["Una sola tabla de<br/>plantilla, acumulada<br/>mes a mes con fecha"]
-    D4["✍️ Carga manual de<br/>capacitaciones, sin<br/>control de consistencia"] --> S4["Interfaz propia de<br/>data entry, con<br/>catálogos validados"]
-    D5["🖥️ Sin servidor propio<br/>del departamento"] --> S5["Motor embebido<br/>(SQLite), evaluado<br/>frente a hosting<br/>gratuito descartado<br/>por volumen"]
+    D1["🗂️ No existía ninguna<br/>base de datos previa"] --> S1["Diseñar el modelo de datos<br/>completo desde cero"]
+    D2["🧹 Errores de carga<br/>arrastrados por años"] --> S2["Proceso de staging:<br/>separar registros válidos<br/>de los dudosos, para auditar"]
+    D3["👤 'Quién capacita a quién'<br/>era conocimiento informal"] --> S3["Tabla formal de asignación<br/>capacitador ↔ unidad organizativa"]
+    D4["📅 Las personas cambian de<br/>unidad y de perfil en el tiempo"] --> S4["El universo de necesidad se<br/>reconstruye, no es un dato fijo"]
+    D5["⚡ Alto volumen de datos<br/>y filtros interactivos en vivo"] --> S5["Cache: separar el cálculo<br/>pesado del liviano"]
 ```
 
-- **Catálogos deducidos del propio dato, en vez de definidos de antemano.** El detalle de cómo se resolvió está en "Tablas catálogo", dentro de Solución Implementada.
-- **Modelado y procesamiento mezclados en una misma herramienta.** El detalle de esta separación está desarrollado en "Modelado en SQL, procesamiento en Python", más abajo.
-- **Dar memoria histórica a la plantilla de RRHH.** A diferencia del histórico de charlas, que sí existía completo, la plantilla se perdía mes a mes. Se resolvió con una tabla que acumula cada envío, identificado por su fecha anexandola cada vez al mes a traves de python.
-- **Que cargar datos no fuera una fuente de errores en sí misma.** En un momento del proyecto se había decidido dejar de lado los dos Excels donde se cargaban las charlas. La solución fue construir una interfaz de carga propia, con los valores posibles ya definidos por catálogo, en vez de dejar el ingreso de datos abierto a texto libre, para eliminar el problema de la carga con errores de raíz.
-- **No contar con servidor propio del área.** Se evaluó alojar una base con servidor en algún servicio gratuito, pero el volumen de información que el departamento acumula con el tiempo excedía cómodamente los límites de esas opciones. SQLite resolvió el problema sin requerir infraestructura adicional.
+- **No existía ninguna base de datos previa:** tuve que definir desde cero qué tablas necesitaba, cuáles debían ser históricas (con snapshot mensual) y cuáles de catálogo/clasificación, y cómo relacionarlas de forma consistente. No había ningún esquema previo del que partir.
+- **Errores de carga históricos:** al migrar la información desde los archivos de origen aparecieron inconsistencias invisibles hasta ese momento — nombres de capacitación con variaciones de tipeo, registros duplicados, datos que no coincidían con el catálogo oficial. Construí un proceso de validación que separa los registros válidos de los que no cumplen el formato esperado, para poder revisarlos antes de incorporarlos a la base definitiva.
+- **Formalizar "quién capacita a quién":** no existía ninguna tabla que asignara explícitamente qué capacitador era responsable de qué unidad organizativa (y por lo tanto, de qué personas). Tuve que relevar esa información junto a los capacitadores y superiores de los mismos y modelarla como una tabla propia, para que dejara de ser un dato informal en la cabeza de cada capacitador y pasara a ser algo consultable por cualquier usuario del sistema.
+- **Calcular avance con datos que cambian en el tiempo:** las personas cambian de unidad organizativa y hasta de perfil (operativo/administrativo) mes a mes, y la necesidad de capacitación depende de esa unidad. Tuve que resolver cómo calcular, para cualquier rango de fechas, un universo de "necesidad" consistente, sin mezclar el estado actual de una persona con su estado histórico en el momento de cada capacitación.
+- **Rendimiento sobre un volumen de datos considerable:** el histórico de capacitaciones y el histórico de plantilla acumulan decenas de miles de registros. Filtrar por fecha, unidad y capacitador en cada interacción del dashboard de forma ingenua hubiese sido lento. La solución fue separar el cálculo pesado (determinar qué universo de personas corresponde a cada capacitación, que cambia poco) del cálculo liviano (contar cuántas de esas personas se capacitaron en el rango de fechas elegido, que cambia todo el tiempo), cacheando el primero y dejando el segundo como una consulta simple.
 
 ## Solución Implementada
 
-### Tablas catálogo: modelar antes de cargar, no deducir después
+### Las cinco vistas del dashboard
 
-El cambio de fondo respecto del esquema anterior fue este: en vez de dejar que el catálogo de capacitaciones, capacitadores o categorías se fuera armando implícitamente a partir de lo que ya estaba cargado, se definieron esas listas como tablas propias, con su Id, desde el principio. El histórico de capacitaciones y las demás tablas se relacionan con esos catálogos por ese Id, así que corregir un dato faltante o mal cargado se hace una vez, en el catálogo, y se refleja en todo el histórico relacionado — en vez de salir a buscar y reemplazar manualmente en decenas de miles de filas.
+```mermaid
+flowchart TD
+    APP["Dashboard Charla de Seguridad"] --> T1["📊 Resumen<br/>Ejecutivo"]
+    APP --> T2["👤 Por<br/>Capacitador"]
+    APP --> T3["🔍 Por Persona<br/>/ Unidad"]
+    APP --> T4["🗺️ Avance por<br/>Capacitador"]
+    APP --> T5["📋 SG-SST"]
 
-### Modelado en SQL, procesamiento en Python
+    T1 --- T1d["Necesidad vs. cumplimiento<br/>por capacitación · export a PNG"]
+    T2 --- T2d["Charlas dictadas · evolución<br/>mensual · distribución por tipo<br/>(vista propia de cada capacitador)"]
+    T3 --- T3d["Historial individual de una<br/>persona o unidad y asignaciones individuales de esa unidad· export CSV"]
+    T4 --- T4d["Mapa de calor por unidad<br/>+ listado de pendientes,<br/>nombre y apellido"]
+    T5 --- T5d["Cobertura de un sistema de<br/>gestión de seguridad y salud<br/>ocupacional (independiente<br/>de la obligación formal)"]
+```
 
-La estructura relacional — qué tablas existen, cómo se relacionan, qué vistas resuelven qué pregunta — se define y vive en SQL. La creación de los dataframes que responden preguntas especificas para cada uno de los tableros independientes, se resuelven con Python y Pandas, como una etapa separada. Esta división fue clave para pensar el sistema con escalabilidad desde el inicio, en vez de sobrecargar una sola herramienta con ambas responsabilidades.
+- **Resumen ejecutivo:** vista general del programa completo — cuántas personas (operativas y administrativas) necesitan capacitación, cuántas ya la recibieron, comparación por capacitación con distinción visual de las consideradas prioritarias segun cada semestre, y exportación de reportes en PNG para presentaciones como asi tambien un tablero mostrando el avance de cada capacitador unicamente teniendo en cuenta las capacitaciones prioritarias del semestre tambien exportable.
+- **Vista por capacitador:** pensada para que cada capacitador haga seguimiento de su propia gestión — cantidad de charlas dictadas, personas únicas capacitadas, evolución mensual y distribución por tipo de capacitación.
+- **Vista por persona / unidad:** consulta puntual del historial de capacitaciones de un individuo o de una unidad completa y las asignaciones que tienen y dependiendo de la unidad a la que pertencen que capacitaciones deben realizar y si las han hecho o no en el periodo de tiempo estimado, con exportación a CSV.
+- **Avance por capacitador:** cruza el universo formal de personas a cargo de cada capacitador (ahora un dato real, no una estimación) contra las capacitaciones, mostrando un mapa de calor por unidad y tambien cuenta graficos de barra mostrando el avance de cada capacitación haciendo capacitados/necesidad. Luego tambien tablas de que personas deben ser capacitadas por unidad y quienes todavia no han recibido que capacitaciones dentro de esa unidad. Por ultimo un listado de las personas pendientes de capacitar con el fin de poder ser exportado de la platafomra en csv.
+- **SG-SST:** identifica quién recibió al menos una capacitación asociada a un sistema de gestión de seguridad y salud ocupacional, sin depender de que exista una obligación formal registrada para esa persona.
 
-### La plantilla de RRHH: carga liviana, a propósito
+Todas las vistas comparten un filtro global de rango de fechas y componentes de tarjetas de indicadores reutilizables, para mantener consistencia visual y de comportamiento en toda la aplicación.
 
-El envío mensual de RRHH se procesa con un script simple: lee el Excel, selecciona las columnas de interés para el departamento y las inserta como filas nuevas en SQLite, agregando a cada fila la fecha del envío al que corresponde. No hay mayor modelado en este paso, a propósito — el peso real de este proyecto está del lado de las capacitaciones, no de la plantilla, así que este procesamiento se mantuvo deliberadamente simple.
+### Cómo se calcula el porcentaje de avance
+
+La fórmula en sí es simple, pero lo que hay detrás de cada uno de sus dos términos no lo es:
+
+```mermaid
+flowchart LR
+    P["Perfil de la persona<br/>(Operativo / Administrativo)"] --> U["Universo de necesidad<br/>(quién debería estar capacitado)"]
+    O["Unidad organizativa vigente<br/>de esa persona"] --> U
+    M["Matriz de necesidades<br/>por unidad organizativa"] --> U
+    U -->|"se recalcula poco:<br/>se cachea"| C{"Cálculo de avance"}
+    F["Rango de fechas elegido<br/>por el usuario en el dashboard"] -->|"consulta liviana,<br/>se recalcula todo el tiempo"| C
+    C --> PCT["% Avance =<br/>Personas Capacitadas / Personas con Necesidad × 100"]
+```
+
+El **universo de necesidad** (quién debería estar capacitado) se reconstruye combinando el perfil de la persona, su unidad organizativa vigente y la matriz de necesidades por unidad. Es un cálculo relativamente estable en el tiempo, así que se cachea. El **conteo de personas capacitadas**, en cambio, depende directamente del rango de fechas que el usuario elige en el dashboard, así que se resuelve como una consulta liviana que se recalcula al vuelo. Separar estos dos cálculos es lo que permite que mover el filtro de fechas en el dashboard sea instantáneo, en vez de tener que recalcular desde cero quién pertenece a cada universo cada vez.
+
+**Otros indicadores generados:** evolución mensual de charlas dictadas, mapa de calor de unidad organizativa × capacitación, listado de personas pendientes por capacitador con el detalle de qué les falta específicamente, y cobertura del submódulo SG-SST.
+
+**Automatizaciones incorporadas:** cálculo del universo de necesidad cacheado y refrescado periódicamente sin intervención manual, clasificación automática de capacitaciones como "prioritarias", y generación automática de reportes descargables en PNG a partir de las tablas mostradas en pantalla (sin captura de pantalla manual).
 
 ## Resultados Obtenidos
 
-- Consultas puntuales (como la del ejemplo al inicio), que antes hubieran significado horas —o directamente media jornada— de cruce manual entre Excels de distintos meses, hoy se resuelven con una consulta SQL en segundos: no porque antes fuera imposible, sino porque el modelo de datos ahora sostiene ese cruce de forma directa.
-- Se reemplazaron los catálogos deducidos implícitamente en Power Query por tablas catálogo explícitas y relacionadas, lo que redujo los errores de consistencia y facilitó tanto corregir datos faltantes en un solo lugar como mantener la base cuando hace falta incorporar lógica nueva.
-- Se separó el modelado de datos (SQL) del procesamiento de datos (Python/Pandas), dándole al sistema una base pensada para escalar, a diferencia del esquema anterior que mezclaba ambas responsabilidades en una misma herramienta.
-- La plantilla mensual de RRHH, que antes se perdía mes a mes, quedó acumulada en un único histórico consultable.
-- Los Excels de capacitaciones, separados por año y que se remontaban hasta 2019, se compilaron en un histórico único y consultable.
-- El tablero que consume esta base (Charla 5 Minutos) pasó de apoyarse en un Excel lento y limitado a apoyarse en consultas SQL reales.
-- Se resolvió la necesidad de una base relacional sin depender de un servidor que el departamento no tiene.
-- Se mejoró la claridad de cada uno de los procedimientos, lo que facilita su mantenimiento, documentación y futura evolución.
-- Se agilizó la resolución de consultas puntuales y requerimientos de información de Gerentes, Subgerentes y Jefes sobre situaciones específicas, permitiendo obtener - respuestas mediante consultas SQL en lugar de análisis manuales.
-- Se construyó una solución escalable y de bajo mantenimiento, cuya lógica central quedó correctamente modelada desde el inicio, requiriendo únicamente ajustes puntuales o ampliaciones cuando se incorporan nuevos análisis o necesidades de negocio.
+> Como se mencionó antes, la empresa no contaba con ningún proceso de medición confiable previo al proyecto, por lo que no existe una línea de base numérica válida contra la cual comparar. Los indicadores que arrojaba el Excel anterior no eran facilmente trazables ni auditables, así que cualquier comparación porcentual "antes vs. después" sería engañosa. El foco de esta primera etapa estuvo puesto en poder reflejar correctamente la situación real por primera vez, no en demostrar una mejora sobre una métrica previa que, en los hechos, no existía.
+
+- **Beneficio operativo:** cada capacitador dejó de trabajar con una estimación informal de su universo a cargo — ahora tiene, con nombre y apellido, exactamente quién debe capacitarse y quién está pendiente.
+- **Beneficio de gestión:** los jefes de área pueden, por primera vez, hacer seguimiento individual del avance de una persona puntual y comparar el desempeño entre distintos capacitadores — algo que antes no existía en ninguna forma.
+- **Beneficio analítico:** el proceso de normalización permitió detectar rápidamente errores de carga (nombres de capacitación mal cargados u otras inconsistencias) que antes pasaban inadvertidos dentro de las fórmulas del Excel, y habilitó el cálculo reproducible de un porcentaje de avance real.
+- **Beneficio estadistico:** se pueden hacer comparaciones anualmente de los avances de las capacitaciones, que competencias deberian ya estar conseguidas y ahora al tener una base solida, empezar a hacer analisis estadistico mas complejo, comparando como estan impactando las capacitaciones frente a los accidentes y si estan ocurriendo disminuiciones estacionales, si hay que mejorar la prioridad de las capacitaciones con respecto a distintas etapas del año.
 
 ## Lecciones Aprendidas
 
 | Tipo | Aprendizaje |
 |---|---|
-| Técnica | Un catálogo de validación deducido de los propios datos hereda todos los errores que esos datos ya tenían; definirlo de antemano, como tabla propia, es lo que realmente lo vuelve confiable. |
-| Técnica | Mezclar modelado y procesamiento en una misma herramienta tiene un techo de escalabilidad bajo; separarlos en capas distintas (SQL para estructura, Python para lógica especifica de negocio) lo eleva considerablemente. |
-| Arquitectura | No toda la información necesita el mismo nivel de modelado: la plantilla de RRHH se beneficia de una carga simple y consistente, mientras que el histórico de capacitaciones es donde vale la pena invertir en catálogos, relaciones e índices. |
-| Arquitectura | Vincular varias bases `.db` independientes con `ATTACH DATABASE`, en vez de forzar todo a un único archivo, permite que cada una evolucione a su ritmo y se combine solo cuando hace falta. |
-| Diseño | El punto más eficaz para evitar errores de carga es la interfaz de entrada, no la corrección posterior: validar contra catálogo al momento de cargar ahorra trabajo de depuración más adelante. |
-| Producto | La ventaja de modelar bien los datos no siempre es "hacer algo nuevo": muchas veces es hacer en segundos algo que siempre se pudo hacer, pero que antes tomaba tanto tiempo que en la práctica no se hacía. |
+| Técnica | Separar el cálculo estable (universo de necesidad) del cálculo variable (conteo por fecha) fue la decisión de diseño que más impactó en la performance del dashboard. |
+| Técnica | Normalizar años de datos acumulados sin un proceso de validación previo requiere un mecanismo de staging desde el principio, en vez de descartar o forzar lo dudoso. |
+| Funcional | Formalizar en una tabla algo que antes era "conocimiento tácito" de cada capacitador (qué unidades tiene a cargo) tuvo más impacto percibido que cualquier gráfico del dashboard. |
+| Funcional | Cuando no existe una métrica previa confiable, el objetivo de un proyecto de datos no puede ser "demostrar una mejora": tiene que ser "establecer una medición correcta por primera vez". |
+| Gestión | Construir la base de datos y el dashboard en solitario dio consistencia de criterio en todas las reglas de negocio, pero también concentró todo el conocimiento del sistema en una sola persona — un riesgo a tener en cuenta hacia adelante. |
+
+## Capturas
+
+![Dashboard - Resumen ejecutivo](assets/dashboard-resumen.png)
+
+![Dashboard - Avance por unidad organizativa](assets/dashboard-mapa-calor.png)
+
+*(Reemplazar por las capturas reales, recortadas o difuminadas para no exponer el nombre de la empresa.)*
 
 ## Próximos Pasos
 
-- [ ] **Dar trazabilidad histórica a las necesidades de capacitación por unidad.** Hoy la base solo conserva qué necesita cada unidad *actualmente*; no hay forma de reconstruir cómo era esa necesidad en un momento del pasado. Funcionó en el ejemplo documentado arriba porque la necesidad de esa unidad puntual no cambió en el tiempo, pero es una limitación real del modelo para unidades donde sí cambió — quedaría resuelta con una tabla de necesidades versionada por fecha, en vez de un estado único vigente.
-- [ ] Integrar el histórico de capacitaciones extensas con evaluación al mismo tablero visual que hoy solo muestra charlas breves.
-- [ ] Documentar como casos de estudio independientes las demás bases `.db` del departamento y las interfaces de carga asociadas, a medida que estén en condiciones de compartirse.
-- [ ] Evaluar mecanismos de actualización más frecuente de la plantilla, si en algún momento se habilita un canal de acceso distinto al envío mensual.
-- [ ] Incorporar restricciones de integridad referencial explícitas donde hoy la relación entre tablas y entre bases es solo lógica.
+- [ ] Modularizar la interfaz del dashboard, separándola de la orquestación de datos. Hoy el UI todavia tiene algunas cuestiones logicas de calculo y estan compartidas con 1000 lineas de codigo y todavia no se han separado todas las funciones.
+- [ ] Generar el diagrama completo de dependencias entre vistas SQL y funciones de carga.
+- [ ] Añadir historico de las necesidades de capacitación para tener trazabilidad y saber en que unidad estaba ese operario cuando recibio esa capacitacion y cual era la necesidad de capacitacion de esa unidad en ese momento en especifico que se esta filtrando con las fechas.
+- [ ] Desarrollar un entorno virtual con uv para el proyecto, de modo que el tablero se ejecute de forma aislada y utilice versiones específicas de las dependencias, evitando depender de las librerías instaladas en el entorno global de Python.
 
 ## Disclaimer
 
-Este caso de estudio describe conceptos, metodologías y decisiones técnicas de diseño de un conjunto de bases de datos **departamentales e internas**, distintas de la base de datos corporativa de la empresa. No se incluyen datos reales, información confidencial, propiedad intelectual, rutas de servidores internos ni detalles sensibles de la organización donde fue desarrollado.
+Este caso de estudio describe conceptos, metodologías y decisiones técnicas aplicadas en un entorno corporativo.
+No se incluyen datos reales, información confidencial, propiedad intelectual ni detalles sensibles de la organización donde fue desarrollado esta solución.
