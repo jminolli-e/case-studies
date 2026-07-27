@@ -19,39 +19,48 @@ Y acá va la aclaración importante, porque es central para entender qué resuel
 Un punto central del modelo son las **tablas catálogo**: cinco o seis tablas que existen únicamente para identificar de forma unívoca entidades que se repiten en todo el histórico (por ejemplo, cada capacitador que pasó por el área, cada tipo de capacitación), cada una con su propio Id. Al estar el resto de la base relacionada con esos catálogos por Id, corregir o completar un dato faltante se hace una sola vez, en un solo lugar, y se refleja automáticamente en todo el histórico relacionado — en vez de tener que salir a buscarlo y reemplazarlo manualmente en decenas de miles de filas.
 
 Sobre esa estructura se construyeron además **vistas SQL con índices**, cada una resolviendo la lógica de un análisis puntual pero masivo y reiterativo (avance por unidad, universo de un capacitador, cobertura de un sistema de gestión), que hoy alimentan el tablero **Charla 5 Minutos** (documentado por separado como su propio caso de estudio en este portafolio). 
+
 La plantilla que envía Recursos Humanos, en cambio, se carga con un procesamiento deliberadamente liviano — un script simplemente agrega la fecha del envío y la inserta como filas nuevas — porque el peso real del proyecto, y donde vale la pena invertir en modelado, está del lado de las capacitaciones, no de la plantilla.
 
 ## Contexto del Problema
 
-### Un histórico que existía, pero estaba mal construido
+### Power Query no combinaba datos: hacía de base de datos, y no daba abasto
 
-El histórico de capacitaciones no partía de cero: existía, acumulado en un único Excel de unas 80.000 filas, alimentado por entre 5 y 7 archivos Excel individuales que se combinaban mediante Power Query. El problema no era la falta de historial — el problema era cómo estaba construido ese proceso.
+Lo que existía anteriormente era una cadena de archivos Excel conectados entre sí por Power Query, que intentaba lograr todo el procesamiento para obtener un tablero para hacer seguimiento de las capacitaciones como Charlas-5-min.
+
+El power query intentaba cumplír el rol que debería cumplir un motor de base de datos y un tablero: normalizar, cruzar información histórica, resolver logica de negocio y estadistica para poder mostrarla después en un Excel a modo de tablero.
+
+El query recibia como datos de entrada distintas tablas no normalizadas o estandarizadas de multiples excels (historicos de charlas, Segmentación de personal entre operativos y adminsitrativos, Necesidades de capacitaciones para cada unidad, entre otras cosas).
+
+Por encima de esto estaba montada toda la logica de negocio que eran multiples consultas sobre todo este volumen de datos importante. Lo cual relentizaba muchisimo el procesamiento, dificiultaba muchisimo el mantenimiento debido a la cantidad de errores que se generaban por la fragilidad del software para modelar esta cantidad de información.
+
 
 ```mermaid
 flowchart LR
-    E1["5 a 7 Excels<br/>individuales de origen"] -->|"Power Query intenta<br/>combinar Y modelar<br/>al mismo tiempo"| HIST["Excel histórico único<br/>(~80.000 filas)"]
-    HIST -->|"catálogos deducidos<br/>del propio dato cargado"| TAB["'Tablero' en Excel"]
-    TAB -.-> P(("Lento de mantener,<br/>frágil ante cualquier<br/>dato mal cargado"))
+    A["Historico de capacitaciones<br/>+ plantilla mensual (Excel)"] -->|"Power Query<br/>hace de motor de datos"| B["Excel maestro<br/>(hace de 'tablero')"]
+    B -.->|"funciones básicas,<br/>poco margen de análisis"| P(("¿Cómo se sostiene esto<br/>a largo plazo — y cómo se<br/>usa el histórico en Power Query?"))
 ```
 
-### Restricciones concretas que esto generaba
+### Restricciones concretas del modelo
 
 - **Catálogos deducidos del dato, en vez de definidos de antemano.** En lugar de partir de una lista cerrada y válida de capacitaciones existentes, Power Query intentaba construir ese catálogo a partir de lo que ya estaba cargado en los Excels de origen. El resultado era un catálogo tan confiable como el dato más inconsistente que hubiera entrado alguna vez al sistema — bastaba una capacitación mal tipeada para que se propagara como si fuera una categoría más.
-- **Modelado y procesamiento mezclados en una misma herramienta.** Power Query no solo combinaba archivos: intentaba también resolver ahí mismo la limpieza y la estructura de la información, dos tareas de naturaleza distinta compitiendo entre sí dentro de una herramienta pensada, ante todo, para combinar planillas.
-- **Lentitud creciente con el volumen.** Con varias fuentes de origen y un histórico que ya rondaba las 80.000 filas, cualquier ajuste a esa lógica se volvía cada vez más pesado de aplicar y de mantener.
+- **Modelado y procesamiento mezclados en una misma herramienta.** Power Query no solo combinaba archivos: intentaba también resolver ahí mismo la limpieza y la estructura de la información, dos tareas de naturaleza distinta compitiendo entre sí dentro de una herramienta pensada, ante todo, para combinar planillas y normalización  sencilla de datos.
+- **Lentitud creciente con el volumen.** Con varias fuentes de origen y un histórico de charlas que ya rondaba las 80.000 filas, cualquier ajuste a esa lógica se volvía cada vez más pesado de aplicar y de mantener.
 - **Sin memoria histórica — pero del lado de la plantilla, no de las capacitaciones.** Conviene ser preciso acá: el histórico de capacitaciones sí se conservaba completo en ese Excel único. Lo que no tenía memoria era la plantilla de personal: el envío mensual de RRHH reemplazaba al anterior en cada actualización, sin dejar una estructura que permitiera consultar meses previos de forma unificada.
 - **Acceso limitado a la fuente de plantilla.** La información de a qué unidad pertenece cada persona vive en un sistema corporativo centralizado al que el departamento no tenía acceso masivo — solo consulta manual, persona por persona. RRHH cubría esa brecha con el envío mensual mencionado arriba, que era, a su vez, uno de los insumos que alimentaba la cadena de Power Query.
+- **Lógica duplicada** Debido a la poca claridad y la fragilidad de lo que estaba armado, habia mucha lógica repetida pero que era complicado de acomodar debido a que habian muchas cosas montadas sobre cada una de estos procesos repetidos.
+- *Información no documentada** No habia nada documentado por lo que cada vez que habia que realizar alguna modificación por cuestiones de cambio a nivel organizacional o ya sea por un error. Habia que volver a interiorizarse en la logica expresada, volviendo a comprender las limitaciones y tratar de razonar nuevamente porque las cosas estaban armadas como estaban y intentar de resolver sobre logica mal montada desde un inicio que habia comenzado con otro fin, y que no se penso desde un inicio que podia ir escalando cada vez mas y mas.
 
 ### Qué hacía falta
 
-Separar dos responsabilidades que en el esquema anterior estaban mezcladas dentro de una misma herramienta: por un lado, un modelo de datos correcto, con catálogos definidos de antemano y relaciones explícitas; por otro, un procesamiento de datos real, capaz de limpiar y transformar la información de origen antes de que llegara a esas tablas. En paralelo, había que resolver un problema puntual pero distinto: darle a la plantilla de RRHH la memoria histórica que nunca tuvo.
+Separar dos responsabilidades que en el esquema anterior estaban mezcladas dentro de una misma herramienta: por un lado, un modelo de datos correcto, con catálogos definidos de antemano y relaciones explícitas; por otro, un procesamiento de datos real, capaz de limpiar y transformar la información de origen antes de que llegara a esas tablas. En paralelo, había que resolver un problema puntual pero distinto: darle a la plantilla de RRHH la memoria histórica que nunca tuvo como asi tambien las capacitaciones historicas las cuales estaban divididas por año que remontaban hasta 2019 y no se utilizaban en absoluto.
 
 Más allá de las capacitaciones puntualmente, esto respondía a una necesidad más amplia del departamento. El área genera un volumen de información considerable, repartido entre varios procesos (capacitaciones, y otros que fueron surgiendo con el tiempo), y no es razonable esperar que cada persona del equipo resuelva su porción con su propia lógica de Power Query — incluso si así se hiciera, relacionar esa información entre distintos procesos sería, en la práctica, muy difícil de sostener. Hacía falta una infraestructura de datos propia del departamento, no una colección de soluciones individuales inconexas entre sí.
 
 ## Objetivo de Negocio
 
-- Migrar el modelado del histórico de capacitaciones desde Power Query hacia una base propia en SQLite, con tablas catálogo definidas de antemano en lugar de deducidas sobre la marcha.
-- Separar el modelado de datos (SQL) del procesamiento de datos (Python/Pandas), como dos etapas distintas del mismo flujo.
+- Migrar el modelado del histórico de capacitaciones (tanto para las capacitaciones como para las charlas) desde Power Query hacia una base propia en SQLite, con tablas catálogo definidas de antemano en lugar de deducidas sobre la marcha.
+- Separar el modelado de datos (SQL) del procesamiento de datos (Python/Pandas), como dos etapas distintas del mismo flujo para no sobrecargar la base de datos y inhabilitar el uso en simultaneo entre los empleados debido a que SQLite es una base de datos serverless.
 - Sostener un histórico de capacitaciones consultable y trazable, donde cualquier registro se pueda cruzar con la unidad organizativa vigente de esa persona **en el momento en que la capacitación ocurrió**, no solo con su situación actual.
 - Dar memoria histórica a la plantilla de RRHH, acumulando cada envío mensual en lugar de reemplazar al anterior.
 - Dar soporte, mediante vistas, a un tablero real (Charla 5 Minutos) capaz de responder preguntas de análisis que el esquema anterior no podía sostener con agilidad.
@@ -74,11 +83,11 @@ flowchart TB
     V --> DASH["📊 Tablero Charla 5 Minutos<br/>(Streamlit, documentado aparte)"]
 ```
 
-**Cómo se dividen las responsabilidades:** el modelado — qué tablas existen, cómo se relacionan, qué es catálogo y qué es histórico — se resuelve en SQL. El procesamiento — limpiar texto, unificar formatos, resolver inconsistencias entre las fuentes de origen — se resuelve por fuera, en Python con Pandas, antes de que el dato entre a la base. Esa separación es, en buena medida, lo que el esquema anterior en Power Query no lograba sostener, al intentar resolver ambas cosas a la vez con una herramienta pensada principalmente para combinar planillas.
+**Cómo se dividen las responsabilidades:** el modelado — qué tablas existen, cómo se relacionan, qué es catálogo y qué es histórico — se resuelve en SQL. El procesamiento — unificar formatos, calcular, dataframes especificos se resuelve en Python con Pandas. Esa separación es, en buena medida, lo que el esquema anterior en Power Query no lograba sostener, al intentar resolver ambas cosas a la vez con una herramienta pensada principalmente para combinar planillas y normalización básica de datos.
 
 **Cómo está organizada la información:**
 
-- **Tablas catálogo:** identifican de forma unívoca entidades recurrentes — capacitadores, tipos de capacitación, categorías —, cada una con su Id, relacionadas con el resto de la base por ese Id.
+- **Tablas catálogo:** identifican de forma unívoca entidades recurrentes — capacitadores, tipos de capacitación, categorías, nominas de SG-SST —, cada una con su Id, relacionadas con el resto de la base por ese Id.
 - **Histórico de plantilla:** una fotografía por persona y por mes, cargada casi tal cual llega desde RRHH, con la fecha de esa fotografía como único agregado. El estado vigente queda disponible tomando siempre "el mes más reciente".
 - **Histórico de capacitaciones:** el registro real de cada charla o capacitación dictada — fecha, persona, tipo, responsable —, heredado del histórico previo de ~80.000 filas y depurado contra las tablas catálogo antes de incorporarse.
 - **Vistas de abstracción con índices:** encapsulan la lógica específica de cada análisis (quién debería estar capacitado, quién ya lo está, avance por unidad o por capacitador), para que el tablero no tenga que reconstruir ese cruce en cada consulta.
@@ -95,8 +104,6 @@ flowchart TB
 | SQL (Tablas catálogo + Vistas + Índices) | El modelado de la información: catálogos definidos de antemano, relaciones explícitas, y vistas que resuelven la lógica de cada análisis del tablero. |
 | Python + Pandas | El procesamiento de la información: limpieza y transformación de los datos de origen antes de insertarlos, separado deliberadamente del modelado en SQL. |
 | `ATTACH DATABASE` | Metodología para combinar, dentro de una misma sesión, información que vive repartida en distintos archivos `.db` del departamento. |
-| Excel + Power Query | Formato en el que llegaba —y llega— la plantilla mensual desde RRHH; el mecanismo que este proyecto reemplaza como motor de modelado del histórico de capacitaciones. |
-| GitHub | Versionado y documentación del esquema. |
 
 ## Principales Desafíos
 
@@ -111,9 +118,8 @@ flowchart LR
 
 - **Definir catálogos correctos, en vez de deducirlos del propio dato.** El problema de fondo no era solo de rendimiento: era que se intentaba construir listas de validación a partir de lo que ya estaba cargado, en vez de partir de una lista cerrada y correcta. Resolver esto significó definir tablas catálogo explícitas en SQL, con sus propios Ids, relacionadas con el resto de la base.
 - **Separar dos tareas que estaban mezcladas.** Una misma herramienta hacía, a la vez, de motor de modelado y de motor de procesamiento. La solución fue dividir esas responsabilidades: SQL para la estructura, Python y Pandas para la limpieza de los datos de origen antes de insertarlos.
-- **Dar memoria histórica a la plantilla de RRHH.** A diferencia del histórico de capacitaciones, que sí existía completo, la plantilla se perdía mes a mes. Se resolvió con una tabla que acumula cada envío, identificado por su fecha.
-- **Depurar años de historial disperso.** El histórico previo venía repartido en origen entre 5 y 7 archivos, con inconsistencias de carga heredadas (nombres mal escritos, duplicados). Se diseñó un mecanismo de cuarentena para poder revisarlas sin perder trazabilidad.
-- **Que cargar datos no fuera una fuente de errores en sí misma.** La solución fue construir una interfaz de carga propia, con los valores posibles ya definidos por catálogo, en vez de dejar el ingreso de datos abierto a texto libre.
+- **Dar memoria histórica a la plantilla de RRHH.** A diferencia del histórico de charlas, que sí existía completo, la plantilla se perdía mes a mes. Se resolvió con una tabla que acumula cada envío, identificado por su fecha.
+- **Que cargar datos no fuera una fuente de errores en sí misma.** Un momento del proyecto se habia decidido dejar los dos excels adonde se cargaban las charlas. La solución fue construir una interfaz de carga propia, con los valores posibles ya definidos por catálogo, en vez de dejar el ingreso de datos abierto a texto libre para eliminar el problema de la carga con errores de raiz.
 - **No contar con servidor propio del área.** Se evaluó alojar una base con servidor en algún servicio gratuito, pero el volumen de información que el departamento acumula con el tiempo excedía cómodamente los límites de esas opciones. SQLite resolvió el problema sin requerir infraestructura adicional.
 
 ## Solución Implementada
@@ -130,20 +136,14 @@ La estructura relacional — qué tablas existen, cómo se relacionan, qué vist
 
 El envío mensual de RRHH se procesa con un script simple: lee el Excel, selecciona las columnas de interés para el departamento y las inserta como filas nuevas en SQLite, agregando a cada fila la fecha del envío al que corresponde. No hay mayor modelado en este paso, a propósito — el peso real de este proyecto está del lado de las capacitaciones, no de la plantilla, así que este procesamiento se mantuvo deliberadamente simple.
 
-### Un caso real: cruzar unidad, tiempo y capacitación
-
-Vale la pena volver sobre el ejemplo mencionado al principio, porque resume bien qué cambió con este proyecto. La consulta necesitaba: identificar quiénes pertenecían a una unidad puntual durante una franja de fechas específica (no quiénes pertenecen hoy), cruzar eso contra el historial de capacitaciones dictadas en esa misma ventana, y así separar a quienes la habían recibido de quienes, siendo parte de esa unidad en ese momento, no la habían recibido. Técnicamente, esto se resolvió con un `JOIN` entre el histórico de plantilla (filtrado por unidad y por período) y el histórico de capacitaciones (filtrado por fecha), apoyado en catálogos ya limpios.
-
-Una aclaración necesaria sobre este caso puntual: la necesidad de esa capacitación para esa unidad se mantuvo constante en el tiempo — es una necesidad troncal de esa organización, no algo que haya cambiado mes a mes —, así que no hizo falta reconstruir cómo era esa necesidad en el pasado, solo la pertenencia a la unidad y el registro de capacitación. Esto no es casualidad: hoy la base solo conserva la necesidad de capacitación **vigente**, no su historial. Si la necesidad de una unidad hubiera cambiado en el medio del período consultado, esta consulta no se podría haber resuelto con la misma certeza — es una limitación real del modelo actual, que quedó anotada como mejora pendiente más abajo.
-
-Lo importante de este ejemplo no es que antes fuera imposible resolverlo — siempre se pudo, a mano o con Power Query. Lo que cambió es el tiempo: una consulta que hoy toma segundos, antes podía llevar una jornada completa de trabajo manual. La ventaja de este proyecto es esa — claridad y velocidad —, no capacidades que no existieran antes.
 
 ## Resultados Obtenidos
 
-- Consultas puntuales como la del ejemplo anterior, que antes hubieran significado horas (o directamente una jornada completa) de cruce manual entre Excels de distintos meses, hoy se resuelven con una consulta SQL en segundos — no porque antes fuera imposible, sino porque el modelo de datos ahora sostiene ese cruce de forma directa.
-- Se reemplazaron los catálogos deducidos implícitamente en Power Query por tablas catálogo explícitas y relacionadas, lo que redujo los errores de consistencia y facilitó corregir datos faltantes en un solo lugar.
+- Consultas puntuales (como la del ejemplo al inicio), que antes hubieran significado horas (o directamente una jornada completa) de cruce manual entre Excels de distintos meses, hoy se resuelven con una consulta SQL en segundos — no porque antes fuera imposible, sino porque el modelo de datos ahora sostiene ese cruce de forma directa.
+- Se reemplazaron los catálogos deducidos implícitamente en Power Query por tablas catálogo explícitas y relacionadas, lo que redujo los errores de consistencia y facilitó corregir datos faltantes en un solo lugar y el mantenimiento de la base de datos cuando es necesario incorporar logica nueva.
 - Se separó el modelado de datos (SQL) del procesamiento de datos (Python/Pandas), dándole al sistema una base pensada para escalar, a diferencia del esquema anterior que mezclaba ambas responsabilidades en una misma herramienta.
 - La plantilla mensual de RRHH, que antes se perdía mes a mes, quedó acumulada en un único histórico consultable.
+- Los excels de capacitaciones que se remontaban hasta 2019 separados por año se compilaron en un hisotiroc unico consultable.
 - El tablero que consume esta base (Charla 5 Minutos) pasó de apoyarse en un Excel lento y limitado a apoyarse en consultas SQL reales.
 - Se resolvió la necesidad de una base relacional sin depender de un servidor que el departamento no tiene.
 
