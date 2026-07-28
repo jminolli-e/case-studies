@@ -59,6 +59,14 @@ flowchart LR
 - **Información no documentada.** No había nada documentado, así que cada vez que hacía falta una modificación —ya fuera por un cambio a nivel organizacional o por un error— había que volver a interiorizarse en la lógica expresada, comprender de nuevo sus limitaciones y tratar de razonar por qué las cosas estaban armadas como estaban, para después intentar resolver sobre una lógica mal montada desde el inicio: había nacido con otro fin, sin pensar que terminaría escalando tanto.
 - **Bugs silenciosos** Más allá de esos errores puntuales, a medida que crecía el volumen de registros históricos, Power Query dejó de procesar el conjunto completo de datos: operaba sobre una ventana de tamaño fijo, tomando los registros ordenados del más reciente al más antiguo. El resultado fue que, con cada nueva tanda de capacitaciones cargadas, los registros más viejos quedaban empujados fuera de esa ventana y dejaban de normalizarse — y por lo tanto, de contabilizarse — aunque seguían existiendo en el archivo de origen. Capacitaciones reales, ya dictadas, iban "desapareciendo" progresivamente de los reportes sin que nadie lo notara, porque el error no arrojaba ningún mensaje: el Excel simplemente mostraba cada vez menos historial a medida que pasaba el tiempo.
 
+### Qué devolvía todo esto, al final
+
+A pesar de todas las consultas montadas en Power Query — múltiples fuentes, fórmulas encadenadas, lógica de negocio resuelta ahí mismo —, lo que ese procesamiento devolvía al final era muy simple. El resultado era, una tabla plana: personas en las filas, capacitaciones en las columnas, y una celda coloreada indicando si esa persona tenía la necesidad de esa capacitación y si ya la había cumplido o no. **Sin ninguna fecha de cuando recibio dicha capacitación**.
+
+La imagen de abajo es un pequeño extracto simulado de ese tipo de tabla — con nombres, identificadores y capacitaciones ficticios, sin relación alguna con datos reales del departamento —, solo para ilustrar el formato: en **rojo**, las personas que tienen la necesidad de esa capacitación y todavía no la hicieron; en **verde**, las que la necesitan y ya la hicieron (el número indica cuántas veces); en **blanco**, las personas que no tienen esa necesidad — el valor sigue estando ahí, pero el formato condicional lo pinta del mismo color que el fondo, porque no es relevante contabilizarlo.
+
+![Extracto anonimizado de una tabla de necesidades de capacitación, con datos ficticios](./necesidades_extracto_anonimizado.png)
+
 ### Qué hacía falta
 
 Separar dos responsabilidades que en el esquema anterior estaban mezcladas dentro de una misma herramienta: por un lado, un modelo de datos correcto, con catálogos definidos de antemano y relaciones explícitas; por otro, un procesamiento de datos real, capaz de limpiar y transformar la información de origen antes de que llegara a esas tablas. En paralelo, había que resolver un problema puntual pero distinto: darle a la plantilla de RRHH la memoria histórica que nunca tuvo, así como también a las capacitaciones históricas, que estaban divididas por año, se remontaban hasta 2019 y no se utilizaban en absoluto.
@@ -123,6 +131,7 @@ flowchart LR
     D5["🖥️ Sin servidor propio<br/>del departamento"] --> S5["Motor embebido<br/>(SQLite), evaluado<br/>frente a hosting<br/>gratuito descartado<br/>por volumen"]
 ```
 
+- **Estandarizar información ambigua y modelar bien la arquitectura desde el inicio.** Este fue, con diferencia, el desafío más grande de todo el proyecto — por encima de migrar el histórico, que en los hechos resultó bastante directo. El detalle de cómo se resolvió está en "Modelar la necesidad de capacitación por unidad", dentro de Solución Implementada.
 - **Catálogos deducidos del propio dato, en vez de definidos de antemano.** El detalle de cómo se resolvió está en "Tablas catálogo", dentro de Solución Implementada.
 - **Modelado y procesamiento mezclados en una misma herramienta.** El detalle de esta separación está desarrollado en "Modelado en SQL, procesamiento en Python", más abajo.
 - **Dar memoria histórica a la plantilla de RRHH.** A diferencia del histórico de charlas, que sí existía completo, la plantilla se perdía mes a mes. Se resolvió con una tabla que acumula cada envío, identificado por su fecha anexandola cada vez al mes a traves de python.
@@ -135,6 +144,22 @@ flowchart LR
 
 El cambio de fondo respecto del esquema anterior fue este: en vez de dejar que el catálogo de capacitaciones, capacitadores o categorías se fuera armando implícitamente a partir de lo que ya estaba cargado, se definieron esas listas como tablas propias, con su Id, desde el principio. El histórico de capacitaciones y las demás tablas se relacionan con esos catálogos por ese Id, así que corregir un dato faltante o mal cargado se hace una vez, en el catálogo, y se refleja en todo el histórico relacionado — en vez de salir a buscar y reemplazar manualmente en decenas de miles de filas.
 
+### Modelar la necesidad de capacitación por unidad
+
+Migrar el histórico de capacitaciones, una vez resuelto el modelo, terminó siendo un trabajo relativamente directo. Lo realmente difícil fue diseñar la arquitectura que determina qué necesita cada unidad y quién ya cumplió con eso y todos los problemas que eso trajo. — ahí es donde había que estandarizar información que antes estaba cargada de forma ambigua, y pensar una estructura que se pudiera mantener en el tiempo sin volverse frágil otra vez, como le había pasado al esquema anterior.
+
+Ya que en un futuro iba a hacer falta empezar a armar estructuras que se actualizaran en tiempo real a traves de una view, asignando el personal a cada inspector en especifico. Y viendo quienes estaban pendientes de capacitación. 
+
+La lógica quedó separada en instancias sucesivas, cada una resuelta como su propia tabla o vista independiente, porque me pareció la forma más clara de construirla y, sobre todo, de mantenerla después:
+
+1. **Partición inicial: operativos vs. administrativos.** Antes de cualquier otra cosa, una vista siempre calculada sobre el estado vigente ("una lista en vivo") separa a todo el personal entre operativo y administrativo. Las necesidades de capacitación que siguen abajo aplican solo a la rama operativa.
+2. **Matriz de necesidades por unidad.** Se identificaron todas las unidades operativas de la empresa y, para cada una, se marcó con un valor booleano qué capacitaciones operativas necesita. Esta información ya estaba parcialmente completada por el modelo anterior, solo que estaba desactualizada y no completa.
+Esta matriz vive en una tabla propia, mantenida por el área — es la definición de "qué se necesita", separada a propósito de "quién lo cumplió".
+3. **Expansión por persona, vía JOIN.** Una vista cruza esa matriz de necesidades con la partición operativa del personal, usando la unidad como clave de unión: por cada persona operativa, expande las capacitaciones que le corresponden según la unidad a la que pertenece, armando en tiempo real el listado de "quién necesita qué".
+4. **Conteo de cumplimiento.** Sobre ese listado ya expandido, otra vista cruza contra el histórico de capacitaciones dictadas y cuenta, para cada persona y cada capacitación que le corresponde, cuántas veces la hizo. Ese conteo es, en definitiva, lo que determina si una celda se pinta de rojo (necesita y no hizo) o de verde (necesita y ya hizo, con el número de veces).
+
+Separar esto en varias instancias, en lugar de resolverlo con una única consulta gigante, fue una decisión deliberada: cada capa se puede revisar, corregir y mantener por separado, sin tener que entender toda la cadena completa para tocar una sola parte.
+
 ### Modelado en SQL, procesamiento en Python
 
 La estructura relacional — qué tablas existen, cómo se relacionan, qué vistas resuelven qué pregunta — se define y vive en SQL. La creación de los dataframes que responden preguntas especificas para cada uno de los tableros independientes, se resuelven con Python y Pandas, como una etapa separada. Esta división fue clave para pensar el sistema con escalabilidad desde el inicio, en vez de sobrecargar una sola herramienta con ambas responsabilidades.
@@ -142,6 +167,12 @@ La estructura relacional — qué tablas existen, cómo se relacionan, qué vist
 ### La plantilla de RRHH: carga liviana, a propósito
 
 El envío mensual de RRHH se procesa con un script simple: lee el Excel, selecciona las columnas de interés para el departamento y las inserta como filas nuevas en SQLite, agregando a cada fila la fecha del envío al que corresponde. No hay mayor modelado en este paso, a propósito — el peso real de este proyecto está del lado de las capacitaciones, no de la plantilla, así que este procesamiento se mantuvo deliberadamente simple.
+
+### Puesta en producción: correr en paralelo antes de reemplazar
+
+El reemplazo no fue un salto de un día para el otro, sino un proceso que llevó meses. Durante ese tiempo, el sistema nuevo corrió en paralelo con el esquema anterior de Excel y Power Query: la misma información se procesaba por los dos caminos, y se comparaban los resultados hasta confirmar que coincidían de forma consistente. Recién cuando esa validación se sostuvo en el tiempo se reemplazó el proceso viejo por la base de datos, y se puso en producción el tablero "Charla 5 Minutos".
+
+Incluso después de ese reemplazo, el Excel que la gente ya conocía y usaba como si fuera un "tablero" —aunque, en rigor, nunca lo había sido: era simplemente una tabla con las capacitaciones de cada persona— se siguió generando por un tiempo. Dejó de armarse a mano en Power Query y pasó a producirse extrayendo un CSV directamente desde SQL, procesado y estandarizado con Python hasta quedar idéntico al archivo de siempre. Mantener las dos vías disponibles —el tablero nuevo y el Excel de siempre— le dio al equipo tiempo para ir migrando a su propio ritmo. Algunos meses despues de la implementación, ese Excel dejó de consultarse y el tablero terminó adoptándose de forma natural.
 
 ## Resultados Obtenidos
 
@@ -158,21 +189,20 @@ El envío mensual de RRHH se procesa con un script simple: lee el Excel, selecci
 
 ## Lecciones Aprendidas
 
-| Tipo | Aprendizaje |
-|---|---|
-| Técnica | Un catálogo de validación deducido de los propios datos hereda todos los errores que esos datos ya tenían; definirlo de antemano, como tabla propia, es lo que realmente lo vuelve confiable. |
-| Técnica | Mezclar modelado y procesamiento en una misma herramienta tiene un techo de escalabilidad bajo; separarlos en capas distintas (SQL para estructura, Python para lógica especifica de negocio) lo eleva considerablemente. |
-| Arquitectura | No toda la información necesita el mismo nivel de modelado: la plantilla de RRHH se beneficia de una carga simple y consistente, mientras que el histórico de capacitaciones es donde vale la pena invertir en catálogos, relaciones e índices. |
-| Arquitectura | Vincular varias bases `.db` independientes con `ATTACH DATABASE`, en vez de forzar todo a un único archivo, permite que cada una evolucione a su ritmo y se combine solo cuando hace falta. |
-| Diseño | El punto más eficaz para evitar errores de carga es la interfaz de entrada, no la corrección posterior: validar contra catálogo al momento de cargar ahorra trabajo de depuración más adelante. |
-| Producto | La ventaja de modelar bien los datos no siempre es "hacer algo nuevo": muchas veces es hacer en segundos algo que siempre se pudo hacer, pero que antes tomaba tanto tiempo que en la práctica no se hacía. |
+Esto no fue un cambio de un día para el otro: llevó meses. La metodología completa está detallada más arriba, en "Puesta en producción", pero vale la pena resumirla acá porque es, en sí misma, gran parte de lo aprendido: antes de reemplazar nada, corrí ambos sistemas en paralelo hasta confiar en que el nuevo daba resultados consistentes, y aun después del reemplazo mantuve por un tiempo el Excel de siempre como puente, hasta que el equipo migró al tablero por su cuenta.
+
+A nivel personal, lo que más me llevo de este proyecto no es tanto un detalle técnico puntual, sino algunas cosas más de fondo:
+
+- **Aprender a modelar datos de verdad, no solo a guardarlos.** No tenía demasiada experiencia previa pensando una base de datos desde cero; buena parte del proyecto fue aprender, sobre la marcha, a distinguir qué es catálogo y qué es histórico, y cómo relacionarlos para que la información se mantenga consistente sin intervención manual.
+- **Diseñar pensando en preguntas que todavía no existían.** El objetivo no era solo resolver las consultas puntuales que hacían falta en ese momento, sino armar una estructura lo suficientemente flexible como para responder, más adelante, preguntas que ni siquiera se me habían ocurrido — y en más de una ocasión, meses después, esa flexibilidad terminó siendo la que sostuvo una necesidad nueva sin tener que rediseñar nada.
+- **Migrar el histórico fue lo fácil; modelar bien fue lo difícil.** Pasar 80.000 filas de capacitaciones de Excel a SQLite fue, en los hechos, bastante directo. Lo que realmente costó fue la arquitectura detrás de las necesidades de capacitación por unidad — estandarizar información que antes estaba cargada de forma ambigua, y pensar una estructura que no se volviera frágil otra vez con el tiempo.
+- **Confiar en un sistema nuevo lleva tiempo, y está bien que así sea.** Correr los dos sistemas en paralelo durante meses, antes de reemplazar nada, no fue una pérdida de tiempo: fue lo que me permitió confiar en el proceso que había armado, tener la seguridad de que no se estaba perdiendo ningún dato en el camino, y confiar en la lógica detrás de todo esto para que, más adelante, la información que se reporta a Gerencia esté validada y sea comprobable.
+- **La importancia de documentar.** Lo que se construyó con esta base de datos genera muchísimo valor: le da claridad a todo el procedimiento y hace que los datos sean confiables, porque es fácil auditar cómo se llega a cada resultado. Independientemente de si sigo trabajando acá o no, documentar todo esto es lo que hace que el proyecto se pueda mantener y perdure en el tiempo — o, si en algún momento se puede, que el departamento logre migrarlo a un servidor propio que es una posibilidad que hoy no existe.
 
 ## Próximos Pasos
 
 - [ ] **Dar trazabilidad histórica a las necesidades de capacitación por unidad.** Hoy la base solo conserva qué necesita cada unidad *actualmente*; no hay forma de reconstruir cómo era esa necesidad en un momento del pasado. Funcionó en el ejemplo documentado arriba porque la necesidad de esa unidad puntual no cambió en el tiempo, pero es una limitación real del modelo para unidades donde sí cambió — quedaría resuelta con una tabla de necesidades versionada por fecha, en vez de un estado único vigente.
-- [ ] Integrar el histórico de capacitaciones extensas con evaluación al mismo tablero visual que hoy solo muestra charlas breves.
-- [ ] Documentar como casos de estudio independientes las demás bases `.db` del departamento y las interfaces de carga asociadas, a medida que estén en condiciones de compartirse.
-- [ ] Evaluar mecanismos de actualización más frecuente de la plantilla, si en algún momento se habilita un canal de acceso distinto al envío mensual.
+- [ ] Incorporar un agente de IA para que mantenga la documentación actualizada en relación a los cambios.
 - [ ] Incorporar restricciones de integridad referencial explícitas donde hoy la relación entre tablas y entre bases es solo lógica.
 
 ## Disclaimer
