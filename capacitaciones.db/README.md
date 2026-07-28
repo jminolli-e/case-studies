@@ -87,17 +87,21 @@ Más allá de las capacitaciones puntualmente, esto respondía a una necesidad m
 
 ```mermaid
 flowchart TB
-    RRHH["Envío mensual de RRHH<br/>(Excel)"] -->|"script Python:<br/>columnas relevantes<br/>+ fecha por fila"| PLANT["Tabla de plantilla<br/>(carga liviana, poco modelado)"]
-    ORIG["Fuentes de capacitaciones<br/>(antes: 5-7 Excels + Power Query)"] -->|"limpieza y transformación<br/>con Python / Pandas"| HIST["Histórico de<br/>capacitaciones"]
-    CARGA["Carga_Capacitaciones<br/>(interfaz local de data entry)"] --> HIST
+    RRHH["Envío mensual de RRHH<br/>(Excel)"] -->|"script Python:<br/>Normaliza en un Dataframe<br/>+ fecha por fila correspondiente al mes"| DB
+    CARGA["Carga_Capacitaciones<br/>(interfaz local de data entry)"] -->|"nutre el histórico<br/>de capacitaciones y charlas"| DB
+    UPD(["Actualización manual<br/>(UPDATE sobre tablas /<br/>, cuando corresponde)"]) -.-> DB
 
-    PLANT --> DB[("Capacitaciones.db<br/>SQLite — sin servidor")]
-    HIST --> DB
-    CAT["Tablas catálogo<br/>(capacitadores, capacitaciones,<br/>categorías, etc.)"] --> DB
+    subgraph DB["Capacitaciones.db (SQLite)"]
+        direction TB
+        TABS["Tablas + catálogos<br/>(Nomina de personal, históricos,<br/>necesidades, Asignación de Capacitador a Unidades etc.)"]
+        VIEWS["Vistas SQL<br/>(lógica de negocio<br/>por análisis)"]
+        TABS --> VIEWS
+    end
 
-    DB --> V["Vistas SQL + índices<br/>(una lógica de negocio<br/>por cada análisis)"]
-    V --> DASH["📊 Tablero Charla 5 Minutos<br/>(Streamlit, documentado aparte)"]
+    DB -->|"consultadas desde<br/> Python"| DASH["📊 Charla-5-Minutos<br/>(Streamlit)"]
+    DB -->|"consultadas desde<br/> Python"| OTROS["🗂️ Otros Proyectos<br/>(tableros, interfaces, .exe)"]
 ```
+
 
 **Cómo se dividen las responsabilidades:** el modelado — qué tablas existen, cómo se relacionan, qué es catálogo y qué es histórico — se resuelve en SQL. El procesamiento — unificar formatos y construir los dataframes específicos que necesita cada análisis — se resuelve en Python con Pandas. Esa separación es, en buena medida, lo que el esquema anterior en Power Query no lograba sostener, al intentar resolver ambas cosas a la vez con una herramienta pensada principalmente para combinar planillas y hacer normalización básica de datos.
 
