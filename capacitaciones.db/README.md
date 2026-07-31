@@ -1,4 +1,4 @@
-# Capacitaciones.db — Modelar en SQL lo que antes se resolvía a fuerza de Excel y Power Query
+# Capacitaciones.db — Modelado en SQL
 
 > **Aclaración de alcance:** lo que se documenta acá es un desarrollo interno del área donde trabajé y trabajo, dentro de una empresa más grande. **No es la base de datos corporativa de la empresa ni un reemplazo de ella** — es una capa propia del departamento, pensada para procesar y consultar información que antes se resolvía por fuera de cualquier base de datos real.
 
