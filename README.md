@@ -5,7 +5,7 @@ Repositorio destinado a documentar proyectos de automatización, análisis de da
 ## Proyectos
 
 - Base de datos en Sqlite
-- Charla-5-Min
+- Coloquios
 - Capacitaciones
 - Gestor de Consultas
 
