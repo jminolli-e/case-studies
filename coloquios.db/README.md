@@ -1,4 +1,4 @@
-# coloquios.db - Modelado de datos en SQLite
+# Coloquios.db - Modelado de datos en SQLite
 
 > **Aclaración de alcance:** este caso de estudio documenta una base interna y departamental. No es la base corporativa de la empresa ni pretende reemplazarla. Su objetivo es organizar, relacionar y consultar información que anteriormente se procesaba mediante archivos Excel y Power Query.
 
