@@ -1,54 +1,50 @@
-# Capacitaciones.db — Modelado en SQL
+# Capacitaciones.db - Modelado de datos en SQLite
 
-> **Aclaración de alcance:** lo que se documenta acá es un desarrollo interno del área donde trabajé y trabajo, dentro de una empresa más grande. **No es la base de datos corporativa de la empresa ni un reemplazo de ella** — es una capa propia del departamento, pensada para procesar y consultar información que antes se resolvía por fuera de cualquier base de datos real.
-
-## De qué se trata este proyecto, antes de entrar en detalle
-
-El departamento donde trabajo dicta y registra dos tipos de actividad formativa de seguridad: **charlas breves** (una charla corta y periódica que se dicta al personal operativo/administrativo sobre un riesgo puntual de su tarea) y **capacitaciones extensas con evaluación**, de mayor duración. Cada persona pertenece a una unidad organizativa dentro de dicha empresa, y esa unidad es la que define qué capacitaciones necesita — así que casi cualquier pregunta de gestión termina cruzando tres cosas: la persona, la capacitación, y a qué unidad pertenecía esa persona en el momento en que se dictó.
-
-`Capacitaciones.db` es el proyecto que le dio a esa información una estructura real. No es, en el fondo, un proyecto sobre "los datos de los empleados" — es un proyecto de **modelado de datos**: tomar un proceso que vivía disperso en Excel y Power Query y pasarlo a una base de datos relacional, para que ese tipo de cruces se puedan resolver con una consulta en vez de con horas de trabajo manual. Una vez que la información está bien modelada — con relaciones claras entre las tablas, en vez de fórmulas apiladas — se pueden hacer análisis mucho más finos: cruzar escenarios específicos, filtrar por ventanas de tiempo puntuales, y llegar al detalle de una persona o de una unidad sin tener que reconstruir esa lógica cada vez desde cero.
-
-Un ejemplo real ilustra bien esto. En un momento me consultaron por una capacitación específica: qué personas de una unidad puntual la habían recibido dentro de una franja de fechas determinada. Para responder eso hacía falta reconstruir quién pertenecía a esa unidad durante ese período (no necesariamente quién pertenece hoy), cruzar eso contra el historial de capacitaciones dictadas en esa misma ventana de tiempo, y así identificar tanto a quienes sí la habían recibido como a quienes, perteneciendo a esa unidad en ese momento, no la habían recibido. Con la base ya modelada, esa consulta se resolvió con un cruce (`JOIN`) entre el histórico de plantilla y el histórico de capacitaciones, en cuestión de segundos.
-
-Y acá va la aclaración importante, porque es central para entender qué resuelve realmente este proyecto: **esa consulta siempre se pudo hacer.** No es que antes fuera imposible — con Power Query hubiera llevado bastante más tiempo, y hecha completamente a mano (abriendo Excels de distintos meses y cruzando uno por uno) podía perfectamente insumir media jornada de trabajo completa. La base de datos no habilitó un análisis nuevo: lo que hizo fue bajar el costo de responder ese tipo de pregunta de "media jornada" a "segundos", gracias a que la información está modelada correctamente de base. Esa es la ventaja real de este proyecto: claridad y velocidad, no capacidades que no existieran antes.
+> **Aclaración de alcance:** este caso de estudio documenta una base interna y departamental. No es la base corporativa de la empresa ni pretende reemplazarla. Su objetivo es organizar, relacionar y consultar información que anteriormente se procesaba mediante archivos Excel y Power Query.
 
 ## Resumen Ejecutivo
 
-`Capacitaciones.db` es una base **SQLite propia del departamento** — no la base corporativa de la empresa — que centraliza el histórico completo de charlas y capacitaciones dictadas, entre otras cosas, junto con el histórico de empleados, que cuenta con la información necesaria para saber a qué unidad pertenecía cada persona en cada momento. El proyecto se apoya en una decisión de diseño central: separar el **modelado** de los datos del **procesamiento** de los datos. El modelado — qué tablas existen, cómo se relacionan, qué es catálogo y qué es histórico — vive en SQL. La lógica de negocio específica se resuelve aparte, con Python y Pandas.
+`Capacitaciones.db` es una base SQLite diseñada para centralizar dos históricos diferentes:
 
-Un punto central del modelo son las **tablas catálogo**: cinco o seis tablas que existen únicamente para identificar de forma unívoca entidades que se repiten en todo el histórico (por ejemplo, cada capacitador que pasó por el área, cada tipo de capacitación), cada una con su propio Id. Al estar el resto de la base relacionada con esos catálogos por Id, corregir o completar un dato faltante se hace una sola vez, en un solo lugar, y se refleja automáticamente en todo el histórico relacionado — en vez de tener que salir a buscarlo y reemplazarlo manualmente en decenas de miles de filas.
+- **Coloquios breves:** instancias periódicas asociadas a contenidos específicos según el perfil y la unidad organizativa de cada persona.
+- **Instancias extensas:** actividades de mayor duración que pueden incluir evaluación, modalidad y observaciones.
 
-Sobre esa estructura se construyeron además **vistas SQL con índices**, cada una resolviendo la lógica de un análisis puntual pero masivo y reiterativo (avance por unidad, universo de un capacitador, cobertura de un sistema de gestión), que hoy alimentan el tablero **Charla 5 Minutos** (documentado por separado como su propio caso de estudio en este portafolio).
+La base también conserva snapshots mensuales de la nómina corporativa, clasificaciones funcionales, necesidades vigentes por unidad, asignaciones de unidades a capacitadores y universos específicos de SG-SST.
 
-La plantilla que envía Recursos Humanos, en cambio, se carga con un procesamiento deliberadamente liviano — un script simplemente agrega la fecha del envío y la inserta como filas nuevas — porque el peso real del proyecto, y donde vale la pena invertir en modelado, está del lado de las capacitaciones, no de la plantilla.
+El objetivo principal no fue simplemente trasladar planillas a SQLite. El desafío real fue montar el pipeline con el objetivo de poder responder, de forma consistente, preguntas que combinan:
 
-## Contexto del Problema
+1. Qué persona se está analizando.
+2. A qué unidad pertenece o pertenecía.
+3. Qué contenidos necesita esa unidad.
+4. Qué instancias realizó la persona.
+5. Quién es responsable de su seguimiento.
 
-### Power Query no combinaba datos: hacía de base de datos, y no daba abasto
+El resultado es una capa de datos reutilizable que alimenta consultas puntuales, procesos internos y el dashboard [Coloquios](../coloquios/).
 
-Lo que existía anteriormente era una cadena de archivos Excel conectados entre sí por Power Query, que intentaba resolver todo el procesamiento necesario para sostener un tablero de seguimiento de las capacitaciones (el actual "Charla 5 Minutos").
+## Magnitud Del Modelo
 
-Power Query intentaba cumplir, al mismo tiempo, el rol que debería cumplir un motor de base de datos y el de un tablero: normalizar la información, cruzar el histórico, y resolver la lógica de negocio y la estadística necesaria para después mostrar todo eso en un Excel a modo de tablero.
+Al momento del relevamiento técnico de agosto de 2026, la base contenía:
 
-El proceso recibía como entrada distintas tablas sin normalizar ni estandarizar, repartidas en múltiples Excels (históricos de charlas, segmentación de personal entre operativos y administrativos, necesidades de capacitación por unidad, entre otras cosas).
+| Elemento | Cantidad aproximada |
+|---|---:|
+| Tablas | 14 |
+| Vistas | 12 |
+| Índices explícitos | 12 |
+| Snapshots históricos de personal | 200.000 filas |
+| Registros de coloquios | 71.000 filas |
+| Registros de instancias extensas | 36.000 filas |
 
-Por encima de esto estaba montada toda la lógica de negocio, resuelta a través de múltiples consultas sobre todo ese volumen de datos. Esto ralentizaba muchísimo el procesamiento y dificultaba muchísimo el mantenimiento, debido a la cantidad de errores que se generaban por la fragilidad del software a la hora de modelar esta cantidad de información.
+En conjunto, los tres históricos principales superan las 300.000 filas. La base fue verificada en modo de solo lectura mediante `PRAGMA quick_check`, sin detectar problemas estructurales.
 
-De aqui origina la idea de empezar a utilizar una base de datos para resolver este problema en particular. Luego se fue moldeando y se fueron agregando usos adicionales que la convirtieron en lo que es hoy.
+> Las cantidades son una fotografía del momento del relevamiento. La base continúa creciendo a medida que se incorporan nuevos snapshots y registros.
 
-```mermaid
-flowchart LR
-    subgraph Fuentes["Múltiples Excels sin normalizar"]
-        F1["Histórico de charlas"]
-        F2["Segmentación operativos<br/>/ administrativos"]
-        F3["Necesidades de capacitación<br/>por unidad"]
-    end
-    Fuentes -->|"Power Query intenta ser,<br/>a la vez, motor de base<br/>de datos y motor de<br/>lógica de negocio"| PQ["Power Query<br/>(normaliza, cruza histórico,<br/>calcula estadísticas)"]
-    PQ --> TAB["Excel maestro<br/>a modo de 'tablero'"]
-    TAB -.-> P(("Cada vez más lento, frágil<br/>y difícil de mantener a<br/>medida que crece el volumen"))
-```
+## Contexto Del Problema
 
-### Restricciones concretas del modelo
+### Cuando Power Query termina funcionando como base de datos
+
+El proceso anterior estaba compuesto por múltiples archivos Excel conectados mediante Power Query. La misma herramienta debía combinar fuentes, limpiar valores, deducir catálogos, reconstruir relaciones, aplicar reglas de negocio y generar una tabla final para el seguimiento.
+
+Ese enfoque funcionó mientras el volumen y la cantidad de reglas fueron reducidos. Con el crecimiento del histórico aparecieron limitaciones concretas:
 
 - **Catálogos deducidos del dato, en vez de definidos de antemano.** En lugar de partir de una lista cerrada y válida de capacitaciones existentes, Power Query intentaba construir ese catálogo a partir de lo que ya estaba cargado en los Excels de origen. El resultado era un catálogo tan confiable como el dato más inconsistente que hubiera entrado alguna vez al sistema — bastaba una capacitación mal tipeada para que se propagara como si fuera una categoría más.
 - **Modelado y procesamiento mezclados en una misma herramienta.** Power Query no solo combinaba archivos: intentaba también resolver ahí mismo la limpieza y la estructura de la información, dos tareas de naturaleza distinta compitiendo entre sí dentro de una herramienta pensada, ante todo, para combinar planillas y hacer normalización sencilla de datos.
@@ -63,152 +59,380 @@ flowchart LR
 
 A pesar de todas las consultas montadas en Power Query — múltiples fuentes, fórmulas encadenadas, lógica de negocio resuelta ahí mismo —, lo que ese procesamiento devolvía al final era muy simple. El resultado era, una tabla plana: personas en las filas, capacitaciones en las columnas, y una celda coloreada indicando si esa persona tenía la necesidad de esa capacitación y si ya la había cumplido o no. **Sin ninguna fecha de cuando recibio dicha capacitación**.
 
-La imagen de abajo es un pequeño extracto simulado de ese tipo de tabla — con nombres, identificadores y capacitaciones ficticios, sin relación alguna con datos reales del departamento —, solo para ilustrar el formato: en **rojo**, las personas que tienen la necesidad de esa capacitación y todavía no la hicieron; en **verde**, las que la necesitan y ya la hicieron (el número indica cuántas veces); en **blanco**, las personas que no tienen esa necesidad — el valor sigue estando ahí, pero el formato condicional lo pinta del mismo color que el fondo, porque no es relevante contabilizarlo.
 
-![Extracto anonimizado de una tabla de necesidades de capacitación, con datos ficticios](./necesidades_extracto_anonimizado.png)
+```mermaid
+flowchart LR
+    subgraph Fuentes["Fuentes en Excel"]
+        F1["Históricos de actividades"]
+        F2["Plantilla mensual"]
+        F3["Clasificación de personal"]
+        F4["Necesidades por unidad"]
+    end
 
-### Qué hacía falta
+    Fuentes --> PQ["Power Query<br/>combina, limpia, relaciona<br/>y calcula"]
+    PQ --> EX["Excel maestro<br/>para seguimiento"]
+    EX -.-> L["Mayor lentitud y<br/>mantenimiento complejo"]
+```
 
-Separar dos responsabilidades que en el esquema anterior estaban mezcladas dentro de una misma herramienta: por un lado, un modelo de datos correcto, con catálogos definidos de antemano y relaciones explícitas; por otro, un procesamiento de datos real, capaz de limpiar y transformar la información de origen antes de que llegara a esas tablas. En paralelo, había que resolver un problema puntual pero distinto: darle a la plantilla de RRHH la memoria histórica que nunca tuvo, así como también a las capacitaciones históricas, que estaban divididas por año, se remontaban hasta 2019 y no se utilizaban en absoluto.
+## Objetivos
 
-Más allá de las capacitaciones puntualmente, esto respondía a una necesidad más amplia del departamento. El área genera un volumen de información considerable, repartido entre varios procesos (capacitaciones, y otros que fueron surgiendo con el tiempo), y no es razonable esperar que cada persona del equipo resuelva su porción con su propia lógica de Power Query — incluso si así se hiciera, relacionar esa información entre distintos procesos sería, en la práctica, muy difícil de sostener. Hacía falta una infraestructura de datos propia del departamento, no una colección de soluciones individuales inconexas entre sí.
-
-## Objetivo de Negocio
-
-- Migrar el modelado del histórico de capacitaciones (tanto para las capacitaciones como para las charlas) desde Power Query hacia una base propia en SQLite, con tablas catálogo definidas de antemano en lugar de deducidas sobre la marcha.
-- Separar el modelado de datos (SQL) del procesamiento de datos (Python/Pandas), como dos etapas distintas del mismo flujo, para no sobrecargar la base de datos ni inhabilitar el uso simultáneo entre los empleados, dado que SQLite es una base de datos serverless.
-- Sostener un histórico de capacitaciones consultable y trazable, donde cualquier registro se pueda cruzar con la unidad organizativa vigente de esa persona **en el momento en que la capacitación ocurrió**, no solo con su situación actual.
-- Dar memoria histórica a la plantilla de RRHH, acumulando cada envío mensual en lugar de reemplazar al anterior.
-- Dar soporte, mediante vistas, a un tablero real (Charla 5 Minutos) capaz de responder preguntas de análisis que el esquema anterior no podía sostener con agilidad.
-- Dar a los integrantes del departamento una forma de cargar información nueva sin escribir SQL, evitando los errores de carga típicos de trabajar sobre planillas sueltas.
-- Sentar una base de datos pensada para más de un proceso del área, no solo para capacitaciones — de forma que otros procesos del departamento puedan apoyarse en la misma infraestructura en vez de resolver cada uno su propia versión aislada.
+- Centralizar los históricos de coloquios e instancias extensas.
+- Conservar snapshots mensuales de la estructura organizativa.
+- Definir catálogos explícitos en lugar de deducirlos desde texto libre.
+- Separar el modelado en SQL del procesamiento realizado con Python y Pandas.
+- Representar las necesidades vigentes por unidad organizativa.
+- Formalizar la asignación de unidades a capacitadores.
+- Exponer vistas reutilizables para dashboards y consultas internas.
+- Prevenir duplicados en los históricos principales.
+- Permitir nuevas cargas mediante interfaces controladas, sin exigir que el usuario escriba SQL.
 
 ## Arquitectura General
 
 ```mermaid
 flowchart TB
-    RRHH["Envío mensual de RRHH<br/>(Excel)"] -->|"script Python:<br/>Normaliza en un Dataframe<br/>+ fecha por fila correspondiente al mes"| DB
-    CARGA["Carga_Capacitaciones<br/>(interfaz local de data entry)"] -->|"nutre el histórico<br/>de capacitaciones y charlas"| DB
-    UPD(["Actualización manual<br/>(UPDATE sobre tablas /<br/>, cuando corresponde)"]) -.-> DB
+    RRHH["Plantilla mensual<br/>recibida en Excel"]
+    PY1["Proceso Python<br/>selección, formato y período"]
+    CARGA["Interfaz de carga<br/>con valores validados"]
+    CLAS["Clasificación funcional"]
+    NEC["Necesidades vigentes<br/>por unidad"]
+    ASIG["Asignación unidad<br/>a capacitador"]
 
-    subgraph DB["Capacitaciones.db (SQLite)"]
-        direction TB
-        TABS["Tablas + catálogos<br/>(Nomina de personal, históricos,<br/>necesidades, Asignación de Capacitador a Unidades etc.)"]
-        VIEWS["Vistas SQL<br/>(lógica de negocio<br/>por análisis)"]
-        TABS --> VIEWS
+    subgraph DB["Capacitaciones.db"]
+        HE["historico_empleados"]
+        HC["historico_charlas"]
+        HCAP["historico_capacitaciones"]
+        CAT["Catálogos"]
+        V["Vistas SQL"]
+        IDX["Índices sobre tablas base"]
+
+        HE --> V
+        HC --> V
+        HCAP --> V
+        CAT --> V
+        IDX -.-> HE
+        IDX -.-> HC
+        IDX -.-> HCAP
     end
 
-    DB -->|"consultadas desde<br/> Python"| DASH["📊 Charla-5-Minutos<br/>(Streamlit)"]
-    DB -->|"consultadas desde<br/> Python"| OTROS["🗂️ Otros Proyectos<br/>(tableros, interfaces, .exe)"]
+    RRHH --> PY1
+    PY1 --> HE
+    CARGA --> HC
+    CARGA --> HCAP
+    CLAS --> V
+    NEC --> V
+    ASIG --> V
+    V --> DASH["Dashboard Coloquios<br/>Streamlit"]
+    V --> CONS["Consultas y<br/>procesos internos"]
 ```
 
+### División de responsabilidades
 
-**Cómo se dividen las responsabilidades:** el modelado — qué tablas existen, cómo se relacionan, qué es catálogo y qué es histórico — se resuelve en SQL. El procesamiento — unificar formatos y construir los dataframes específicos que necesita cada análisis — se resuelve en Python con Pandas. Esa separación es, en buena medida, lo que el esquema anterior en Power Query no lograba sostener, al intentar resolver ambas cosas a la vez con una herramienta pensada principalmente para combinar planillas y hacer normalización básica de datos.
+| Capa | Responsabilidad |
+|---|---|
+| SQLite | Persistencia, catálogos, históricos, índices y vistas de consulta. |
+| SQL | Relaciones lógicas, filtros recurrentes, agregaciones y universos de análisis. |
+| Python + Pandas | Ingesta, limpieza, transformación y preparación de datasets específicos. |
+| Interfaces de carga | Validación de entradas y escritura controlada. |
+| Streamlit | Presentación, filtros interactivos, indicadores y reportes. |
 
-**Cómo está organizada la información:**
+SQLite fue elegido porque no requiere un proceso servidor ni infraestructura adicional. El patrón de uso es mayormente analítico y de lectura; las escrituras se concentran en procesos controlados. Esto reduce conflictos, aunque no elimina las limitaciones de concurrencia propias de una base embebida.
 
-- **Tablas catálogo:** identifican de forma unívoca entidades recurrentes — capacitadores, tipos de capacitación, categorías, nóminas de SG-SST —, cada una con su Id, relacionadas con el resto de la base por ese Id.
-- **Histórico de plantilla:** una fotografía por persona y por mes, cargada casi tal cual llega desde RRHH, con la fecha de esa fotografía como único agregado. El estado vigente queda disponible tomando siempre "el mes más reciente".
-- **Histórico de capacitaciones:** el registro real de cada charla o capacitación dictada — fecha, persona, tipo, responsable —, heredado del histórico previo de ~80.000 filas y depurado contra las tablas catálogo antes de incorporarse.
-- **Vistas de abstracción con índices:** encapsulan la lógica específica de cada análisis (quién debería estar capacitado, quién ya lo está, avance por unidad o por capacitador), para que el tablero no tenga que reconstruir ese cruce en cada consulta.
+## Modelo De Datos
 
-**Sobre trabajar con más de una base a la vez:** como metodología de trabajo, cuando una consulta necesita combinar información que vive en distintos archivos `.db` del departamento, se usa `ATTACH DATABASE` de SQLite para leer de más de una base dentro de la misma sesión, sin duplicar información entre ellas. Es más una forma de trabajo que una arquitectura formal: permite que cada base se mantenga y evolucione por separado, y aun así cruzar lógica de una hacia la otra cuando hace falta.
+El diseño actual es un **modelo híbrido**. Utiliza tablas históricas, catálogos e identificadores lógicos, pero conserva algunos campos descriptivos dentro de los históricos para mantener compatibilidad con procesos anteriores.
 
-**Cómo entra la información nueva:** la carga de charlas y capacitaciones no se hace escribiendo directamente sobre la base ni sobre una planilla suelta. `Carga_Capacitaciones` — documentada por separado como su propio caso de estudio — es una interfaz local pensada para que cualquier integrante del área registre una charla o capacitación dictada eligiendo entre valores ya validados contra las tablas catálogo, en vez de tipear texto libre. Esa misma información, una vez cargada ahí, es la que después consume el tablero Charla 5 Minutos construido en Streamlit.
+No todas las relaciones están declaradas mediante claves foráneas. En varios casos la integridad se sostiene por reglas de carga, catálogos validados, índices únicos y cruces lógicos en las vistas. Esta distinción es importante: la base tiene estructura relacional, pero todavía no aplica integridad referencial explícita en todo el esquema.
+
+### Históricos principales
+
+| Tabla | Función |
+|---|---|
+| `historico_empleados` | Snapshot mensual de la plantilla y su estructura organizativa. |
+| `historico_charlas` | Registro de coloquios con fecha, persona, contenido y capacitador. |
+| `historico_capacitaciones` | Registro de instancias extensas con fecha, código, duración, evaluación, modalidad y observaciones. |
+
+El histórico de personal conserva el campo `anio_mes`, que permite diferenciar cada fotografía mensual. Esto habilita consultas temporales que relacionan un evento con la estructura organizativa correspondiente a ese período.
+
+### Catálogos
+
+La base contiene catálogos para contenidos, categorías, capacitadores y universos SG-SST. Su función es definir valores válidos y evitar que las entidades recurrentes dependan únicamente del texto ingresado en cada registro.
+
+En el modelo actual conviven dos estrategias:
+
+- Relaciones mediante identificadores lógicos, como el código de contenido.
+- Campos descriptivos conservados en los históricos por compatibilidad y facilidad de consumo.
+
+La relación lógica entre `historico_charlas.id_charla` y `catalogo_charlas.Id` cubre el histórico principal de coloquios. Otros catálogos y los históricos anteriores presentan algunas excepciones heredadas. Estas excepciones se tratan como deuda de calidad de datos, no como una característica deseada del modelo.
+
+### Clasificación funcional
+
+`Necesidades_Objetivos` contiene la clasificación utilizada para separar perfiles operativos, administrativos y casos especiales. Las vistas interpretan sus columnas de clasificación junto con atributos del snapshot vigente, como estado y categoría.
+
+La clasificación no se deduce desde los eventos realizados. Es una fuente independiente que define a qué universo pertenece cada persona.
+
+### Matriz de necesidades
+
+`necesidades_charlas_org` representa qué contenidos necesita cada unidad organizativa mediante indicadores booleanos. Es una tabla ancha: cada fila representa una unidad y cada columna de contenido indica si existe necesidad.
+
+Esta decisión simplificó la migración desde el modelo anterior y facilita ciertas consultas de presentación. A cambio, incorporar nuevos contenidos requiere modificar el esquema y actualizar las expresiones que relacionan cada columna con el catálogo correspondiente.
+
+La matriz representa el **estado vigente**. Actualmente no conserva versiones históricas de las necesidades.
+
+### Asignación de capacitadores
+
+`org_x_inspector` formaliza qué capacitador tiene asignada cada unidad organizativa. El nombre físico de la tabla se conserva por compatibilidad histórica; en la documentación pública y en la interfaz se utiliza el término **capacitador**.
+
+Esta tabla convierte una asignación que antes dependía del conocimiento informal del equipo en un dato consultable. También permite construir universos de personas por responsable.
+
+### Correcciones puntuales
+
+La tabla de correcciones de empleados permite reemplazar información puntual sin modificar todas las filas históricas. La vista de empleados corregidos aplica `COALESCE` para priorizar el valor corregido y conservar el original cuando no existe una corrección.
+
+Este mecanismo evita actualizaciones masivas sobre el histórico y mantiene separada la fuente recibida de los ajustes administrados localmente.
+
+## Lógica Del Servicio
+
+La base no expone una única consulta gigante. La lógica se divide en capas que pueden verificarse y mantenerse por separado.
+
+### 1. Construcción del snapshot vigente
+
+```mermaid
+flowchart LR
+    H["historico_empleados"] --> C["vw_emp_corregido1<br/>aplica correcciones puntuales"]
+    R["correcciones de empleados"] --> C
+    C --> A["vw_emp_actual<br/>selecciona MAX(anio_mes)"]
+```
+
+`vw_emp_corregido1` combina cada snapshot con las correcciones administradas localmente. `vw_emp_actual` toma el máximo `anio_mes` disponible y expone la fotografía organizativa vigente.
+
+Este snapshot se reutiliza en la mayoría de las vistas operativas, administrativas, de asignación y SG-SST.
+
+### 2. Construcción del universo operativo
+
+Según la vista consumidora, el universo operativo se obtiene combinando:
+
+1. La clasificación funcional.
+2. El snapshot vigente.
+3. El estado de la persona.
+4. Las reglas de categoría aplicables.
+5. La matriz de necesidades de su unidad.
+
+`vw_operativo_streamlit` cruza los eventos realizados con la necesidad vigente de la unidad para el conjunto de contenidos codificado en su definición. Solo incluye combinaciones donde el contenido realizado corresponde a una necesidad configurada.
+
+Otras vistas generan una representación agregada por persona, utilizando sumas condicionales para convertir eventos en columnas de cumplimiento. Esa salida reproduce la matriz que históricamente se consumía desde Excel, pero ahora se calcula desde datos centralizados.
+
+### 3. Construcción del universo administrativo
+
+El universo administrativo utiliza una rama diferente de la clasificación funcional. Las vistas verifican que la persona:
+
+- Esté clasificada como administrativa.
+- No pertenezca simultáneamente a las ramas operativas.
+- Tenga atributos de categoría válidos.
+- Cumpla las condiciones de estado definidas para la vista consumidora.
+
+El cumplimiento se calcula contra un conjunto acotado de contenidos administrativos. Las reglas están expresadas actualmente dentro de las definiciones SQL de las vistas.
+
+### 4. Universo por capacitador
+
+```mermaid
+flowchart LR
+    A["org_x_inspector<br/>unidad → capacitador"] --> U["Vistas de universo"]
+    E["vw_emp_actual"] --> U
+    C["Clasificación funcional"] --> U
+    U --> OP["Universo operativo<br/>por capacitador"]
+    U --> AD["Universo administrativo<br/>por capacitador"]
+```
+
+Las vistas de asignación cruzan la unidad vigente de cada persona con `org_x_inspector`. Después aplican la clasificación correspondiente para construir universos operativos y administrativos.
+
+Esta capa permite responder quién está a cargo de cada capacitador sin reconstruir manualmente la asignación en cada consulta.
+
+### 5. Cobertura SG-SST
+
+Las vistas SG-SST parten de un catálogo propio de personas y tipos. Ese universo se cruza con:
+
+- El snapshot organizativo vigente.
+- Los históricos de coloquios o instancias extensas.
+- La asignación del capacitador responsable.
+
+Una vista cuenta coloquios recibidos dentro del período configurado. Otra transforma determinados códigos de instancias extensas en indicadores booleanos mediante agregaciones condicionales.
+
+### 6. Consultas históricas
+
+El modelo permite relacionar eventos con snapshots mensuales, pero las vistas principales del dashboard trabajan mayormente con `vw_emp_actual`. Por lo tanto, muestran la unidad vigente de la persona, incluso cuando el evento pertenece a un período anterior.
+
+Para reconstruir una situación histórica se requiere una consulta específica que relacione la fecha del evento con `anio_mes` del histórico de personal.
+
+```sql
+SELECT
+    evento.Fecha,
+    evento.Sobre,
+    plantilla."Organización Actual"
+FROM historico_charlas AS evento
+JOIN historico_empleados AS plantilla
+    ON plantilla.Sobre = evento.Sobre
+   AND plantilla.anio_mes = strftime('%Y-%m', evento.Fecha);
+```
+
+Esta capacidad existe gracias al histórico mensual, pero todavía no está encapsulada de forma uniforme en todas las vistas.
+
+## Vistas Principales
+
+| Grupo | Vistas | Responsabilidad |
+|---|---|---|
+| Plantilla | `vw_emp_corregido1`, `vw_emp_actual` | Aplicar correcciones y seleccionar el snapshot vigente. |
+| Operativos | `vw_charlas_operativo`, `vw_charla_5_operativos`, `vw_operativo_streamlit` | Construir actividad y cumplimiento del universo operativo. |
+| Administrativos | `vw_charla_administrativos`, `vw_administrativo_streamlit` | Construir actividad y cumplimiento administrativo. |
+| Asignaciones | `vw_inspector_universo`, `vw_inspector_universo_administrativo` | Relacionar personas y unidades con capacitadores. |
+| SG-SST | `vw_SG_charlas`, `vw_simulacro_SG2` | Calcular cobertura sobre universos específicos. |
+| Perfiles de gestión | `vw_jefaturas_actuales` | Exponer una selección vigente para consultas internas. |
+
+Algunos nombres físicos conservan términos del sistema anterior. Cambiarlos directamente implicaría actualizar consumidores existentes, por lo que la terminología pública se normaliza sin romper compatibilidad en el esquema.
+
+## Índices Y Rendimiento
+
+SQLite no permite crear índices tradicionales sobre vistas normales. Los 12 índices del proyecto están definidos sobre las tablas base y son utilizados por el planificador cuando evalúa las vistas.
+
+### Estrategias aplicadas
+
+- Índices individuales sobre fecha, persona y contenido en el histórico de coloquios.
+- Índice compuesto para consultas por contenido, fecha y persona.
+- Índices sobre `Sobre`, `anio_mes` y la combinación de ambos en el histórico de empleados.
+- Índice sobre organización para resolver necesidades por unidad.
+- Índice sobre la clasificación funcional por persona.
+- Índices únicos para prevenir registros duplicados en los dos históricos de actividades.
+
+### Grano de unicidad
+
+```text
+Coloquios:
+    Fecha + Persona + Id de contenido
+
+Instancias extensas:
+    Fecha + Persona + Código de contenido
+```
+
+Los índices reducen el costo de los filtros más frecuentes y protegen el grano esperado de cada evento cuando las columnas que lo componen tienen valores informados. Como esas columnas todavía no declaran todas las restricciones `NOT NULL`, los valores nulos requieren validación adicional durante la carga. Las vistas pueden seguir utilizando estructuras temporales para operaciones como `DISTINCT` o `GROUP BY`, especialmente en los universos administrativos y SG-SST.
+
+## Integridad Y Calidad De Datos
+
+El esquema actual utiliza tres mecanismos principales:
+
+1. Claves primarias en históricos y algunas tablas catálogo.
+2. Índices únicos para evitar duplicados de eventos.
+3. Validaciones externas en los procesos de carga.
+
+No existen triggers ni claves foráneas declaradas. Las relaciones entre personas, contenidos, capacitadores y unidades son actualmente lógicas. Esto brinda flexibilidad durante la migración, pero permite que datos heredados queden fuera de un catálogo si la carga no los valida previamente.
+
+El relevamiento encontró excepciones aisladas de formato y relaciones incompletas en datos heredados. No afectan la integridad estructural del archivo, pero justifican incorporar controles formales y un proceso de staging para futuras migraciones.
+
+## Procesamiento Con Python Y Pandas
+
+La base resuelve persistencia y lógica SQL reutilizable. Los procesos externos se encargan de:
+
+- Leer fuentes Excel.
+- Seleccionar las columnas necesarias.
+- Normalizar tipos y formatos.
+- Agregar el período correspondiente al snapshot.
+- Validar valores contra catálogos.
+- Insertar registros mediante procesos controlados.
+- Preparar datasets particulares para dashboards o reportes.
+
+Esta división evita convertir las vistas en una capa de limpieza general. SQL modela y consulta; Python procesa los insumos antes de insertarlos y adapta las salidas cuando un consumidor necesita una forma específica.
+
+Los scripts de ingesta no forman parte del archivo SQLite y, por lo tanto, su comportamiento histórico no puede reconstruirse únicamente inspeccionando la base. En este documento se describe su responsabilidad general, no una implementación que no esté incluida en el caso de estudio.
+
+## Consultas Entre Bases
+
+Cuando un análisis necesita información almacenada en otro archivo SQLite del departamento, se utiliza `ATTACH DATABASE` para consultar ambos esquemas dentro de una misma sesión.
+
+```sql
+ATTACH DATABASE 'otra_base.db' AS otra;
+
+SELECT ...
+FROM main.tabla_local AS local
+JOIN otra.tabla_externa AS externa
+    ON local.clave = externa.clave;
+```
+
+Esta es una práctica de consulta, no una relación física persistida dentro de `Capacitaciones.db`. Cada base puede evolucionar por separado y combinarse cuando una necesidad concreta lo requiere.
+
+## Puesta En Producción
+
+La migración no se realizó mediante un reemplazo inmediato. Durante varios meses el sistema nuevo y el proceso anterior se ejecutaron en paralelo. Los resultados se compararon hasta obtener consistencia suficiente para reemplazar la cadena de Excel y Power Query.
+
+Como transición, el equipo continuó recibiendo temporalmente un archivo con el formato conocido. La diferencia era que ese archivo ya no se construía mediante la cadena anterior: se generaba desde SQL y se procesaba con Python para conservar una salida familiar.
+
+Este período de convivencia permitió validar la lógica y reducir el costo de adopción. El tablero terminó reemplazando al archivo anterior de forma gradual.
+
+## Resultados Obtenidos
+
+- Consultas que requerían cruzar manualmente varios archivos pasaron a resolverse en segundos mediante SQL.
+- La plantilla mensual dejó de sobrescribirse y se convirtió en un histórico consultable.
+- Los eventos de diferentes períodos quedaron centralizados en históricos únicos.
+- Se incorporaron catálogos explícitos para reducir variaciones de texto.
+- Las asignaciones de unidades a capacitadores dejaron de depender exclusivamente del conocimiento informal.
+- Las reglas recurrentes se encapsularon en vistas reutilizables.
+- El dashboard dejó de depender de una cadena de Power Query para obtener sus datos.
+- La solución pudo implementarse sin disponer de un servidor de base de datos propio.
+- La ejecución paralela permitió validar el reemplazo antes de retirar el proceso anterior.
+
+El beneficio principal no fue habilitar preguntas que antes fueran imposibles. Fue reducir drásticamente el tiempo y la complejidad necesarios para responderlas, con reglas que pueden revisarse y ejecutarse nuevamente.
+
+## Limitaciones Conocidas
+
+- La matriz de necesidades representa solo el estado vigente y no está versionada por fecha.
+- Varias vistas relacionan eventos históricos con la unidad actual de la persona.
+- Algunas reglas temporales están fijadas directamente a 2026 dentro del SQL.
+- Los contenidos operativos están mapeados mediante columnas y condiciones explícitas.
+- No existen claves foráneas declaradas.
+- Parte del histórico conserva valores descriptivos además de los identificadores.
+- Las columnas que forman las claves naturales de los eventos no declaran todas las restricciones `NOT NULL`.
+- Existen excepciones aisladas heredadas de formatos anteriores.
+- El esquema no utiliza `PRAGMA user_version` para versionar migraciones.
+- SQLite ofrece concurrencia de escritura limitada frente a una base con servidor.
+
+Estas limitaciones no invalidan el uso actual, pero definen con claridad qué debería evolucionar si aumenta el volumen, cambia el modelo de necesidades o se incorporan más consumidores.
+
+## Próximos Pasos
+
+- [ ] Versionar las necesidades por unidad con fecha de vigencia.
+- [ ] Incorporar claves foráneas después de normalizar las excepciones heredadas.
+- [ ] Incorporar restricciones `NOT NULL` en las claves naturales utilizadas por los índices únicos.
+- [ ] Reemplazar los años fijados en las vistas por configuración o períodos parametrizables.
+- [ ] Evaluar una tabla relacional `unidad_contenido` para reemplazar la matriz ancha.
+- [ ] Centralizar los contenidos administrativos y operativos en tablas de configuración.
+- [ ] Incorporar migraciones de esquema con `PRAGMA user_version`.
+- [ ] Agregar pruebas automatizadas para las reglas principales de cada vista.
+- [ ] Documentar dependencias entre vistas y consumidores externos.
+- [ ] Evaluar una migración futura a un motor con servidor si la concurrencia o el volumen lo justifican.
+
+## Lecciones Aprendidas
+
+| Área | Aprendizaje |
+|---|---|
+| Modelado | Guardar datos no es lo mismo que modelarlos. El valor aparece cuando las relaciones permiten responder nuevas preguntas sin reconstruir la lógica. |
+| Calidad | Los catálogos deben definirse antes de la carga, no deducirse de valores históricos potencialmente inconsistentes. |
+| Historia | Un snapshot mensual simple puede ser más valioso que una transformación compleja si permite reconstruir estados anteriores. |
+| Rendimiento | Los índices deben responder a los patrones reales de consulta y ubicarse en las tablas base utilizadas por las vistas. |
+| Migración | Ejecutar ambos sistemas en paralelo no fue trabajo duplicado: fue el mecanismo que permitió validar el reemplazo. |
+| Adopción | Mantener temporalmente una salida conocida facilitó que el equipo migrara al nuevo tablero a su propio ritmo. |
+| Mantenimiento | Dividir la lógica en capas pequeñas facilita revisar una regla sin comprender nuevamente todo el sistema. |
+| Documentación | Describir también las limitaciones evita presentar una arquitectura idealizada y permite planificar su evolución. |
 
 ## Tecnologías Utilizadas
 
 | Tecnología | Propósito |
 |---|---|
-| SQLite | Motor de base de datos relacional embebido y sin servidor — el departamento no cuenta con infraestructura propia para alojar una base tradicional. |
-| SQL (Tablas catálogo + Vistas + Índices) | El modelado de la información: catálogos definidos de antemano, relaciones explícitas, y vistas que resuelven la lógica de cada análisis del tablero. |
-| Python + Pandas | El procesamiento de la información: limpieza y transformación de los datos de origen antes de insertarlos, separado deliberadamente del modelado en SQL. |
-
-## Principales Desafíos
-
-```mermaid
-flowchart LR
-    D1["🐌 Power Query modelaba<br/>y procesaba a la vez,<br/>sin escalar"] --> S1["Separar modelado (SQL)<br/>de procesamiento<br/>(Python/Pandas)"]
-    D2["📋 Catálogos deducidos<br/>del propio dato,<br/>frágiles ante errores"] --> S2["Tablas catálogo<br/>definidas de antemano<br/>y relacionadas por Id"]
-    D3["🗂️ Plantilla de RRHH sin<br/>memoria de meses previos"] --> S3["Una sola tabla de<br/>plantilla, acumulada<br/>mes a mes con fecha"]
-    D4["✍️ Carga manual de<br/>capacitaciones, sin<br/>control de consistencia"] --> S4["Interfaz propia de<br/>data entry, con<br/>catálogos validados"]
-    D5["🖥️ Sin servidor propio<br/>del departamento"] --> S5["Motor embebido<br/>(SQLite), evaluado<br/>frente a hosting<br/>gratuito descartado<br/>por volumen"]
-```
-
-- **Estandarizar información ambigua y modelar bien la arquitectura desde el inicio.** Este fue, con diferencia, el desafío más grande de todo el proyecto — por encima de migrar el histórico, que en los hechos resultó bastante directo. El detalle de cómo se resolvió está en "Modelar la necesidad de capacitación por unidad", dentro de Solución Implementada.
-- **Catálogos deducidos del propio dato, en vez de definidos de antemano.** El detalle de cómo se resolvió está en "Tablas catálogo", dentro de Solución Implementada.
-- **Modelado y procesamiento mezclados en una misma herramienta.** El detalle de esta separación está desarrollado en "Modelado en SQL, procesamiento en Python", más abajo.
-- **Dar memoria histórica a la plantilla de RRHH.** A diferencia del histórico de charlas, que sí existía completo, la plantilla se perdía mes a mes. Se resolvió con una tabla que acumula cada envío, identificado por su fecha anexandola cada vez al mes a traves de python.
-- **Que cargar datos no fuera una fuente de errores en sí misma.** En un momento del proyecto se había decidido dejar de lado los dos Excels donde se cargaban las charlas. La solución fue construir una interfaz de carga propia, con los valores posibles ya definidos por catálogo, en vez de dejar el ingreso de datos abierto a texto libre, para eliminar el problema de la carga con errores de raíz.
-- **No contar con servidor propio del área.** Se evaluó alojar una base con servidor en algún servicio gratuito, pero el volumen de información que el departamento acumula con el tiempo excedía cómodamente los límites de esas opciones. SQLite resolvió el problema sin requerir infraestructura adicional.
-
-## Solución Implementada
-
-### Tablas catálogo: modelar antes de cargar, no deducir después
-
-El cambio de fondo respecto del esquema anterior fue este: en vez de dejar que el catálogo de capacitaciones, capacitadores o categorías se fuera armando implícitamente a partir de lo que ya estaba cargado, se definieron esas listas como tablas propias, con su Id, desde el principio. El histórico de capacitaciones y las demás tablas se relacionan con esos catálogos por ese Id, así que corregir un dato faltante o mal cargado se hace una vez, en el catálogo, y se refleja en todo el histórico relacionado — en vez de salir a buscar y reemplazar manualmente en decenas de miles de filas.
-
-### Modelar la necesidad de capacitación por unidad
-
-Migrar el histórico de capacitaciones, una vez resuelto el modelo, terminó siendo un trabajo relativamente directo. Lo realmente difícil fue diseñar la arquitectura que determina qué necesita cada unidad y quién ya cumplió con eso y todos los problemas que eso trajo. — ahí es donde había que estandarizar información que antes estaba cargada de forma ambigua, y pensar una estructura que se pudiera mantener en el tiempo sin volverse frágil otra vez, como le había pasado al esquema anterior.
-
-Ya que en un futuro iba a hacer falta empezar a armar estructuras que se actualizaran en tiempo real a traves de una view, asignando el personal a cada inspector en especifico. Y viendo quienes estaban pendientes de capacitación. 
-
-La lógica quedó separada en instancias sucesivas, cada una resuelta como su propia tabla o vista independiente, porque me pareció la forma más clara de construirla y, sobre todo, de mantenerla después:
-
-1. **Partición inicial: operativos vs. administrativos.** Antes de cualquier otra cosa, una vista siempre calculada sobre el estado vigente ("una lista en vivo") separa a todo el personal entre operativo y administrativo. Las necesidades de capacitación que siguen abajo aplican solo a la rama operativa.
-2. **Matriz de necesidades por unidad.** Se identificaron todas las unidades operativas de la empresa y, para cada una, se marcó con un valor booleano qué capacitaciones operativas necesita. Esta información ya estaba parcialmente completada por el modelo anterior, solo que estaba desactualizada y no completa.
-Esta matriz vive en una tabla propia, mantenida por el área — es la definición de "qué se necesita", separada a propósito de "quién lo cumplió".
-3. **Expansión por persona, vía JOIN.** Una vista cruza esa matriz de necesidades con la partición operativa del personal, usando la unidad como clave de unión: por cada persona operativa, expande las capacitaciones que le corresponden según la unidad a la que pertenece, armando en tiempo real el listado de "quién necesita qué".
-4. **Conteo de cumplimiento.** Sobre ese listado ya expandido, otra vista cruza contra el histórico de capacitaciones dictadas y cuenta, para cada persona y cada capacitación que le corresponde, cuántas veces la hizo. Ese conteo es, en definitiva, lo que determina si una celda se pinta de rojo (necesita y no hizo) o de verde (necesita y ya hizo, con el número de veces).
-
-Separar esto en varias instancias, en lugar de resolverlo con una única consulta gigante, fue una decisión deliberada: cada capa se puede revisar, corregir y mantener por separado, sin tener que entender toda la cadena completa para tocar una sola parte.
-
-### Modelado en SQL, procesamiento en Python
-
-La estructura relacional — qué tablas existen, cómo se relacionan, qué vistas resuelven qué pregunta — se define y vive en SQL. La creación de los dataframes que responden preguntas especificas para cada uno de los tableros independientes, se resuelven con Python y Pandas, como una etapa separada. Esta división fue clave para pensar el sistema con escalabilidad desde el inicio, en vez de sobrecargar una sola herramienta con ambas responsabilidades.
-
-### La plantilla de RRHH: carga liviana, a propósito
-
-El envío mensual de RRHH se procesa con un script simple: lee el Excel, selecciona las columnas de interés para el departamento y las inserta como filas nuevas en SQLite, agregando a cada fila la fecha del envío al que corresponde. No hay mayor modelado en este paso, a propósito — el peso real de este proyecto está del lado de las capacitaciones, no de la plantilla, así que este procesamiento se mantuvo deliberadamente simple.
-
-### Puesta en producción: correr en paralelo antes de reemplazar
-
-El reemplazo no fue un salto de un día para el otro, sino un proceso que llevó meses. Durante ese tiempo, el sistema nuevo corrió en paralelo con el esquema anterior de Excel y Power Query: la misma información se procesaba por los dos caminos, y se comparaban los resultados hasta confirmar que coincidían de forma consistente. Recién cuando esa validación se sostuvo en el tiempo se reemplazó el proceso viejo por la base de datos, y se puso en producción el tablero "Charla 5 Minutos".
-
-Incluso después de ese reemplazo, el Excel que la gente ya conocía y usaba como si fuera un "tablero" —aunque, en rigor, nunca lo había sido: era simplemente una tabla con las capacitaciones de cada persona— se siguió generando por un tiempo. Dejó de armarse a mano en Power Query y pasó a producirse extrayendo un CSV directamente desde SQL, procesado y estandarizado con Python hasta quedar idéntico al archivo de siempre. Mantener las dos vías disponibles —el tablero nuevo y el Excel de siempre— le dio al equipo tiempo para ir migrando a su propio ritmo. Algunos meses despues de la implementación, ese Excel dejó de consultarse y el tablero terminó adoptándose de forma natural.
-
-## Resultados Obtenidos
-
-- Consultas puntuales (como la del ejemplo al inicio), que antes hubieran significado horas —o directamente media jornada— de cruce manual entre Excels de distintos meses, hoy se resuelven con una consulta SQL en segundos: no porque antes fuera imposible, sino porque el modelo de datos ahora sostiene ese cruce de forma directa.
-- Se reemplazaron los catálogos deducidos implícitamente en Power Query por tablas catálogo explícitas y relacionadas, lo que redujo los errores de consistencia y facilitó tanto corregir datos faltantes en un solo lugar como mantener la base cuando hace falta incorporar lógica nueva.
-- Se separó el modelado de datos (SQL) del procesamiento de datos (Python/Pandas), dándole al sistema una base pensada para escalar, a diferencia del esquema anterior que mezclaba ambas responsabilidades en una misma herramienta.
-- La plantilla mensual de RRHH, que antes se perdía mes a mes, quedó acumulada en un único histórico consultable.
-- Los Excels de capacitaciones, separados por año y que se remontaban hasta 2019, se compilaron en un histórico único y consultable.
-- El tablero que consume esta base (Charla 5 Minutos) pasó de apoyarse en un Excel lento y limitado a apoyarse en consultas SQL reales.
-- Se resolvió la necesidad de una base relacional sin depender de un servidor que el departamento no tiene.
-- Se mejoró la claridad de cada uno de los procedimientos, lo que facilita su mantenimiento, documentación y futura evolución.
-- Se agilizó la resolución de consultas puntuales y requerimientos de información de Gerentes, Subgerentes y Jefes sobre situaciones específicas, permitiendo obtener - respuestas mediante consultas SQL en lugar de análisis manuales.
-- Se construyó una solución escalable y de bajo mantenimiento, cuya lógica central quedó correctamente modelada desde el inicio, requiriendo únicamente ajustes puntuales o ampliaciones cuando se incorporan nuevos análisis o necesidades de negocio.
-
-## Lecciones Aprendidas
-
-Esto no fue un cambio de un día para el otro: llevó meses. La metodología completa está detallada más arriba, en "Puesta en producción", pero vale la pena resumirla acá porque es, en sí misma, gran parte de lo aprendido: antes de reemplazar nada, corrí ambos sistemas en paralelo hasta confiar en que el nuevo daba resultados consistentes, y aun después del reemplazo mantuve por un tiempo el Excel de siempre como puente, hasta que el equipo migró al tablero por su cuenta.
-
-A nivel personal, lo que más me llevo de este proyecto no es tanto un detalle técnico puntual, sino algunas cosas más de fondo:
-
-- **Aprender a modelar datos de verdad, no solo a guardarlos.** No tenía demasiada experiencia previa pensando una base de datos desde cero; buena parte del proyecto fue aprender, sobre la marcha, a distinguir qué es catálogo y qué es histórico, y cómo relacionarlos para que la información se mantenga consistente sin intervención manual.
-- **Diseñar pensando en preguntas que todavía no existían.** El objetivo no era solo resolver las consultas puntuales que hacían falta en ese momento, sino armar una estructura lo suficientemente flexible como para responder, más adelante, preguntas que ni siquiera se me habían ocurrido — y en más de una ocasión, meses después, esa flexibilidad terminó siendo la que sostuvo una necesidad nueva sin tener que rediseñar nada.
-- **Migrar el histórico fue lo fácil; modelar bien fue lo difícil.** Pasar 80.000 filas de capacitaciones de Excel a SQLite fue, en los hechos, bastante directo. Lo que realmente costó fue la arquitectura detrás de las necesidades de capacitación por unidad — estandarizar información que antes estaba cargada de forma ambigua, y pensar una estructura que no se volviera frágil otra vez con el tiempo.
-- **Confiar en un sistema nuevo lleva tiempo, y está bien que así sea.** Correr los dos sistemas en paralelo durante meses, antes de reemplazar nada, no fue una pérdida de tiempo: fue lo que me permitió confiar en el proceso que había armado, tener la seguridad de que no se estaba perdiendo ningún dato en el camino, y confiar en la lógica detrás de todo esto para que, más adelante, la información que se reporta a Gerencia esté validada y sea comprobable.
-- **La importancia de documentar.** Lo que se construyó con esta base de datos genera muchísimo valor: le da claridad a todo el procedimiento y hace que los datos sean confiables, porque es fácil auditar cómo se llega a cada resultado. Independientemente de si sigo trabajando acá o no, documentar todo esto es lo que hace que el proyecto se pueda mantener y perdure en el tiempo — o, si en algún momento se puede, que el departamento logre migrarlo a un servidor propio que es una posibilidad que hoy no existe.
-
-## Próximos Pasos
-
-- [ ] **Dar trazabilidad histórica a las necesidades de capacitación por unidad.** Hoy la base solo conserva qué necesita cada unidad *actualmente*; no hay forma de reconstruir cómo era esa necesidad en un momento del pasado. Funcionó en el ejemplo documentado arriba porque la necesidad de esa unidad puntual no cambió en el tiempo, pero es una limitación real del modelo para unidades donde sí cambió — quedaría resuelta con una tabla de necesidades versionada por fecha, en vez de un estado único vigente.
-- [ ] Incorporar un agente de IA para que mantenga la documentación actualizada en relación a los cambios.
-- [ ] Incorporar restricciones de integridad referencial explícitas donde hoy la relación entre tablas y entre bases es solo lógica.
+| SQLite | Persistencia relacional embebida, vistas e índices sin infraestructura de servidor. |
+| SQL | Modelado, agregaciones, universos y reglas de consulta reutilizables. |
+| Python | Ingesta, validación, automatización y acceso desde aplicaciones. |
+| Pandas | Limpieza, transformación y preparación de datasets. |
+| Streamlit | Consumo interactivo de la información mediante el dashboard Coloquios. |
+| Git | Versionado del código y la documentación asociada. |
 
 ## Disclaimer
 
-Este caso de estudio describe conceptos, metodologías y decisiones técnicas de diseño de un conjunto de bases de datos **departamentales e internas**, distintas de la base de datos corporativa de la empresa. No se incluyen datos reales, información confidencial, propiedad intelectual, rutas de servidores internos ni detalles sensibles de la organización donde fue desarrollado.
+Este caso de estudio documenta conceptos, decisiones técnicas y aprendizajes obtenidos al construir una base departamental interna. No corresponde a la base corporativa de la empresa.
+
+No se incluyen registros individuales, rutas internas, nombres de personas, resultados sensibles ni archivos de producción. Los volúmenes publicados son aproximados y los nombres físicos de algunas tablas y vistas se mencionan únicamente para explicar la arquitectura técnica.
