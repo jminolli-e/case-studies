@@ -10,6 +10,8 @@ La idea original y el primer boceto de `carga_coloquios` fueron desarrollados po
 
 El resultado es un pipeline que vincula la operación diaria con la gestión: lo que se registra durante la carga termina alimentando los tableros utilizados para analizar el avance y orientar nuevas acciones.
 
+Este documento presenta la arquitectura general y la relación entre los componentes. El detalle del modelo de datos se encuentra en [Coloquios.db](../coloquios.db/), mientras que el funcionamiento del dashboard se documenta en [Coloquios](../coloquios/).
+
 ## Contexto
 
 Contar con una base de datos y un dashboard no resolvía por sí solo todo el problema. También era necesario controlar cómo ingresaban los nuevos registros.
@@ -42,13 +44,13 @@ Es el punto de integración entre los sistemas. Centraliza los registros histór
 
 La aplicación de carga la utiliza para leer valores válidos y guardar nuevas actividades. El dashboard la utiliza como fuente de consulta. Ambas aplicaciones se relacionan a través de la base de datos y no mediante una comunicación directa entre ellas.
 
-El diseño y las reglas internas de esta capa se encuentran documentados por separado en [Coloquios.db - Modelado de datos en SQLite](https://github.com/jminolli-e/case-studies/tree/main/coloquios.db).
+El diseño y las reglas internas de esta capa se encuentran documentados por separado en [Coloquios.db - Modelado de datos en SQLite](../coloquios.db/).
 
 ### `coloquios`
 
 Es la capa analítica del pipeline. Consulta la base sin modificarla, combina las actividades realizadas con la plantilla vigente y las necesidades definidas para cada unidad organizativa, y calcula los indicadores de cumplimiento.
 
-La información se presenta mediante un dashboard con filtros, gráficos, listados de personas pendientes y reportes exportables. Su funcionamiento y sus reglas de cálculo se describen con mayor detalle en [Coloquios de Seguridad](https://github.com/jminolli-e/case-studies/tree/main/coloquios).
+La información se presenta mediante un dashboard con filtros, gráficos, listados de personas pendientes y reportes exportables. Su funcionamiento y sus reglas de cálculo se describen con mayor detalle en [Coloquios de Seguridad](../coloquios/).
 
 ## Por qué SQLite
 
