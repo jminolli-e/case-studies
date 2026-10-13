@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dashboard de coloquios · Réplica pública</title>
+  <style>
+    :root{--green:#18856f;--green-dark:#0f6d5d;--green-deep:#0c5b4e;--green-soft:#e8f5f2;--bg:#f8fafb;--surface:#fff;--text:#102a26;--muted:#5f7185;--border:#cce3de;--warning:#f5a000;--warning-bg:#fffaf0;--info:#dcecff}
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font:12px/1.45 "Segoe UI",Arial,sans-serif}button,input{font:inherit}.app{min-height:100vh}.sidebar{position:fixed;inset:0 auto 0 0;width:208px;min-height:100vh;padding:8px 18px 24px;background:linear-gradient(180deg,#198a76 0%,#0d5d50 100%);color:#fff}.sidebar-brand{display:flex;align-items:center;gap:9px;height:34px;padding:0 8px 7px;border-bottom:1px solid rgba(255,255,255,.2);font-size:10px;font-weight:700}.brand-icon{display:grid;width:28px;height:28px;place-items:center;border-radius:6px;background:#24b69a;font-size:12px}.sidebar-nav{display:grid;gap:3px;margin-top:15px}.sidebar-nav button{min-height:37px;padding:0 18px;border:0;border-left:3px solid transparent;border-radius:7px;background:transparent;color:#fff;text-align:left;font-weight:600;cursor:pointer}.sidebar-nav button.active{border-left-color:#9ce2d3;background:rgba(255,255,255,.18)}.sidebar-nav button:disabled{cursor:default;opacity:.82}.sidebar-rule{margin:16px 0;border:0;border-top:1px solid rgba(255,255,255,.27)}.side-kicker{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.side-copy{margin:3px 0 12px;font-size:10px}.date-label{display:block;margin:0 6px 4px;color:#b9e7dd;font-size:9px;font-weight:800;letter-spacing:.07em;text-transform:uppercase}.date-box{display:flex;align-items:center;gap:28px;height:35px;margin:0 6px 25px;padding:0 11px;border-radius:6px;background:#f7f9fa;color:#172a27;font-size:12px}.date-box span{color:#8e78e8}.date-connector{position:absolute;margin:-21px 0 0 92px;color:rgba(255,255,255,.32);font-size:17px}.available{margin-top:3px;font-size:10px}.refresh{width:100%;height:31px;margin-top:1px;border:1px solid rgba(255,255,255,.5);border-radius:6px;background:rgba(255,255,255,.1);color:#fff;font-size:10px}.topbar{position:fixed;z-index:5;inset:0 0 auto 208px;display:flex;align-items:center;justify-content:space-between;height:39px;padding:0 28px;border-bottom:1px solid var(--border);background:#fff;color:#657887;font-size:10px}.topbar-actions{font-size:18px;letter-spacing:8px;color:#394e49}.main{margin-left:208px;padding:39px 0 70px}.content{width:min(1072px,calc(100vw - 250px));margin:0 auto}.hero{padding:44px 0 19px;border-bottom:2px solid #cfe5e0}.hero h1{margin:0;font-size:40px;line-height:1.1;letter-spacing:-.03em}.hero p{margin:5px 0 0;color:var(--muted);font-size:12px}.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin-top:21px}.kpi{height:105px;padding:16px 18px;border:1px solid var(--border);border-top:4px solid var(--green);border-radius:9px;background:#fff;text-align:center;box-shadow:0 2px 5px rgba(20,70,60,.08)}.kpi.dynamic{border:0;background:linear-gradient(135deg,#188a74,#0e6658);color:#fff;box-shadow:0 6px 12px rgba(18,105,88,.2)}.kpi label{display:block;margin-bottom:4px;color:#667991;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}.kpi.dynamic label{color:#d9fff6}.kpi strong{display:block;color:#16806c;font-size:30px;line-height:1.05}.kpi.dynamic strong{color:#fff}.kpi small{color:#657887}.kpi.dynamic small{color:#dcf8f2}.warning{display:flex;gap:10px;min-height:68px;margin:10px 0 4px;padding:12px 19px;border:1px solid var(--warning);border-left:5px solid var(--warning);border-radius:9px;background:var(--warning-bg);color:#7f3b00;font-size:13px}.warning b{font-weight:800}.section-divider{height:62px;border-bottom:1px solid #d9e7e4}.tabs{display:flex;gap:5px;margin:9px 0 17px}.tabs button{height:33px;padding:0 21px;border:1px solid var(--border);border-radius:7px;background:#fff;color:#556b83}.tabs button.active{border-color:var(--green);background:#edf8f5;color:var(--green);font-weight:700}.tabs button:disabled{cursor:default}.table-title{margin:0 0 6px;color:#087d69;font-size:15px}.data-table{width:100%;border-collapse:collapse;border:1px solid var(--border);background:#fff}.data-table th,.data-table td{height:32px;padding:7px 12px;border-bottom:1px solid #cfe2df;border-right:1px solid #d9e7e4}.data-table th{background:#e8f5f2;color:#0b806c;font-size:10px;letter-spacing:.05em;text-align:left;text-transform:uppercase}.data-table th:not(:first-child),.data-table td:not(:first-child){text-align:right}.data-table td{font-size:11px}.data-table td:nth-child(2),.data-table td:nth-child(3){font-weight:700}.priority td:first-child{border-left:4px solid #2458b8;background:#dce9f9}.priority td:nth-child(2),.priority td:nth-child(3){background:#dce9f9}.badge{margin-left:8px;padding:3px 6px;border-radius:3px;background:#2f78e8;color:#fff;font-size:9px;font-weight:800}.pct{font-weight:700}.p-good{background:#d4f7df}.p-mid{background:#ffe98e}.p-low{background:#ffd59e}.report-view{display:none}.report-hero{margin-top:23px;padding:18px 20px;border:1px solid var(--border);border-left:5px solid var(--green);border-radius:10px;background:#f9fcfb}.report-hero small{color:#087d69;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}.report-hero h2{margin:7px 0 4px;font-size:22px}.report-hero p{margin:0;color:#60748b;font-size:12px}.report-form{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:21px}.field label{display:block;margin-bottom:5px;font-size:12px}.field input{width:100%;height:42px;padding:0 12px;border:2px solid var(--green);border-radius:8px;background:#fff;color:#7b8998;font-size:15px}.generate{height:37px;margin-top:14px;padding:0 14px;border:1px solid #c9d3d9;border-radius:7px;background:#fff;color:#172a27;font-size:14px}.info{margin-top:14px;padding:15px;border-radius:7px;background:var(--info);font-size:14px}.ready{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:14px}.ready[hidden]{display:none}.download{display:flex;align-items:center;justify-content:space-between;padding:15px;border:1px solid var(--border);border-radius:9px;background:#fff}.download strong{font-size:13px}.download span{color:var(--muted);font-size:10px}.download button{padding:8px 12px;border:1px solid var(--green);border-radius:6px;background:var(--green-soft);color:var(--green-deep);font-weight:700}.public-note{position:fixed;right:14px;bottom:12px;padding:7px 10px;border:1px solid #bdd8d2;border-radius:7px;background:rgba(255,255,255,.96);color:#60748b;font-size:9px;box-shadow:0 3px 12px rgba(0,0,0,.08)}
+    @media(max-width:900px){.sidebar{position:static;width:100%;min-height:auto}.sidebar-nav{grid-template-columns:repeat(2,minmax(0,1fr))}.sidebar-filters{display:none}.topbar{position:static;margin:0;inset:auto;height:38px}.main{margin:0;padding-top:0}.content{width:auto;margin:0 16px}.hero{padding-top:28px}.hero h1{font-size:31px}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.tabs{overflow-x:auto}.tabs button{flex:none}.table-wrap{overflow-x:auto}.data-table{min-width:850px}}
+    @media(max-width:520px){.sidebar-nav{grid-template-columns:1fr}.kpis,.report-form,.ready{grid-template-columns:1fr}.hero h1{font-size:28px}.warning{font-size:11px}.public-note{max-width:calc(100vw - 28px)}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span class="brand-icon">C</span><span>Charlas de Seguridad</span></div>
+    <nav class="sidebar-nav">
+      <button class="active" data-view="summary">Resumen</button>
+      <button disabled>Por Inspector</button>
+      <button disabled>Por Persona / Unidad</button>
+      <button disabled>Avance por Inspector</button>
+      <button data-view="reports">Reportes</button>
+      <button disabled>SG-SST</button>
+    </nav>
+    <div class="sidebar-filters">
+      <hr class="sidebar-rule">
+      <div class="side-kicker" id="period-title">Período de análisis</div>
+      <div class="side-copy" id="period-copy">Seleccioná el rango</div>
+      <div class="summary-filter">
+        <label class="date-label">Desde</label><div class="date-box"><span>▦</span>01/01/2031</div>
+        <div class="date-connector">↓</div>
+        <label class="date-label">Hasta</label><div class="date-box"><span>▦</span>30/09/2031</div>
+      </div>
+      <div class="side-kicker">Datos disponibles</div>
+      <div class="available">01/01/2028 — 30/09/2031</div>
+      <button class="refresh" disabled>↻ &nbsp; Actualizar datos</button>
+    </div>
+  </aside>
+  <div class="topbar"><span>Último registro: 30/09/2031</span><span class="topbar-actions">⋮</span></div>
+  <main class="main">
+    <div class="content">
+      <header class="hero"><h1>📋 Charlas de Seguridad</h1><p id="main-period">Período: 01/01/2031 al 30/09/2031</p></header>
+      <section class="summary-view">
+        <div class="kpis">
+          <article class="kpi"><label>Operativos</label><strong>428</strong><small>personal con necesidad</small></article>
+          <article class="kpi"><label>Administrativos</label><strong>186</strong><small>personal con necesidad</small></article>
+          <article class="kpi dynamic"><label>Charlas dadas a operat.</label><strong>1.284</strong><small>período seleccionado</small></article>
+          <article class="kpi dynamic"><label>Charlas dadas a administ.</label><strong>207</strong><small>período seleccionado</small></article>
+        </div>
+        <div class="warning"><span>⚠</span><div><b>Importante:</b> actualmente no existe una reconstrucción histórica de las necesidades del personal. Aunque cambie el filtro de fechas, el total de necesidad de cada capacitación representa la asignación vigente al día de la consulta. Los nombres y valores de esta réplica son completamente ficticios.</div></div>
+        <div class="section-divider"></div>
+        <div class="tabs"><button class="active" disabled>Avance por capacitación</button><button disabled>Prioritarias por inspector</button><button disabled>Avance por gerencia</button><button disabled>Avance por zona</button></div>
+        <h2 class="table-title">⌁ &nbsp; Avance Operativos · 01/01/2031 — 30/09/2031</h2>
+        <div class="table-wrap"><table class="data-table">
+          <thead><tr><th>Capacitación</th><th>Necesidad</th><th>Capacitados</th><th>% Avance</th></tr></thead>
+          <tbody>
+            <tr><td>Prevención de incidentes frecuentes</td><td>428</td><td>309</td><td class="pct p-good">72,2%</td></tr>
+            <tr><td>Preparación segura de la tarea</td><td>396</td><td>156</td><td class="pct p-mid">39,4%</td></tr>
+            <tr><td>Normas generales de seguridad</td><td>421</td><td>147</td><td class="pct p-low">34,9%</td></tr>
+            <tr><td>Trabajo seguro en altura</td><td>274</td><td>102</td><td class="pct p-mid">37,2%</td></tr>
+            <tr><td>MTS-04 Traslado seguro de cargas</td><td>318</td><td>107</td><td class="pct p-low">33,6%</td></tr>
+            <tr><td>MTS-08 Uso de elementos de protección</td><td>352</td><td>168</td><td class="pct p-mid">47,7%</td></tr>
+            <tr><td>MTS-12 Señalización del área de trabajo</td><td>297</td><td>121</td><td class="pct p-mid">40,7%</td></tr>
+            <tr class="priority"><td>MTS-16 Protección ocular <span class="badge">PRIORITARIA</span></td><td>388</td><td>281</td><td class="pct p-good">72,4%</td></tr>
+            <tr><td>MTS-18 Acceso seguro a instalaciones</td><td>279</td><td>114</td><td class="pct p-mid">40,9%</td></tr>
+            <tr class="priority"><td>MTS-27 Control previo de herramientas <span class="badge">PRIORITARIA</span></td><td>304</td><td>231</td><td class="pct p-good">76,0%</td></tr>
+            <tr><td>MTS-34 Orden y limpieza</td><td>367</td><td>204</td><td class="pct p-mid">55,6%</td></tr>
+            <tr><td>MTS-39 Verificación del entorno</td><td>286</td><td>133</td><td class="pct p-mid">46,5%</td></tr>
+            <tr><td>MTS-42 Comunicación previa a la tarea</td><td>341</td><td>198</td><td class="pct p-mid">58,1%</td></tr>
+            <tr class="priority"><td>MTS-48 Control de energías <span class="badge">PRIORITARIA</span></td><td>312</td><td>249</td><td class="pct p-good">79,8%</td></tr>
+            <tr><td>MTS-53 Inspección de equipos</td><td>265</td><td>119</td><td class="pct p-mid">44,9%</td></tr>
+            <tr><td>MTS-58 Manipulación manual de cargas</td><td>379</td><td>225</td><td class="pct p-mid">59,4%</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+      <section class="report-view">
+        <div class="report-hero"><small>Informes para convenios</small><h2>Reportes HTML interactivos</h2><p>Elegí el período de actividad. El avance prioritario se calcula desde el inicio del año hasta la última fecha disponible.</p></div>
+        <div class="report-form"><div class="field"><label>Desde</label><input disabled placeholder="DD/MM/AAAA"></div><div class="field"><label>Hasta</label><input disabled placeholder="DD/MM/AAAA"></div></div>
+        <button class="generate" disabled>Generar reportes</button>
+        <div class="info">Completá ambas fechas para habilitar la generación.</div>
+        <div class="ready" hidden><div class="download"><div><strong>Reporte Convenio A</strong><br><span>HTML autocontenido</span></div><button disabled>Descargar</button></div><div class="download"><div><strong>Reporte Convenio B</strong><br><span>HTML autocontenido</span></div><button disabled>Descargar</button></div></div>
+      </section>
+    </div>
+  </main>
+</div>
+<div class="public-note">Réplica fiel de la UI · Datos sintéticos · Sin información productiva</div>
+<script>
+  const summary=document.querySelector('.summary-view');
+  const reports=document.querySelector('.report-view');
+  const period=document.getElementById('main-period');
+  const title=document.getElementById('period-title');
+  const copy=document.getElementById('period-copy');
+  const filter=document.querySelector('.summary-filter');
+  function show(view){
+    const report=view==='reports';
+    summary.style.display=report?'none':'block';
+    reports.style.display=report?'block':'none';
+    period.textContent=report?'':'Período: 01/01/2031 al 30/09/2031';
+    title.textContent=report?'Período del reporte':'Período de análisis';
+    copy.textContent=report?'Se configura dentro de la pantalla Reportes':'Seleccioná el rango';
+    filter.style.display=report?'none':'block';
+    document.querySelectorAll('.sidebar-nav button[data-view]').forEach(button=>button.classList.toggle('active',button.dataset.view===view));
+  }
+  document.querySelectorAll('.sidebar-nav button[data-view]').forEach(button=>button.addEventListener('click',()=>show(button.dataset.view)));
+  show(location.hash==='#reportes'?'reports':'summary');
+</script>
+</body>
+</html>
