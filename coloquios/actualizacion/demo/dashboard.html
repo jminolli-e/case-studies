@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dashboard de coloquios | Demo pública</title>
+  <style>
+    :root{--forest:#103f36;--forest-2:#16584b;--green:#1f846f;--mint:#5fc4a8;--pale:#e8f5f1;--wash:#f5f9f7;--surface:#fff;--ink:#17332d;--muted:#62756f;--line:#d4e5df;--shadow:0 16px 38px rgba(16,63,54,.09)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--wash);color:var(--ink);font:14px/1.5 "Segoe UI",Arial,sans-serif}button,select{font:inherit}.privacy{position:relative;z-index:20;padding:8px 24px;background:#092e28;color:#d8eee8;text-align:center;font-size:12px}.shell{display:grid;grid-template-columns:240px minmax(0,1fr);min-height:calc(100vh - 34px)}.side{position:sticky;top:0;height:calc(100vh - 34px);padding:28px 18px;background:linear-gradient(165deg,var(--forest),#0d332d);color:#fff}.brand{display:flex;align-items:center;gap:12px;margin:0 8px 34px}.mark{display:grid;width:38px;height:38px;place-items:center;border:1px solid rgba(255,255,255,.3);border-radius:12px;background:rgba(255,255,255,.09);font-weight:800}.brand strong{display:block;font-size:14px}.brand small{color:#a9d7cb}.nav{display:grid;gap:7px}.nav button{width:100%;padding:12px 14px;border:1px solid transparent;border-radius:10px;background:transparent;color:#d8eee8;text-align:left;cursor:pointer}.nav button.active{border-color:rgba(255,255,255,.16);background:rgba(255,255,255,.12);color:#fff;font-weight:700}.nav button:disabled{color:#73968d;cursor:not-allowed}.side-note{position:absolute;right:18px;bottom:24px;left:18px;padding:14px;border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#a9d7cb;font-size:11px}.main{min-width:0;padding:30px 38px 64px}.top{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;margin-bottom:26px}.eyebrow{margin:0 0 5px;color:var(--green);font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.top h1{margin:0;font-size:30px;letter-spacing:-.03em}.top p{margin:5px 0 0;color:var(--muted)}.period{min-width:245px;padding:12px 15px;border:1px solid var(--line);border-radius:12px;background:var(--surface);box-shadow:0 5px 16px rgba(16,63,54,.04)}.period span{display:block;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}.period strong{font-size:13px}.toolbar{display:flex;justify-content:space-between;gap:18px;align-items:center;margin-bottom:20px}.segment,.tabs{display:flex;gap:4px;padding:4px;border:1px solid var(--line);border-radius:11px;background:var(--surface)}.segment button,.tabs button{padding:8px 14px;border:0;border-radius:8px;background:transparent;color:var(--muted);cursor:pointer}.segment button.active,.tabs button.active{background:var(--forest);color:#fff;font-weight:700}.tabs button:disabled{color:#aab8b4;cursor:not-allowed}.hint{color:var(--muted);font-size:12px}.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:20px}.kpi{padding:18px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:0 7px 22px rgba(16,63,54,.04)}.kpi label{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase}.kpi strong{display:block;margin-top:7px;font-size:28px;line-height:1}.kpi small{display:block;margin-top:7px;color:var(--muted)}.tip{position:relative;display:inline-grid;width:16px;height:16px;place-items:center;border:1px solid #91aaa3;border-radius:50%;font-size:10px;cursor:help}.tip:hover:after,.tip:focus:after{position:absolute;z-index:30;bottom:24px;left:-30px;width:230px;padding:10px;border-radius:8px;background:var(--forest);color:#fff;content:attr(data-tip);font-size:11px;font-weight:400;text-transform:none;box-shadow:var(--shadow)}.panel{overflow:hidden;border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:var(--shadow)}.panel-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;padding:20px 22px;border-bottom:1px solid var(--line)}.panel-head h2{margin:0;font-size:18px}.panel-head p{margin:4px 0 0;color:var(--muted);font-size:12px}.legend{display:flex;gap:13px;color:var(--muted);font-size:11px}.legend i{display:inline-block;width:9px;height:9px;margin-right:4px;border-radius:2px}.table-scroll{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:12px 16px;border-bottom:1px solid #e8f0ed;text-align:left;white-space:nowrap}th{background:#f1f7f5;color:var(--muted);font-size:10px;letter-spacing:.06em;text-transform:uppercase}th:not(:first-child),td:not(:first-child){text-align:center}tbody tr:hover{background:#f8fbfa}.progress{display:inline-block;min-width:58px;padding:4px 8px;border-radius:999px;background:var(--pale);color:var(--forest-2);font-weight:800}.progress.mid{background:#d8eee8}.progress.high{background:#a9dece}.priority{display:inline-block;margin-left:7px;padding:2px 6px;border-radius:4px;background:var(--forest);color:#fff;font-size:9px;font-weight:800}.select-wrap{display:flex;align-items:center;gap:10px}.select-wrap label{color:var(--muted);font-size:12px;font-weight:700}.select-wrap select{min-width:210px;padding:9px 34px 9px 11px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink)}.bar-cell{min-width:180px}.bar{height:8px;overflow:hidden;border-radius:10px;background:#e2ede9}.bar span{display:block;height:100%;border-radius:10px;background:linear-gradient(90deg,var(--green),var(--mint))}.heatmap{min-width:760px}.heat{font-weight:800}.h1{background:#eef6f3;color:#5d766f}.h2{background:#d9eee8;color:#315f53}.h3{background:#b9dfd4;color:#174c40}.h4{background:#75c4ae;color:#0b3b32}.h5{background:#207c69;color:#fff}.pending-controls{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line)}.check{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px}.check input{accent-color:var(--green)}.download{padding:9px 13px;border:0;border-radius:8px;background:var(--green);color:#fff;font-weight:700;cursor:pointer}.notice{margin-top:18px;padding:13px 16px;border-left:3px solid var(--green);border-radius:8px;background:var(--pale);color:#45645c;font-size:12px}.empty{padding:60px;text-align:center;color:var(--muted)}[hidden]{display:none!important}
+    @media(max-width:1000px){.shell{grid-template-columns:190px minmax(0,1fr)}.main{padding:24px}.kpis{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:720px){.privacy{text-align:left}.shell{display:block}.side{position:static;height:auto;padding:18px}.brand{margin-bottom:16px}.nav{grid-template-columns:1fr 1fr}.side-note{display:none}.main{padding:22px 14px 46px}.top,.toolbar,.panel-head,.pending-controls{align-items:stretch;flex-direction:column}.period{min-width:0}.kpis{grid-template-columns:1fr 1fr}.tabs{overflow:auto}.tabs button{white-space:nowrap}.hint{display:none}.select-wrap{align-items:stretch;flex-direction:column}.select-wrap select{width:100%}}
+    @media(max-width:440px){.kpis{grid-template-columns:1fr}.nav{grid-template-columns:1fr}.top h1{font-size:25px}}
+  </style>
+  <style>
+    .tip{padding:0;background:transparent;color:inherit}.heat{position:relative}.heat:hover:after,.heat:focus:after{position:absolute;z-index:30;right:8px;bottom:calc(100% + 5px);width:150px;padding:8px;border-radius:7px;background:var(--forest);color:#fff;content:attr(data-tip);font-size:11px;font-weight:400;box-shadow:var(--shadow)}
+  </style>
+</head>
+<body>
+  <div class="privacy">Demostración pública reconstruida · Nombres, valores y agrupaciones completamente ficticios</div>
+  <div class="shell">
+    <aside class="side">
+      <div class="brand"><span class="mark">CS</span><div><strong>Coloquios</strong><small>Panel de seguimiento</small></div></div>
+      <nav class="nav" aria-label="Navegación principal">
+        <button class="active" aria-current="page" data-main="summary">Resumen</button>
+        <button data-main="trainer">Avance por Capacitador</button>
+        <button disabled>Pestaña 3</button>
+        <button disabled>Pestaña 4</button>
+        <button disabled>Pestaña 5</button>
+      </nav>
+      <div class="side-note">Réplica parcial. Sólo las secciones incluidas en este caso son navegables.</div>
+    </aside>
+    <main class="main">
+      <header class="top">
+        <div><p class="eyebrow">Seguimiento anual</p><h1 id="page-title">Resumen del programa</h1><p id="page-copy">Necesidad y avance del universo seleccionado.</p></div>
+        <div class="period"><span>Período de análisis</span><strong>01/01/2031 al 30/09/2031</strong></div>
+      </header>
+
+      <section id="summary-view">
+        <div class="toolbar">
+          <div class="segment" role="group" aria-label="Seleccionar perfil"><button class="active" aria-pressed="true" data-profile="operativo">Operativos</button><button aria-pressed="false" data-profile="administrativo">Administrativos</button></div>
+          <span class="hint">Datos sintéticos actualizados al 30/09/2031</span>
+        </div>
+        <div class="kpis" id="summary-kpis"></div>
+        <div class="tabs" role="tablist">
+          <button id="summary-tab-courses" class="active" role="tab" aria-selected="true" aria-controls="courses-panel" data-summary-tab="courses">Avance por capacitación</button>
+          <button id="summary-tab-priorities" role="tab" aria-selected="false" aria-controls="priorities-panel" data-summary-tab="priorities">Prioritarias por Capacitador</button>
+          <button role="tab" aria-selected="false" disabled>Comparación anual</button>
+        </div>
+        <div id="courses-panel" class="panel" role="tabpanel" aria-labelledby="summary-tab-courses" style="margin-top:14px">
+          <div class="panel-head"><div><h2 id="course-title">Avance operativo</h2><p>Comparación entre necesidad vigente y personas capacitadas.</p></div><div class="legend"><span><i style="background:#d8eee8"></i>En curso</span><span><i style="background:#75c4ae"></i>Avance alto</span></div></div>
+          <div class="table-scroll"><table><thead><tr><th>Capacitación</th><th>Necesidad</th><th>Capacitados</th><th>Avance</th></tr></thead><tbody id="courses-body"></tbody></table></div>
+        </div>
+        <div id="priorities-panel" class="panel" role="tabpanel" aria-labelledby="summary-tab-priorities" style="margin-top:14px" hidden>
+          <div class="panel-head"><div><h2>Prioritarias por Capacitador</h2><p>Comparación del avance en los contenidos definidos como prioritarios.</p></div><div class="legend"><span><i style="background:#eef6f3"></i>Menor avance</span><span><i style="background:#207c69"></i>Mayor avance</span></div></div>
+          <div class="table-scroll"><table class="heatmap"><thead><tr><th>Capacitador</th><th>MTS-04</th><th>MTS-12</th><th>MTS-18</th><th>MTS-27</th><th>Promedio</th></tr></thead><tbody id="priority-body"></tbody></table></div>
+        </div>
+        <div class="notice"><strong>Alcance:</strong> la necesidad representa la asignación vigente a la fecha de consulta. El período elegido filtra las instancias realizadas.</div>
+      </section>
+
+      <section id="trainer-view" hidden>
+        <div class="toolbar">
+          <div class="select-wrap"><label for="trainer-select">Capacitador</label><select id="trainer-select"></select></div>
+          <span class="hint">Cambiá la selección para actualizar todo el detalle</span>
+        </div>
+        <div class="kpis" id="trainer-kpis"></div>
+        <div class="tabs" role="tablist">
+          <button id="trainer-tab-progress" class="active" role="tab" aria-selected="true" aria-controls="progress-panel" data-trainer-tab="progress">Avance por capacitación</button>
+          <button id="trainer-tab-heatmap" role="tab" aria-selected="false" aria-controls="heatmap-panel" data-trainer-tab="heatmap">Avance por organización</button>
+          <button id="trainer-tab-pending" role="tab" aria-selected="false" aria-controls="pending-panel" data-trainer-tab="pending">Personas pendientes</button>
+        </div>
+        <div id="progress-panel" class="panel" role="tabpanel" aria-labelledby="trainer-tab-progress" style="margin-top:14px"></div>
+        <div id="heatmap-panel" class="panel" role="tabpanel" aria-labelledby="trainer-tab-heatmap" style="margin-top:14px" hidden></div>
+        <div id="pending-panel" class="panel" role="tabpanel" aria-labelledby="trainer-tab-pending" style="margin-top:14px" hidden></div>
+      </section>
+    </main>
+  </div>
+  <script>
+    const profiles={
+      operativo:{need:428,trained:309,sessions:1284,advance:72.2,courses:[['Prevención de incidentes frecuentes',428,309],['Preparación segura de la tarea',396,256],['Normas generales de seguridad',421,247],['MTS-04 Protección de manos',388,281],['MTS-12 Desplazamiento seguro',352,268],['MTS-18 Señalización del área',304,231],['MTS-27 Verificación de herramientas',312,249]]},
+      administrativo:{need:186,trained:142,sessions:307,advance:76.3,courses:[['Prevención de incidentes frecuentes',186,142],['Preparación segura de la tarea',180,133],['Normas generales de seguridad',184,139],['MTS-12 Desplazamiento seguro',128,91],['MTS-18 Señalización del área',149,116]]}
+    };
+    const trainers=[
+      {name:'Capacitador A01',people:74,trained:60,sessions:27,values:[82,78,74,70],adminValues:[88,82,79,76],groups:[['Equipo 01',86,78,70,75],['Equipo 02',80,71,68,64],['Equipo 03',91,83,79,74]],pending:[['Persona Ficticia 01','Equipo 01','MTS-12, MTS-18'],['Persona Ficticia 02','Equipo 02','MTS-04'],['Persona Ficticia 03','Equipo 03','MTS-27']],other:['Persona Ficticia 13','Equipo 01','Preparación segura de la tarea']},
+      {name:'Capacitador A02',people:78,trained:52,sessions:22,values:[72,68,65,62],adminValues:[79,75,71,69],groups:[['Equipo 04',77,70,64,59],['Equipo 05',69,66,61,58],['Equipo 06',73,68,70,65]],pending:[['Persona Ficticia 04','Equipo 04','MTS-18'],['Persona Ficticia 05','Equipo 05','MTS-04, MTS-12'],['Persona Ficticia 06','Equipo 06','MTS-27']],other:['Persona Ficticia 14','Equipo 05','Normas generales de seguridad']},
+      {name:'Capacitador A03',people:82,trained:60,sessions:19,values:[63,60,86,82],adminValues:[74,70,83,80],groups:[['Equipo 07',68,62,88,84],['Equipo 08',61,57,83,79],['Equipo 09',59,60,86,82]],pending:[['Persona Ficticia 07','Equipo 07','MTS-04, MTS-12'],['Persona Ficticia 08','Equipo 08','MTS-04'],['Persona Ficticia 09','Equipo 09','MTS-18']],other:['Persona Ficticia 15','Equipo 08','Prevención de incidentes frecuentes']},
+      {name:'Capacitador A04',people:86,trained:68,sessions:16,values:[85,81,77,74],adminValues:[91,87,84,81],groups:[['Equipo 10',89,84,81,76],['Equipo 11',83,79,75,72],['Equipo 12',84,80,76,73]],pending:[['Persona Ficticia 10','Equipo 10','MTS-27'],['Persona Ficticia 11','Equipo 11','MTS-12'],['Persona Ficticia 12','Equipo 12','MTS-18, MTS-27']],other:['Persona Ficticia 16','Equipo 11','Preparación segura de la tarea']}
+    ];
+    const priorityCodes=['MTS-04','MTS-12','MTS-18','MTS-27'];
+    let profile='operativo',trainerIndex=0;
+    const pct=(a,b)=>Math.round(a/b*1000)/10;
+    const heatClass=value=>'h'+(value>=85?5:value>=75?4:value>=65?3:value>=55?2:1);
+    const kpi=(label,value,small,tip)=>`<article class="kpi"><label>${label}${tip?` <button type="button" class="tip" aria-label="${tip}" data-tip="${tip}">?</button>`:''}</label><strong>${value}</strong><small>${small}</small></article>`;
+    function renderSummary(){
+      const data=profiles[profile];
+      document.getElementById('summary-kpis').innerHTML=kpi('Personas con necesidad',data.need,'Asignación vigente','Personas con al menos un contenido requerido.')+kpi('Personas capacitadas',data.trained,'Durante el período','Personas con al menos una instancia registrada.')+kpi('Avance general',data.advance.toFixed(1).replace('.',',')+'%','Cobertura de personas','Capacitadas dividido personas con necesidad.')+kpi('Instancias registradas',data.sessions.toLocaleString('es-AR'),'Registros persona-contenido','Una persona puede participar en más de una instancia.');
+      document.getElementById('course-title').textContent=`Avance ${profile}`;
+      document.getElementById('courses-body').innerHTML=data.courses.map((row,index)=>{const value=pct(row[2],row[1]);return `<tr><td>${row[0]}${index>2?' <span class="priority">PRIORITARIA</span>':''}</td><td>${row[1]}</td><td>${row[2]}</td><td><span class="progress ${value>=75?'high':value>=60?'mid':''}" title="${row[2]} capacitadas sobre ${row[1]} con necesidad">${value.toFixed(1).replace('.',',')}%</span></td></tr>`}).join('');
+      document.getElementById('priority-body').innerHTML=trainers.map(t=>{const values=profile==='operativo'?t.values:t.adminValues;return `<tr><td>${t.name}</td>${values.map(v=>`<td class="heat ${heatClass(v)}" tabindex="0" data-tip="Avance sintético: ${v}%" aria-label="Avance sintético: ${v}%">${v}%</td>`).join('')}<td><span class="progress high">${Math.round(values.reduce((a,b)=>a+b)/4)}%</span></td></tr>`}).join('');
+    }
+    function renderTrainer(){
+      const t=trainers[trainerIndex],overall=Math.round(t.values.reduce((a,b)=>a+b)/4);
+      document.getElementById('trainer-kpis').innerHTML=kpi('Personas asignadas',t.people,'Universo vigente')+kpi('Personas capacitadas',t.trained,'Con al menos un registro')+kpi('Avance prioritario',overall+'%','Promedio de contenidos','Promedio simple del avance de los cuatro contenidos prioritarios.')+kpi('Actividad semanal',t.sessions,'Registros persona-contenido');
+      document.getElementById('progress-panel').innerHTML=`<div class="panel-head"><div><h2>Avance por capacitación</h2><p>${t.name} · Contenidos prioritarios del período.</p></div></div><div class="table-scroll"><table><thead><tr><th>Capacitación</th><th>Avance</th><th>Progreso</th></tr></thead><tbody>${priorityCodes.map((code,i)=>`<tr><td>${code} · ${['Protección de manos','Desplazamiento seguro','Señalización del área','Verificación de herramientas'][i]}</td><td>${t.values[i]}%</td><td class="bar-cell"><div class="bar"><span style="width:${t.values[i]}%"></span></div></td></tr>`).join('')}</tbody></table></div>`;
+      document.getElementById('heatmap-panel').innerHTML=`<div class="panel-head"><div><h2>Avance por organización</h2><p>Comparación sintética entre los equipos asignados.</p></div><div class="legend"><span><i style="background:#eef6f3"></i>Menor</span><span><i style="background:#207c69"></i>Mayor</span></div></div><div class="table-scroll"><table class="heatmap"><thead><tr><th>Organización</th>${priorityCodes.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${t.groups.map(g=>`<tr><td>${g[0]}</td>${g.slice(1).map(v=>`<td class="heat ${heatClass(v)}" tabindex="0" data-tip="${v}% de avance" aria-label="${v}% de avance">${v}%</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+      document.getElementById('pending-panel').innerHTML=`<div class="panel-head"><div><h2>Personas pendientes</h2><p>Detalle ficticio para seguimiento del capacitador seleccionado.</p></div></div><div class="pending-controls"><label class="check"><input id="priority-check" type="checkbox" checked> Mostrar únicamente contenidos prioritarios</label><button class="download" type="button" id="fake-download">Descargar CSV</button></div><div class="table-scroll"><table><thead><tr><th>Persona</th><th>Organización</th><th>Capacitaciones pendientes</th></tr></thead><tbody>${t.pending.map(r=>`<tr data-priority="true"><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}<tr data-priority="false" hidden><td>${t.other[0]}</td><td>${t.other[1]}</td><td>${t.other[2]}</td></tr></tbody></table></div>`;
+      document.getElementById('priority-check').onchange=event=>document.querySelectorAll('#pending-panel tr[data-priority="false"]').forEach(row=>row.hidden=event.target.checked);
+      document.getElementById('fake-download').onclick=()=>downloadCsv(t);
+    }
+    function downloadCsv(t){const visibleRows=[...document.querySelectorAll('#pending-panel tbody tr:not([hidden])')].map(row=>[...row.cells].map(cell=>`"${cell.textContent}"`).join(','));const rows=['Persona,Organización,Capacitaciones pendientes',...visibleRows];const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+rows.join('\n')],{type:'text/csv'}));a.download=`pendientes-${t.name.toLowerCase().replaceAll(' ','-')}.csv`;a.click();URL.revokeObjectURL(a.href)}
+    function setMain(view,push=true){
+      document.querySelectorAll('[data-main]').forEach(b=>{const active=b.dataset.main===view;b.classList.toggle('active',active);active?b.setAttribute('aria-current','page'):b.removeAttribute('aria-current')});document.getElementById('summary-view').hidden=view!=='summary';document.getElementById('trainer-view').hidden=view!=='trainer';document.getElementById('page-title').textContent=view==='summary'?'Resumen del programa':'Avance por Capacitador';document.getElementById('page-copy').textContent=view==='summary'?'Necesidad y avance del universo seleccionado.':'Detalle del universo, avance y pendientes de cada capacitador.';if(push)history.replaceState(null,'',view==='trainer'?'#avance-capacitador':'#resumen');
+    }
+    function setSummaryTab(tab,push=true){document.querySelectorAll('[data-summary-tab]').forEach(b=>{const active=b.dataset.summaryTab===tab;b.classList.toggle('active',active);b.setAttribute('aria-selected',String(active))});document.getElementById('courses-panel').hidden=tab!=='courses';document.getElementById('priorities-panel').hidden=tab!=='priorities';if(push)history.replaceState(null,'',tab==='priorities'?'#prioritarias-capacitador':'#resumen')}
+    function setTrainerTab(tab){document.querySelectorAll('[data-trainer-tab]').forEach(b=>{const active=b.dataset.trainerTab===tab;b.classList.toggle('active',active);b.setAttribute('aria-selected',String(active))});['progress','heatmap','pending'].forEach(name=>document.getElementById(`${name}-panel`).hidden=name!==tab)}
+    document.querySelectorAll('[data-main]').forEach(b=>b.onclick=()=>setMain(b.dataset.main));document.querySelectorAll('[data-profile]').forEach(b=>b.onclick=()=>{profile=b.dataset.profile;document.querySelectorAll('[data-profile]').forEach(x=>{const active=x===b;x.classList.toggle('active',active);x.setAttribute('aria-pressed',String(active))});renderSummary()});document.querySelectorAll('[data-summary-tab]').forEach(b=>b.onclick=()=>setSummaryTab(b.dataset.summaryTab));document.querySelectorAll('[data-trainer-tab]').forEach(b=>b.onclick=()=>setTrainerTab(b.dataset.trainerTab));
+    document.querySelectorAll('[role="tablist"]').forEach(tablist=>tablist.addEventListener('keydown',event=>{if(!['ArrowLeft','ArrowRight'].includes(event.key))return;const tabs=[...tablist.querySelectorAll('[role="tab"]:not(:disabled)')];const current=tabs.indexOf(document.activeElement);const next=event.key==='ArrowRight'?(current+1)%tabs.length:(current-1+tabs.length)%tabs.length;tabs[next].focus();tabs[next].click();event.preventDefault()}));
+    const select=document.getElementById('trainer-select');select.innerHTML=trainers.map((t,i)=>`<option value="${i}">${t.name}</option>`).join('');select.onchange=()=>{trainerIndex=Number(select.value);renderTrainer()};
+    renderSummary();renderTrainer();
+    if(location.hash==='#avance-capacitador')setMain('trainer',false);else{setMain('summary',false);setSummaryTab(location.hash==='#prioritarias-capacitador'?'priorities':'courses',false)}
+  </script>
+</body>
+</html>

@@ -12,6 +12,7 @@ El pipeline se apoya en dos casos de estudio complementarios:
 
 - [Coloquios.db - Modelado de datos en SQLite](./coloquios.db/): diseño de la base, históricos, catálogos, vistas, índices y reglas de datos.
 - [Coloquios - Dashboard de seguimiento](./coloquios/): funcionamiento del dashboard, cálculos, indicadores, visualizaciones y reportes.
+- [Evolución del dashboard](./coloquios/actualizacion/): reorganización de la navegación y generación de reportes HTML semanales por coordinador.
 
 El pipeline funciona como puerta de entrada para comprender la solución completa. Los otros documentos permiten profundizar en cada componente sin repetir toda la implementación en un único README.
 

@@ -1,5 +1,7 @@
 # Coloquios de Seguridad - Sistema de Seguimiento de Instancias Formativas de Seguridad Industrial
 
+> **Primera etapa del proyecto.** Este documento describe la construcción de la base de datos y la primera versión del dashboard. La [actualización de navegación y reportes semanales](./actualizacion/) documenta su evolución posterior.
+
 ## Resumen Ejecutivo
 
 En la empresa donde trabajo existe un programa interno de Seguridad Industrial que en este documento voy a llamar **"Coloquio Breve"**: instancias periódicas que el personal debe completar sobre contenidos específicos de su tarea. No todo el personal necesita los mismos contenidos: depende de su perfil laboral (personal de campo/operativo o de oficina/administrativo) y de la unidad a la que pertenece dentro de la organización.
@@ -59,7 +61,7 @@ Una base de datos real y normalizada, que sirviera como única fuente de verdad 
 
 > **Sobre los indicadores de éxito:** al momento de iniciar el proyecto no existía una línea de base suficientemente confiable para realizar una comparación válida. Por eso, el criterio de éxito no fue "mejorar un número existente", sino **habilitar por primera vez una medición reproducible**: que cada capacitador supiera quién tiene pendiente, que el porcentaje de avance pudiera recalcularse con las mismas reglas y que un jefe pudiera realizar seguimiento individual y comparar resultados.
 
-## Arquitectura General
+## Arquitectura General de la primera etapa
 
 La solución se apoya en fuentes periódicas con la asignación organizativa de cada persona y su clasificación como operativa o administrativa. A partir de ellas diseñé el esquema de la base de datos, las vistas, la matriz de necesidades por unidad y la asignación formal de capacitadores.
 
@@ -87,9 +89,9 @@ flowchart TB
 - El registro histórico de cada instancia dictada, incluyendo fecha, persona y capacitador responsable.
 - Vistas SQL que encapsulan las combinaciones de datos más utilizadas por el dashboard.
 
-**El dashboard**, construido en Streamlit, se organiza en cinco vistas funcionales. Las principales vistas analíticas utilizan filtros de fecha y componentes reutilizables para los indicadores.
+**En esta primera etapa, el dashboard**, construido en Streamlit, se organizó en cinco vistas funcionales. Las principales vistas analíticas utilizaban filtros de fecha y componentes reutilizables para los indicadores. La navegación fue reorganizada posteriormente, como se explica en la [actualización del caso](./actualizacion/).
 
-**La capa de reporting** genera exportaciones PNG mediante tablas redibujadas con Matplotlib, pensadas para utilizarse fuera del navegador, y archivos CSV para consultas y seguimiento operativo.
+**La capa de reporting inicial** generaba exportaciones PNG mediante tablas redibujadas con Matplotlib y archivos CSV para consultas y seguimiento operativo. La etapa siguiente incorporó [reportes HTML autocontenidos](./actualizacion/) para reunir ese material semanal en un único archivo por coordinador.
 
 ### Normalización en el origen: un proyecto complementario
 
@@ -133,7 +135,7 @@ coloquios_breves/
 └── app.py                # Punto de entrada y navegación entre vistas
 ```
 
-Esta separación es también la base del plan de modularización mencionado en "Próximos Pasos": actualmente `app.py` todavía concentra parte de la lógica de interfaz y de orquestación.
+Esta estructura fue el punto de partida de una modularización posterior, que separó las pantallas y redujo la concentración de lógica de interfaz y orquestación en `app.py`.
 
 ## Tecnologías Utilizadas
 
@@ -166,7 +168,7 @@ flowchart LR
 
 ## Solución Implementada
 
-### Las cinco vistas del dashboard
+### Las cinco vistas del dashboard inicial
 
 ```mermaid
 flowchart TD
@@ -189,7 +191,7 @@ flowchart TD
 - **Avance por capacitador:** cruza el universo formal de personas asignadas con los contenidos requeridos. Incluye gráficos de avance, mapa de calor por unidad, detalle de personas capacitadas y pendientes, y una lista exportable a CSV para enviar a cada capacitador.
 - **SG-SST:** identifica quién recibió al menos una instancia asociada al Sistema de Gestión de Seguridad y Salud en el Trabajo, sin depender de que exista una obligación formal registrada para esa persona.
 
-Las vistas analíticas principales comparten un filtro global de fechas y componentes reutilizables, para mantener consistencia visual y de comportamiento. La vista SG-SST utiliza su propio universo consolidado.
+Las vistas analíticas principales compartían un filtro global de fechas y componentes reutilizables, para mantener consistencia visual y de comportamiento. La vista SG-SST utilizaba su propio universo consolidado. Esta descripción corresponde a la primera versión; la [actualización](./actualizacion/) muestra la navegación posterior.
 
 ### Cómo se calcula el porcentaje de avance
 
@@ -246,7 +248,7 @@ Las siguientes ilustraciones reproducen las funciones principales con **datos co
 
 ## Próximos Pasos
 
-- [ ] Modularizar la interfaz del dashboard y separar la orquestación de datos. Actualmente `app.py` concentra cerca de 1500 líneas y todavía combina responsabilidades de interfaz y coordinación.
+- [x] Modularizar la interfaz del dashboard y separar la orquestación de datos.
 - [ ] Generar el diagrama completo de dependencias entre vistas SQL y funciones de carga.
 - [ ] Incorporar un histórico de necesidades para conocer la unidad y los contenidos requeridos de cada persona en el momento exacto de cada registro.
 - [ ] Crear un entorno virtual con `uv`, con versiones específicas de las dependencias y ejecución aislada del entorno global de Python.
