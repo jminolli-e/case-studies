@@ -8,10 +8,9 @@ La primera etapa reemplazó un seguimiento basado en Excel y Power Query por una
 
 ## Qué cambió
 
-- El dashboard se dividió en pantallas y subsecciones orientadas a preguntas concretas.
+- La información del dashboard crecio tanto que fue necesario dividirla en pantallas y subsecciones dentro de cada pantalla.
 - Se conservaron los cálculos y reglas existentes, pero se redujo el contenido renderizado al análisis elegido.
-- Se incorporaron dos reportes HTML semanales: uno para cada coordinador.
-- Cada reporte reúne únicamente la información de los capacitadores asignados a ese coordinador.
+- Se incorporaron dos reportes HTML con el fin de mostrar el avance del programa en cuestiones puntuales.
 - La preparación quedó automatizada; la revisión y el envío por correo continúan siendo manuales.
 
 ## Del armado manual a un único archivo
