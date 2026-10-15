@@ -1,6 +1,6 @@
 # Evolución del dashboard: navegación y reportes semanales
 
-> **Demostración pública y sintética.** Todos los nombres, cifras, agrupaciones y registros son ficticios. Las demos conservan la disposición general y los patrones de interacción de la solución, pero fueron reconstruidas desde cero con otra paleta, sin capturas, código visual ni datos del entorno productivo.
+> **Aclaraciones** Todos los nombres, cifras, agrupaciones y registros son ficticios. Las demos conservan la disposición general y los patrones de interacción de la solución, pero fueron reconstruidas desde cero con otra paleta, sin capturas, código visual ni datos del entorno productivo.
 
 Esta es la segunda etapa del [caso de seguimiento de coloquios](../). Un **coloquio** es una instancia breve de capacitación sobre seguridad. Cada persona tiene determinados contenidos requeridos, su **necesidad**, y los **capacitadores** registran las instancias realizadas.
 
