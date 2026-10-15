@@ -1,96 +1,59 @@
-# Evolución del dashboard: navegación y reportes semanales
+# Evolución del dashboard: navegación y reportes HTML
 
-> **Demostración pública y sintética.** Todos los nombres, cifras, agrupaciones y registros son ficticios. Las demos conservan la disposición general y los patrones de interacción de la solución, pero fueron reconstruidas desde cero con otra paleta, sin capturas, código visual ni datos del entorno productivo.
+> **Demostración pública y sintética.** Todos los nombres, cifras, agrupaciones y registros son ficticios. Las demos reproducen la estructura general y los patrones de interacción de la solución, pero fueron reconstruidas sin utilizar datos ni código visual del entorno productivo.
 
-Esta es la segunda etapa del [caso de seguimiento de coloquios](../). Un **coloquio** es una instancia breve de capacitación sobre seguridad. Cada persona tiene determinados contenidos requeridos, su **necesidad**, y los **capacitadores** registran las instancias realizadas.
+Este dashboard permite consultar el avance de un programa interno de capacitación y hacer el seguimiento individual de cada capacitador. Es la continuación del [caso de seguimiento de coloquios](../), cuya primera etapa reemplazó un proceso basado en Excel y Power Query por una base SQLite y un dashboard en Streamlit.
 
-La primera etapa reemplazó un seguimiento basado en Excel y Power Query por una base SQLite normalizada y un dashboard Streamlit. Con el uso, la herramienta sumó indicadores y tablas; algunas pantallas se hicieron extensas y el seguimiento semanal todavía exigía combinar varios archivos fuera del sistema.
+Esta actualización se concentró en dos problemas que aparecieron con el uso: la dificultad para navegar un dashboard que había acumulado demasiado contenido y la preparación manual de los reportes semanales.
 
-## Qué cambió
+## El problema: demasiado contenido en cada pantalla
 
-- El dashboard se dividió en pantallas y subsecciones orientadas a preguntas concretas.
-- Se conservaron los cálculos y reglas existentes, pero se redujo el contenido renderizado al análisis elegido.
-- Se incorporaron dos reportes HTML semanales: uno para cada coordinador.
-- Cada reporte reúne únicamente la información de los capacitadores asignados a ese coordinador.
-- La preparación quedó automatizada; la revisión y el envío por correo continúan siendo manuales.
+A medida que el dashboard creció, sus pantallas incorporaron más indicadores, tablas, gráficos y mapas de calor. El contenido estaba dividido por títulos, pero seguía ubicado en una única página extensa.
 
-## Del armado manual a un único archivo
+Para llegar a la información necesaria había que desplazarse demasiado. Además, no todas las visualizaciones eran relevantes para todas las personas que consultaban el tablero. Cuando se agregaba o modificaba un bloque, el resto del contenido cambiaba de posición y resultaba difícil volver a encontrarlo.
 
-Antes, los dos coordinadores descargaban CSV, PNG y capturas, separaban pendientes por capacitador y organizaban la información hoja por hoja en Excel. Luego preparaban múltiples archivos para sus capacitadores, sus propios jefes y el jefe de los capacitadores. El trabajo combinado demandaba aproximadamente una hora semanal.
+## La solución: pantallas y secciones
 
-Ahora el flujo es:
+Opté por dividir la interfaz en dos niveles de navegación:
 
-1. Seleccionar el período de actividad correspondiente a la semana.
-2. Ejecutar en Python las consultas y los cálculos reproducibles.
-3. Generar dos reportes, uno por coordinador.
-4. Descargar y revisar un único HTML integrado por coordinador.
-5. Enviarlo manualmente a los capacitadores asignados, al jefe del coordinador y al jefe de los capacitadores.
+- Una **pantalla** es una opción principal del menú lateral, como `Resumen` o `Reportes`.
+- Una **sección** es un bloque de análisis dentro de una pantalla, seleccionado mediante las pestañas ubicadas sobre el contenido.
 
-La actividad respeta el período semanal seleccionado. El avance acumulado se calcula desde el inicio del año hasta la fecha de corte, de modo que el mismo documento combina situación general y movimiento reciente.
+Cada sección responde una pregunta concreta y muestra como máximo uno o dos gráficos o tablas relacionados. De esta manera, el usuario elige primero qué pantalla necesita y después qué análisis quiere consultar, sin recorrer todos los componentes del dashboard.
 
-## Qué contiene cada reporte
+### Pantalla Resumen
 
-- Avance acumulado de contenidos prioritarios.
-- Actividad de la semana seleccionada.
-- Comparación de prioridades.
-- Detalle de avance por capacitador.
-- Distribución de capacitaciones dictadas.
-- Personas y capacitaciones pendientes.
-- Filtros por capacitador y contenidos prioritarios.
-- Descarga CSV del detalle visible.
-- Notas breves sobre alcance y cálculo.
+La pantalla `Resumen` concentra los indicadores generales del programa. Sus secciones permiten cambiar entre distintos análisis sin cargar todos los gráficos uno debajo del otro.
 
-El HTML contiene sus estilos, datos e interacción. Puede abrirse localmente en un navegador sin instalar Python, conectarse a la base ni ingresar al dashboard.
+![Pantalla Resumen y sus secciones](./assets/dashboard-resumen.png)
+
+### Pantalla Reportes
+
+La pantalla `Reportes` separa la generación de documentos del resto de los análisis. Allí se selecciona el período y se inicia la preparación de los reportes HTML.
+
+![Pantalla para generar reportes HTML](./assets/dashboard-reportes.png)
+
+## Reportes HTML semanales
+
+El seguimiento semanal estaba a cargo de dos coordinadores y alcanzaba a cerca de 30 capacitadores. Para preparar la información se combinaban PNG y CSV descargados del dashboard, capturas de pantalla y archivos Excel con los pendientes de capacitación. El resultado podía distribuirse como un libro consolidado o como archivos individuales, y generalmente se concentraba en las capacitaciones prioritarias del trimestre.
+
+La preparación de ese material demandaba aproximadamente una hora semanal entre ambos coordinadores. Para simplificarla, desarrollé dos reportes HTML autocontenidos, uno por coordinador. Cada archivo reúne el avance general del programa y permite consultar el avance y todos los pendientes de cada capacitador, con la posibilidad de filtrar los contenidos prioritarios.
+
+Los reportes se abren localmente en un navegador y no requieren ingresar al dashboard ni instalar Python. La generación quedó automatizada; la revisión y el envío continúan siendo decisiones manuales.
 
 ## Demos navegables
 
 - [Explorar el dashboard público](https://jminolli-e.github.io/case-studies/coloquios/actualizacion/demo/dashboard.html)
-- [Abrir un reporte semanal de ejemplo](https://jminolli-e.github.io/case-studies/coloquios/actualizacion/demo/)
+- [Abrir un reporte HTML de ejemplo](https://jminolli-e.github.io/case-studies/coloquios/actualizacion/demo/)
 
-La réplica del dashboard implementa `Resumen` y `Avance por Capacitador`. Algunas pestañas se muestran deshabilitadas para comunicar la estructura sin simular funcionalidades que no forman parte de esta demostración. Los selectores, vistas de prioridades, mapa de calor, pendientes y tooltips utilizan datos sintéticos.
+## Estado actual y próximo avance
 
-![Resumen del dashboard reconstruido](./assets/dashboard-resumen.png)
+La interfaz operativa continúa construida en Streamlit. Prioriza la utilidad diaria, la trazabilidad de la información y la aplicación consistente de las reglas de cálculo.
 
-![Prioridades por capacitador](./assets/dashboard-prioritarias-capacitador.png)
-
-![Avance por capacitador](./assets/dashboard-avance-capacitador.png)
-
-![Reporte HTML semanal](./assets/reporte-html.png)
-
-## Estado actual
-
-La interfaz operativa actual está construida en Streamlit y prioriza la consulta, la trazabilidad y la utilidad diaria. La réplica pública utiliza HTML, CSS y JavaScript para ofrecer una muestra portable y visualmente diferenciada.
-
-Existe una migración inicial hacia React, TypeScript y FastAPI. Todavía no reemplaza al dashboard actual ni reproduce toda su funcionalidad; una etapa futura buscará una experiencia visual más refinada sin perder las reglas ya validadas.
-
-## Conceptos usados
-
-<details>
-<summary><strong>Coloquio</strong></summary>
-
-Instancia breve de capacitación sobre un contenido de seguridad.
-</details>
-
-<details>
-<summary><strong>Necesidad</strong></summary>
-
-Contenido que una persona debe completar según su perfil y asignación organizativa vigente.
-</details>
-
-<details>
-<summary><strong>Capacitador</strong></summary>
-
-Persona que dicta coloquios y consulta el avance y los pendientes de las personas que tiene asignadas.
-</details>
-
-<details>
-<summary><strong>Coordinador</strong></summary>
-
-Persona que supervisa un grupo de capacitadores, revisa su reporte semanal y controla su distribución manual.
-</details>
+Ya existe una prueba inicial de migración a React y TypeScript. El próximo avance será convertirla en un frontend operativo con una experiencia visual más cuidada, utilizando Node.js como entorno de desarrollo y conservando las reglas ya validadas en la solución actual.
 
 ## Alcance y privacidad
 
-La hora semanal describe el costo aproximado del proceso anterior, no una medición de ahorro validada después del despliegue. La necesidad histórica continúa calculándose con la asignación vigente, una limitación documentada desde la primera etapa.
+La hora semanal corresponde a una estimación del tiempo que demandaba el proceso anterior; no representa una medición formal de ahorro posterior a la implementación.
 
-Este caso excluye nombres de empresa, personas, ubicaciones, correos, rutas, métricas productivas y código fuente corporativo. Las demos no fueron construidas a partir de una copia anonimizada de la base real.
+Este caso excluye nombres de empresa, personas, ubicaciones, correos, rutas, métricas productivas y código fuente corporativo. Las demos y capturas utilizan datos ficticios y no fueron construidas a partir de una copia anonimizada de la base real.
