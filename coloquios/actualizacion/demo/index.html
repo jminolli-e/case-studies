@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="es">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Avance MTS Inspectores · Reporte Convenio A</title><style>
+<title>Avance MTS Capacitadores · Reporte Convenio A</title><style>
     :root { --bg:#F5F6F8; --surface:#FFFFFF; --text:#25303A; --muted:#707B85;
       --border:#E2E7EB; --table-header:#EEF1F4; --subtle:#F7F9FA;
       --header-start:#303840; --header-end:#4A555E; --header-secondary:#CBD2D7;
@@ -165,7 +165,7 @@
 }
 </style></head>
 <body><div style="padding:8px 16px;background:#FFF7DA;color:#6F5514;font:600 12px Segoe UI,Arial,sans-serif;text-align:center">Demostración interactiva · Todos los nombres y valores son ficticios</div>
-  <header><div class="header-row"><div><h1>Avance MTS Inspectores</h1>
+  <header><div class="header-row"><div><h1>Avance MTS Capacitadores</h1>
     <div class="badge">Reporte Convenio A · Área de Seguridad Industrial</div>
     <div class="header-kpis"><div><div class="header-label">Avance acumulado</div><div class="header-value">01/01 al 30/09</div></div>
       <div><div class="header-label">Actividad del período</div><div class="header-value">01/09 al 30/09</div></div>
@@ -189,7 +189,7 @@
         aria-describedby="total-weighted-old" aria-expanded="false">?</button>
       <span class="bubble" id="total-weighted-old" role="tooltip">
         <strong class="tooltip-title">Total ponderado</strong>
-        <span class="tooltip-description">Divide todos los cumplimientos por todas las necesidades del grupo; no es un promedio de porcentajes.</span>
+        <span class="tooltip-description">Divide todos los cumplimientos por todas las necesidades del convenio; no es un promedio de porcentajes.</span>
         <span class="tooltip-formula">Capacitados / Necesidad × 100 = 538 / 624 × 100 = 86.2%</span>
         <span class="tooltip-note">Cada asignación persona-MTS aporta una unidad al cálculo.</span>
       </span>
@@ -221,7 +221,7 @@ Necesidad: 174"><span class="pill" style="--pill-bg:#bbf7d0;--pill-fg:#14532d">8
         aria-describedby="total-weighted-current" aria-expanded="false">?</button>
       <span class="bubble" id="total-weighted-current" role="tooltip">
         <strong class="tooltip-title">Total ponderado</strong>
-        <span class="tooltip-description">Divide todos los cumplimientos por todas las necesidades del grupo; no es un promedio de porcentajes.</span>
+        <span class="tooltip-description">Divide todos los cumplimientos por todas las necesidades del convenio; no es un promedio de porcentajes.</span>
         <span class="tooltip-formula">Capacitados / Necesidad × 100 = 502 / 624 × 100 = 80.4%</span>
         <span class="tooltip-note">Cada asignación persona-MTS aporta una unidad al cálculo.</span>
       </span>
@@ -242,12 +242,12 @@ Necesidad: 174"><span class="pill" style="--pill-bg:#dcfce7;--pill-fg:#14532d">7
 
       </div>
     </section>
-    <p class="scope-note"><strong>Alcance del detalle:</strong> el avance general incluye personal que actualmente no tiene inspector responsable asignado. Por ese motivo, sus totales pueden no coincidir con la suma del detalle por inspector.</p>
-    <section><h2>Avance por inspector · Convenio A</h2>
-      <p class="section-intro">Detalle del convenio por inspector responsable.</p>
+    <p class="scope-note"><strong>Alcance del detalle:</strong> el avance general incluye personal que actualmente no tiene capacitador responsable asignado. Por ese motivo, sus totales pueden no coincidir con la suma del detalle por capacitador.</p>
+    <section><h2>Avance por capacitador · Convenio A</h2>
+      <p class="section-intro">Detalle del convenio por capacitador responsable.</p>
       <div class="inspector-selector">
         <span class="inspector-selector-label">MTS prioritarios visualizados</span>
-        <div class="inspector-semester-buttons" role="group" aria-label="Seleccionar semestre del avance por inspector">
+        <div class="inspector-semester-buttons" role="group" aria-label="Seleccionar semestre del avance por capacitador">
           <button type="button" class="inspector-semester-button" data-inspector-semester="old" aria-pressed="false" aria-controls="inspector-panel-old">1er semestre</button>
           <button type="button" class="inspector-semester-button active" data-inspector-semester="current" aria-pressed="true" aria-controls="inspector-panel-current">2do semestre</button>
         </div>
@@ -257,7 +257,7 @@ Necesidad: 174"><span class="pill" style="--pill-bg:#dcfce7;--pill-fg:#14532d">7
     <article id="inspector-panel-old" class="table-wrap inspector-panel old" data-inspector-panel="old" hidden>
       <div class="wrap-title"><span>MTS prioritarios 1er semestre</span><small>Detalle del convenio</small></div>
       <div class="table-scroll"><table class="inspector-table">
-        <thead><tr><th class="inspector">Inspector responsable</th><th title="MTS-03 Orden del espacio de trabajo">MTS-03</th><th title="MTS-09 Prevención de caídas">MTS-09</th><th title="MTS-21 Manipulación de cargas">MTS-21</th><th title="MTS-34 Control previo a la tarea">MTS-34</th><th class="total">Total ponderado</th></tr></thead>
+        <thead><tr><th class="inspector">Capacitador responsable</th><th title="MTS-03 Orden del espacio de trabajo">MTS-03</th><th title="MTS-09 Prevención de caídas">MTS-09</th><th title="MTS-21 Manipulación de cargas">MTS-21</th><th title="MTS-34 Control previo a la tarea">MTS-34</th><th class="total">Total ponderado</th></tr></thead>
         <tbody><tr><td class="inspector">Capacitador A01</td><td class="advance" title="Capacitados: 15
 Necesidad: 17"><span class="pill" style="--pill-bg:#bbf7d0;--pill-fg:#14532d">88.2%</span></td><td class="advance" title="Capacitados: 15
 Necesidad: 18"><span class="pill" style="--pill-bg:#bbf7d0;--pill-fg:#14532d">83.3%</span></td><td class="advance" title="Capacitados: 15
@@ -297,7 +297,7 @@ Necesidad: 80"><span class="pill" style="--pill-bg:#dcfce7;--pill-fg:#14532d">77
     <article id="inspector-panel-current" class="table-wrap inspector-panel current" data-inspector-panel="current">
       <div class="wrap-title"><span>MTS prioritarios 2do semestre</span><small>Detalle del convenio</small></div>
       <div class="table-scroll"><table class="inspector-table">
-        <thead><tr><th class="inspector">Inspector responsable</th><th title="MTS-04 Protección de manos">MTS-04</th><th title="MTS-12 Desplazamiento seguro">MTS-12</th><th title="MTS-18 Señalización del área">MTS-18</th><th title="MTS-27 Verificación de herramientas">MTS-27</th><th class="total">Total ponderado</th></tr></thead>
+        <thead><tr><th class="inspector">Capacitador responsable</th><th title="MTS-04 Protección de manos">MTS-04</th><th title="MTS-12 Desplazamiento seguro">MTS-12</th><th title="MTS-18 Señalización del área">MTS-18</th><th title="MTS-27 Verificación de herramientas">MTS-27</th><th class="total">Total ponderado</th></tr></thead>
         <tbody><tr><td class="inspector">Capacitador A01</td><td class="advance" title="Capacitados: 14
 Necesidad: 17"><span class="pill" style="--pill-bg:#bbf7d0;--pill-fg:#14532d">82.4%</span></td><td class="advance" title="Capacitados: 14
 Necesidad: 18"><span class="pill" style="--pill-bg:#dcfce7;--pill-fg:#14532d">77.8%</span></td><td class="advance" title="Capacitados: 14
@@ -482,10 +482,10 @@ Capacitador A03: 7">
 
     <section class="pending-section">
       <h2>Pendientes de capacitación · Convenio A</h2>
-      <p class="section-intro">Necesidades operativas pendientes al 30/09. Seleccioná un inspector para consultar y descargar su detalle.</p>
+      <p class="section-intro">Necesidades operativas pendientes al 30/09. Seleccioná un capacitador para consultar y descargar su detalle.</p>
       <div class="pending-controls">
-        <label class="pending-field" for="pending-inspector"><span>Inspector responsable</span>
-          <select id="pending-inspector"><option value="">Seleccionar inspector</option><option value="Capacitador A01">Capacitador A01</option><option value="Capacitador A02">Capacitador A02</option><option value="Capacitador A03">Capacitador A03</option><option value="Capacitador A04">Capacitador A04</option><option value="Capacitador A05">Capacitador A05</option><option value="Capacitador A06">Capacitador A06</option></select>
+        <label class="pending-field" for="pending-inspector"><span>Capacitador responsable</span>
+          <select id="pending-inspector"><option value="">Seleccionar capacitador</option><option value="Capacitador A01">Capacitador A01</option><option value="Capacitador A02">Capacitador A02</option><option value="Capacitador A03">Capacitador A03</option><option value="Capacitador A04">Capacitador A04</option><option value="Capacitador A05">Capacitador A05</option><option value="Capacitador A06">Capacitador A06</option></select>
         </label>
         <label class="pending-check" for="pending-priority-only">
           <input id="pending-priority-only" type="checkbox" checked>
@@ -493,7 +493,7 @@ Capacitador A03: 7">
         </label>
         <button id="pending-download" type="button" disabled>Descargar CSV</button>
       </div>
-      <p id="pending-status" class="pending-status">Seleccioná un inspector para mostrar sus pendientes.</p>
+      <p id="pending-status" class="pending-status">Seleccioná un capacitador para mostrar sus pendientes.</p>
       <div id="pending-results" class="table-wrap pending-results" hidden>
         <div class="table-scroll pending-scroll"><table class="pending-table">
           <thead><tr><th>Sobre</th><th>Apellido y Nombre</th><th>Organización</th><th>Capacitaciones pendientes</th></tr></thead>
@@ -517,7 +517,7 @@ Capacitador A03: 7">
         <li>Cambios en las necesidades de capacitación.</li>
         <li>Licencias prolongadas o de corta duración.</li>
         <li>Traslados que modifican las necesidades de una persona.</li>
-        <li>Cambios en las organizaciones asignadas al inspector.</li>
+        <li>Cambios en las organizaciones asignadas al capacitador responsable.</li>
       </ul></div>
     </section>
   </main>
@@ -576,7 +576,7 @@ Capacitador A03: 7">
       pendingResults.hidden=true;
       pendingEmpty.hidden=true;
       pendingDownload.disabled=true;
-      pendingStatus.textContent='Seleccioná un inspector para mostrar sus pendientes.';
+      pendingStatus.textContent='Seleccioná un capacitador para mostrar sus pendientes.';
       return;
     }
 
@@ -612,7 +612,7 @@ Capacitador A03: 7">
   priorityOnly.addEventListener('change',renderPending);
   pendingDownload.addEventListener('click',()=>{
     const quoteCsv=value=>'"'+String(value??'').replace(/"/g,'""')+'"';
-    const csvRows=[['Inspector','Sobre','Apellido y Nombre','Organización','Capacitaciones pendientes']];
+    const csvRows=[['Capacitador responsable','Sobre','Apellido y Nombre','Organización','Capacitaciones pendientes']];
     visiblePendingRows.forEach(row=>csvRows.push([
       row.Inspector,
       row.Sobre,
@@ -624,9 +624,11 @@ Capacitador A03: 7">
     const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
     const url=URL.createObjectURL(blob);
     const link=document.createElement('a');
-    const inspector=inspectorSelect.value.normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-zA-Z0-9]+/g,'_').replace(/^_|_$/g,'').toLowerCase();
+    const normalizeFilename=value=>value.normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-zA-Z0-9]+/g,'_').replace(/^_|_$/g,'').toLowerCase();
+    const convenio=normalizeFilename(pendingMeta.dataset.convenio);
+    const inspector=normalizeFilename(inspectorSelect.value);
     link.href=url;
-    link.download='pendientes_'+pendingMeta.dataset.convenio+'_'+inspector+'_'+pendingMeta.dataset.corte+'.csv';
+    link.download='pendientes_'+convenio+'_'+inspector+'_'+pendingMeta.dataset.corte+'.csv';
     link.click();
     URL.revokeObjectURL(url);
   });
