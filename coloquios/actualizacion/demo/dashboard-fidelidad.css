@@ -57,6 +57,20 @@ h1,.period,.sidebar,.card,.convention-card,.segments,.tabs,.panel{font-family:'P
 .sidebar input[type=date]::-webkit-datetime-edit{padding:0}
 .sidebar input[type=date]::-webkit-calendar-picker-indicator{width:14px;height:14px;margin:0;opacity:.95}
 .top{position:sticky;top:0;z-index:10;border-bottom:1px solid #cde9e3;box-shadow:0 1px 0 #cde9e3}
-#trainer-kpis .card:first-child .numbers>div:first-child:after{content:'Personas únicas del universo seleccionado';display:block;color:#64748b;font-size:11px;margin-top:5px;max-width:180px}
-#trainer-kpis .card:first-child .numbers>div:nth-child(2):after{content:'Al menos una capacitación pendiente en el período';display:block;color:#64748b;font-size:11px;margin-top:5px;max-width:180px}
+#summary-kpis .badge.kpi-progress small{color:#64748b;font-size:10px;font-weight:700}
+#summary-kpis .badge.kpi-progress .progress-value{color:#18856f;font-size:12px;font-weight:800}
+#trainer-kpis .card h3.kpi-heading{justify-content:flex-start}
+#trainer-kpis .numbers small{display:block;margin-top:5px;color:#64748b;font-size:11px;line-height:1.45;max-width:210px}
+#trainer-kpis .kpi-track{height:5px;background:#e1f1ee;border-radius:5px;margin-top:12px;overflow:hidden}
+#trainer-kpis .kpi-track span{display:block;height:5px;margin:0;background:#718052}
+#trainer-kpis .semester-second .kpi-track span{background:#365d83}
+#trainer-kpis .no-aplica{margin-top:24px;color:#64748b;font-size:18px;font-weight:700}
+#trainer-kpis .card footer b{color:#1a2e2b;font-weight:800}
+.summary-kpi-help{position:relative;display:inline-grid;flex:0 0 14px;place-items:center;width:14px;height:14px;border:1px solid currentColor;border-radius:50%;color:#64748b;font-size:9px;font-weight:800;line-height:1;cursor:help;outline:none}
+.summary-kpi-tooltip{position:absolute;left:50%;top:calc(100% + 8px);z-index:30;display:grid;width:280px;max-width:calc(100vw - 40px);padding:12px 14px;border-radius:8px;border:1px solid #25b899;background:#18856f;color:#fff;font-size:11px;font-weight:500;line-height:1.35;text-align:left;opacity:0;visibility:hidden;pointer-events:none;transform:translate(-50%,-3px);transition:opacity .15s,transform .15s;white-space:normal}
+.summary-kpi-tooltip-section{display:grid;gap:3px;padding:8px 0}
+.summary-kpi-tooltip-section:first-child{padding-top:0}.summary-kpi-tooltip-section:last-child{padding-bottom:0}.summary-kpi-tooltip-section+.summary-kpi-tooltip-section{border-top:1px solid #ffffff47}
+.card .summary-kpi-tooltip-section strong{color:#fff;font-size:11px;font-weight:800;line-height:1.35}
+.card .summary-kpi-tooltip-section>span{color:#fff;font-size:10px;font-weight:500;line-height:1.35;text-transform:none}
+.summary-kpi-help:hover .summary-kpi-tooltip,.summary-kpi-help:focus .summary-kpi-tooltip{opacity:1;visibility:visible;transform:translate(-50%,0)}
 @media(max-width:800px){.convention-body{grid-template-columns:110px 1fr}.legend{justify-content:flex-start!important}.panel-head{display:block}.chart-row{grid-template-columns:140px 1fr}.card h3{gap:8px;flex-wrap:wrap}}
