@@ -43,9 +43,9 @@
       if (azar() < .18) continue;
       necesidades.push({ persona: persona.id, codigo: curso.codigo });
       if (azar() < .69) {
-        const mes = 1 + Math.floor(azar() * 9);
+        const mes = 1 + Math.floor(azar() * 10);
         const dia = 1 + Math.floor(azar() * 27);
-        actividad.push({ persona: persona.id, codigo: curso.codigo, capacitador: inspectores[Math.floor(azar() * inspectores.length)], fecha: `2031-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}` });
+        actividad.push({ persona: persona.id, codigo: curso.codigo, capacitador: inspectores[Math.floor(azar() * inspectores.length)], fecha: `2026-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}` });
       }
     }
   }
