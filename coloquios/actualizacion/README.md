@@ -31,6 +31,8 @@ Mientras GitHub Pages no está configurado, las reconstrucciones pueden consulta
 - [Fuente de la réplica del dashboard](./demo/dashboard.html)
 - [Fuente del reporte HTML interactivo](./demo/index.html)
 
+También están disponibles versiones en construcción basadas en la interfaz más reciente: [dashboard actual](./demo/dashboard-actual.html) y [reporte actual](./demo/reporte-actual.html). Comparten datos ficticios reproducibles; el dashboard implementa únicamente los recorridos habilitados en la demostración. Las versiones anteriores se conservan para comparación.
+
 ## Qué cambió
 
 | Antes | Problema | Ahora | Solución aportada |
