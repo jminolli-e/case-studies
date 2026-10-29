@@ -73,4 +73,10 @@ h1,.period,.sidebar,.card,.convention-card,.segments,.tabs,.panel{font-family:'P
 .card .summary-kpi-tooltip-section strong{color:#fff;font-size:11px;font-weight:800;line-height:1.35}
 .card .summary-kpi-tooltip-section>span{color:#fff;font-size:10px;font-weight:500;line-height:1.35;text-transform:none}
 .summary-kpi-help:hover .summary-kpi-tooltip,.summary-kpi-help:focus .summary-kpi-tooltip{opacity:1;visibility:visible;transform:translate(-50%,0)}
+.needs-chart-panel{margin:24px 0 0;min-width:0}
+.needs-chart-header{padding:20px 24px 8px;border-radius:14px;background:linear-gradient(135deg,#18856f,#0f5c4d);font-family:'Plus Jakarta Sans',sans-serif;color:#fff;margin-top:8px}
+.needs-chart-header h3{font-size:18px;font-weight:800;margin:0 0 4px;color:#fff}
+.needs-chart-header p{font-size:12px;font-weight:400;line-height:1.4;margin:0 0 16px;color:rgba(255,255,255,.65)}
+.needs-chart{width:100%;min-width:0;background:#fff}
+.needs-chart svg{font-family:'Plus Jakarta Sans',sans-serif}
 @media(max-width:800px){.convention-body{grid-template-columns:110px 1fr}.legend{justify-content:flex-start!important}.panel-head{display:block}.chart-row{grid-template-columns:140px 1fr}.card h3{gap:8px;flex-wrap:wrap}}

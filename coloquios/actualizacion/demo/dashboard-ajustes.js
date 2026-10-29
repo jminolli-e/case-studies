@@ -94,5 +94,37 @@
     const priorityHelp = help([['Personas pendientes de prioritarias',universe === 'operativo' ? 'Acumulado: 01/01/2026 – 28/10/2026. Independiente del filtro de fechas. Personas únicas con al menos una MTS prioritaria pendiente, sobre necesidades vigentes.' : 'Las capacitaciones prioritarias por semestre corresponden al universo operativo.']]);
     document.querySelector('#trainer-kpis').innerHTML = `<article class="card inspector-card"><h3 class="kpi-heading">${personIcon}Personas a cargo${generalHelp}</h3><div class="numbers"><div><strong>${fmt(people.length)}</strong><span>Personas asignadas</span><small>Personas únicas del universo seleccionado</small></div><div><strong>${fmt(pending)}</strong><span>Personas pendientes</span><small>Al menos una capacitación pendiente en el período</small></div></div><footer><b>${organizations}</b> organizaciones · <b>${universe === 'operativo' ? repartos : count}</b> ${universe === 'operativo' ? 'repartos' : 'charlas dictadas en el período'}</footer></article><article class="card inspector-card"><h3 class="kpi-heading">${icons.shield}Personas pendientes de prioritarias${priorityHelp}</h3>${universe === 'operativo' ? `<div class="numbers">${sections}</div><footer>Cada semestre cuenta <b>personas únicas</b>; una persona puede aparecer en ambos.</footer>` : '<div class="no-aplica">No aplica</div>'}</article>`;
   }
+
+  const originalSummaryAdvance = summaryAdvance;
+  summaryAdvance = function () {
+    originalSummaryAdvance();
+    const panel = document.querySelector('#summary-content .panel:nth-of-type(2)');
+    panel.className = 'needs-chart-panel';
+    const range = dates();
+    const formatDate = value => value.split('-').reverse().join('/');
+    panel.innerHTML = `<header class="needs-chart-header"><h3>📊 Necesidad vs Capacitados — ${formatDate(range.desde)} al ${formatDate(range.hasta)}</h3><p>Personal con necesidad de capacitación asignada · Ajustá las fechas del panel izquierdo para comparar períodos</p></header><div class="needs-chart" role="img" aria-label="Necesidad y capacitados por capacitación"></div>`;
+    const operational = state.summaryUniverse === 'operativo';
+    const courses = d.capacitaciones.filter(c => c.universo === state.summaryUniverse);
+    const rows = courses.map(c => ({ course: c, ...calc({ universo: c.universo, codigo: c.codigo }) }));
+    const colors = c => c.semestre === '1er' ? ['#eef1e6','#718052'] : c.semestre === '2do' ? ['#edf2f7','#365d83'] : ['#a7f3d0','#18856f'];
+    const labels = courses.map(c => (operational && c.semestre ? '⚑ ' : '') + c.codigo);
+    const hover = rows.map(r => `<b style="font-size:13px">${r.course.codigo} ${r.course.nombre}</b><br>━━━━━━━━━━━━━━━<br>📋 Necesidad: <b>${fmt(r.necesidad)}</b><br>✅ Capacitados: <b>${fmt(r.capacitados)}</b><br>📈 Avance: <b>${pct(r.porcentaje)}</b>`);
+    const averageCount = rows.reduce((s, r) => s + r.capacitados, 0) / rows.length;
+    const averagePct = rows.reduce((s, r) => s + (r.porcentaje || 0), 0) / rows.length;
+    const traces = [
+      { type: 'bar', name: 'Necesidad', x: labels, y: rows.map(r => r.necesidad), marker: { color: courses.map(c => operational ? colors(c)[0] : '#a7f3d0'), line: { color: courses.map(c => operational ? colors(c)[1] : '#6ee7b7'), width: operational ? .13 : 1 } }, hovertext: hover, hoverinfo: 'text' },
+      { type: 'bar', name: 'Capacitados', x: labels, y: rows.map(r => r.capacitados), marker: { color: courses.map(c => operational ? colors(c)[1] : '#18856f'), line: { color: courses.map(c => operational ? colors(c)[1] : '#0f5c4d'), width: operational ? .13 : 1 } }, hovertext: hover, hoverinfo: 'text', text: rows.map(r => pct(r.porcentaje)), textposition: 'outside', textfont: { family: 'Plus Jakarta Sans', color: '#0f5c4d', size: operational ? 10 : 11 } }
+    ];
+    const layout = {
+      autosize: true, height: operational ? 468 : 378, barmode: 'overlay', font: { family: 'Plus Jakarta Sans', size: 12, color: '#1a2e2b' }, plot_bgcolor: '#fff', paper_bgcolor: '#fff',
+      xaxis: { gridcolor: '#e0eeeb', linecolor: '#b2d8d1', tickfont: { color: '#1a2e2b', size: 11 }, tickangle: operational ? -35 : 0, automargin: true },
+      yaxis: { gridcolor: '#e0eeeb', linecolor: '#b2d8d1', tickfont: { color: '#1a2e2b', size: 11 }, automargin: true },
+      legend: { font: { color: '#1a2e2b', size: 14 }, bgcolor: 'rgba(232,245,242,.85)', bordercolor: '#b2d8d1', borderwidth: 1, orientation: 'h', yanchor: 'bottom', y: 1.02, xanchor: 'right', x: 1 }, margin: { t: 45, b: 18, l: 9, r: 9 },
+      hoverlabel: { bgcolor: '#f0faf7', font: { size: 12, family: 'Plus Jakarta Sans', color: '#1a2e2b' }, bordercolor: '#18856f' },
+      shapes: [{ type: 'line', xref: 'paper', x0: 0, x1: 1, y0: averageCount, y1: averageCount, line: { color: operational ? '#000' : '#f59e0b', width: 2.5, dash: 'dot' } }],
+      annotations: [{ xref: 'paper', x: 1, y: averageCount, yanchor: 'bottom', text: `Promedio ${averagePct.toFixed(1)}%`, showarrow: false, font: { family: 'Plus Jakarta Sans', size: 12, color: operational ? '#080808' : '#b45309' } }]
+    };
+    window.dashboardChartReady = Plotly.newPlot(panel.querySelector('.needs-chart'), traces, layout, { responsive: true, displaylogo: false, toImageButtonOptions: { filename: 'necesidad-capacitados-sintetico' } });
+  };
   render();
 })();
