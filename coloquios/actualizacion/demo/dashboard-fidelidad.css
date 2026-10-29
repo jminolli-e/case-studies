@@ -4,14 +4,14 @@
 body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif!important;font-size:12px}
 h1,.period,.sidebar,.card,.convention-card,.segments,.tabs,.panel{font-family:'Plus Jakarta Sans',system-ui,'Segoe UI',sans-serif}
 .sidebar{background:linear-gradient(180deg,#18856f,#0f5c4d)!important}
-.nav button{font-family:inherit;font-weight:700;font-size:12px;line-height:1.25}
-.nav button:disabled{opacity:.76}.nav button.active{background:rgba(255,255,255,.16)}
-.sidebar label{font:700 10px 'Segoe UI',sans-serif!important;color:rgba(255,255,255,.6);letter-spacing:.04em;text-transform:uppercase}
-.sidebar input[type=date]{color-scheme:dark;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.12);font:700 13px 'Segoe UI',sans-serif;padding:7px 9px;border-radius:6px}
+.nav button{font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-weight:550;font-size:12px;line-height:1.25;color:rgba(255,255,255,.76)}
+.nav button:disabled{opacity:1}.nav button.active{background:rgba(255,255,255,.16);color:#fff;font-weight:700}
+.sidebar label{font:700 9.5px/1.2 'Plus Jakarta Sans',system-ui,sans-serif!important;color:rgba(255,255,255,.6);letter-spacing:.08em;text-transform:uppercase}
+.sidebar input[type=date]{color-scheme:dark;background:#428375;color:#fff;border:0;font:600 12px 'Plus Jakarta Sans',system-ui,sans-serif;padding:0 8px;border-radius:6px}
 .sidebar input[type=date]::-webkit-calendar-picker-indicator{opacity:1;cursor:pointer}
 .sidebar input[type=date]:focus-visible{outline:2px solid #b8e8df;outline-offset:2px}
 .sidebar label{margin-top:12px;margin-bottom:5px}.sidebar input[type=date]{margin-bottom:3px}
-.refresh{font-family:'Segoe UI',sans-serif;font-size:12px;font-weight:400;opacity:1!important;padding:6px 8px}
+.refresh{font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:12px;font-weight:400;opacity:1!important;padding:6px 8px}
 .main h1{font-weight:900;font-size:34.2px;letter-spacing:-.45px}
 .card h3{font-size:15px;font-weight:800;line-height:1.2}.kpi-heading svg{width:24px;height:24px;stroke-width:2.4;color:#0f5c4d}
 #summary-kpis .card{padding:14.4px 18px;min-height:148px}
@@ -19,11 +19,12 @@ h1,.period,.sidebar,.card,.convention-card,.segments,.tabs,.panel{font-family:'P
 .numbers strong{font-size:36px;font-weight:800;line-height:1;color:#1a2e2b}
 .numbers span{display:block;margin-top:5.76px;color:#64748b;font-size:10px;font-weight:700;line-height:1.25;letter-spacing:.04em}
 .numbers small{margin-top:1.7px;color:#64748b;font-size:11px;line-height:1.25}
-.badge.kpi-progress{border-radius:999px;padding:4px 8px;gap:8px;background:#b8e8df;color:#18856f;font-size:12px;font-weight:800}
+.badge.kpi-progress{border-radius:999px;padding:4px 8px;gap:8px;background:#b9e7de;color:#18856f;font-size:12px;font-weight:800;line-height:1.45;white-space:nowrap}
 .kpi-progress small{font-size:10px;font-weight:700;color:#64748b}
-.notice{font-family:'Segoe UI',sans-serif;font-size:12px;line-height:1.4;background:#fff8e8;padding:11px 16px}
+.notice,.notice *{font-family:'Plus Jakarta Sans',system-ui,sans-serif!important;color:inherit}
+.notice{font-size:12px;line-height:1.45;background:#fff8e6;padding:10px 16px;border-radius:14px;border:1px solid #f2c460;color:#7a4b00;font-weight:400}
 .segments button{font-family:inherit;font-size:12px;font-weight:500}.segments button.active{font-weight:600;background:#e8f5f2}
-.tabs button{font-family:inherit;font-size:12px;font-weight:650}.tabs button.active{font-weight:750}.tabs button:disabled{opacity:.76}
+.tabs{border-radius:12px}.tabs button{font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:12.384px;font-weight:700;padding:8px 14px;min-height:34px;color:#64748b}.tabs button.active{font-weight:700;color:white}.tabs button:disabled{opacity:.76}
 .panel-head{padding:12px 14px 10px;column-gap:12px}
 .panel-head h3{font-size:15px;font-weight:750;line-height:1.2;color:#0f5c4d}
 .panel-head .caption{font-size:11px;line-height:1.2;color:#64748b;margin-top:3px}
@@ -34,7 +35,7 @@ h1,.period,.sidebar,.card,.convention-card,.segments,.tabs,.panel{font-family:'P
 .kpi-heading [title]{cursor:help;font-family:'Segoe UI',sans-serif;font-weight:400;font-size:13px}
 .panel .caption{font-weight:400}.panel .pct{font-weight:700;font-variant-numeric:tabular-nums;border-radius:7px;min-height:27px;line-height:19px}
 .priority-semester-first{background:#4f6034;color:white}.priority-semester-second{background:#274764;color:white}
-.convention-card h3{font-size:18px;font-weight:800}.convention-body{grid-template-columns:150px 1fr}.convention-details strong{font-size:32px;font-weight:800}.convention-details .split b{font-size:20px;font-weight:800}.convention-details .split{color:#64748b;font-size:11px}.ring span{font-size:26px;font-weight:800}
+.convention-card h3{font-size:17px;font-weight:750}.convention-body{grid-template-columns:150px minmax(0,1fr);align-items:center;gap:18px}.convention-body>div:first-child{display:grid;justify-items:center;gap:8.64px}.convention-details strong{font-size:30px;font-weight:800}.convention-details .split b{font-size:20px;font-weight:800}.convention-details .split{color:#64748b;font-size:11px}.ring{width:112px;height:112px;flex-shrink:0}.ring span{font-size:24px;font-weight:800;line-height:1;letter-spacing:0;color:#0f5c4d;font-variant-numeric:tabular-nums}.convention-body>div:first-child>small{font-size:11px;color:#64748b;font-weight:500}
 #trainer-kpis .card{padding:20px 24px 10px}#trainer-kpis .numbers{margin-top:20px}
 #trainer-kpis .card .numbers>div:nth-child(2) strong{color:#1a2e2b}
 #trainer-kpis .card:nth-child(2) .numbers>div:first-child strong{color:#4f6034}
@@ -55,7 +56,7 @@ h1,.period,.sidebar,.card,.convention-card,.segments,.tabs,.panel{font-family:'P
 .sidebar input[type=date]{display:block;width:100%;min-width:0;font-variant-numeric:tabular-nums;letter-spacing:0;font-style:normal}
 .sidebar input[type=date]::-webkit-datetime-edit{padding:0}
 .sidebar input[type=date]::-webkit-calendar-picker-indicator{width:14px;height:14px;margin:0;opacity:.95}
-.top{position:sticky;top:0;z-index:10;border-bottom:1px solid #d8e8e4}
+.top{position:sticky;top:0;z-index:10;border-bottom:1px solid #cde9e3;box-shadow:0 1px 0 #cde9e3}
 #trainer-kpis .card:first-child .numbers>div:first-child:after{content:'Personas únicas del universo seleccionado';display:block;color:#64748b;font-size:11px;margin-top:5px;max-width:180px}
 #trainer-kpis .card:first-child .numbers>div:nth-child(2):after{content:'Al menos una capacitación pendiente en el período';display:block;color:#64748b;font-size:11px;margin-top:5px;max-width:180px}
 @media(max-width:800px){.convention-body{grid-template-columns:110px 1fr}.legend{justify-content:flex-start!important}.panel-head{display:block}.chart-row{grid-template-columns:140px 1fr}.card h3{gap:8px;flex-wrap:wrap}}
