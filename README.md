@@ -6,7 +6,7 @@ Repositorio destinado a documentar proyectos de automatización, análisis de da
 
 Este es el caso principal del proyecto de seguimiento de coloquios e instancias formativas. Explica cómo se conectan la carga operativa, la base de datos y el dashboard para transformar una actividad registrada en información de gestión.
 
-- [Pipeline de Coloquios](./pipeline-coloquios/)
+- [Pipeline de Coloquios](./pipeline_coloquios/)
 
 El pipeline se apoya en dos casos de estudio complementarios:
 
