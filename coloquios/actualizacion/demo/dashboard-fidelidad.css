@@ -56,7 +56,7 @@ h1,.period,.sidebar,.card,.convention-card,.segments,.tabs,.panel{font-family:'P
 .sidebar input[type=date]{display:block;width:100%;min-width:0;font-variant-numeric:tabular-nums;letter-spacing:0;font-style:normal}
 .sidebar input[type=date]::-webkit-datetime-edit{padding:0}
 .sidebar input[type=date]::-webkit-calendar-picker-indicator{width:14px;height:14px;margin:0;opacity:.95}
-.top{position:sticky;top:0;z-index:10;border-bottom:1px solid #cde9e3;box-shadow:0 1px 0 #cde9e3}
+.top{position:sticky;top:0;z-index:10;border-bottom:2px solid #e1f1ee;box-shadow:none;font-size:9.792px;font-weight:600;letter-spacing:.01em}
 #summary-kpis .badge.kpi-progress small{color:#64748b;font-size:10px;font-weight:700}
 #summary-kpis .badge.kpi-progress .progress-value{color:#18856f;font-size:12px;font-weight:800}
 #trainer-kpis .card h3.kpi-heading{justify-content:flex-start}
@@ -79,4 +79,13 @@ h1,.period,.sidebar,.card,.convention-card,.segments,.tabs,.panel{font-family:'P
 .needs-chart-header p{font-size:12px;font-weight:400;line-height:1.4;margin:0 0 16px;color:rgba(255,255,255,.65)}
 .needs-chart{width:100%;min-width:0;background:#fff}
 .needs-chart svg{font-family:'Plus Jakarta Sans',sans-serif}
+.inspector-advance{font-family:'Plus Jakarta Sans',sans-serif;border-radius:7px}
+.inspector-advance-rows{display:grid;gap:5px;padding:14px}
+.inspector-advance-row{display:grid;grid-template-columns:minmax(200px,35%) minmax(0,1fr);align-items:center;gap:10px}
+.inspector-advance-label{font-size:11px;font-weight:400;color:#1a2e2b}
+.inspector-advance-track{position:relative;height:23px;background:#e8f5f2;border-radius:4px}
+.inspector-advance-bar{position:relative;height:100%;border-radius:4px}
+.inspector-advance-value{position:absolute;top:50%;transform:translateY(-50%);font-size:10px;font-weight:700;white-space:nowrap}
+.inspector-advance-value.inside{left:8px}.inspector-advance-value.outside{color:#1a2e2b}
+@media(max-width:600px){.inspector-advance-row{grid-template-columns:140px minmax(0,1fr)}}
 @media(max-width:800px){.convention-body{grid-template-columns:110px 1fr}.legend{justify-content:flex-start!important}.panel-head{display:block}.chart-row{grid-template-columns:140px 1fr}.card h3{gap:8px;flex-wrap:wrap}}

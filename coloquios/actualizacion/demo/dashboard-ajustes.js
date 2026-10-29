@@ -44,6 +44,7 @@
     originalTrainer();
     const selected = document.querySelector('#trainer-select').value;
     if (selected) renderInspectorKpis(selected);
+    if (selected && state.trainerTab === 'avance' && state.trainerUniverse === 'operativo') renderInspectorChart(selected);
     if (state.trainerTab !== 'organizaciones' || state.trainerUniverse !== 'operativo' || !document.querySelector('#trainer-select').value) return;
     const table = document.querySelector('#trainer-content .heatmap');
     if (!table) return;
@@ -69,6 +70,17 @@
     const legend = document.querySelector('#trainer-content .legend');
     if (legend) legend.insertAdjacentHTML('afterbegin', '<span><i style="background:#f1f5f9"></i>Sin necesidad</span>');
   };
+
+  function renderInspectorChart(inspector) {
+    const rows = d.capacitaciones.filter(c => c.universo === 'operativo').map(course => ({ course, ...calc({ universo: 'operativo', inspector, codigo: course.codigo }) })).filter(r => r.necesidad).sort((a, b) => b.porcentaje - a.porcentaje);
+    const bars = rows.map(row => {
+      const [background, foreground] = color(row.porcentaje);
+      const label = `${pct(row.porcentaje)} (${row.capacitados}/${row.necesidad})`;
+      const tooltip = `${row.course.codigo} ${row.course.nombre} · Avance: ${pct(row.porcentaje)} · Pendientes: ${row.pendientes}`;
+      return `<div class="inspector-advance-row" title="${tooltip}"><div class="inspector-advance-label">${row.course.codigo} ${row.course.nombre}</div><div class="inspector-advance-track"><div class="inspector-advance-bar" style="width:${row.porcentaje}%;background:${background}">${row.porcentaje >= 30 ? `<span class="inspector-advance-value inside" style="color:${foreground}">${label}</span>` : ''}</div>${row.porcentaje < 30 ? `<span class="inspector-advance-value outside" style="left:calc(${row.porcentaje}% + 8px)">${label}</span>` : ''}</div></div>`;
+    }).join('');
+    document.querySelector('#trainer-content').innerHTML = `<article class="panel inspector-advance"><header class="panel-head"><h3>Avance por capacitación</h3><p class="caption">Porcentaje de personas capacitadas sobre la necesidad vigente de cada capacitación.</p>${legend()}</header><div class="inspector-advance-rows">${bars}</div></article>`;
+  }
 
   function renderInspectorKpis(inspector) {
     const universe = state.trainerUniverse;
