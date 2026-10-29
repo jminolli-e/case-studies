@@ -1,6 +1,6 @@
 # Evolución del dashboard: navegación y reportes HTML
 
-> **Demostración pública y sintética.** Todos los nombres, cifras, agrupaciones y registros son ficticios. Las demos reproducen la estructura general y los patrones de interacción de la solución, pero fueron reconstruidas sin utilizar datos ni código visual del entorno productivo.
+> **Demostración pública y sintética.** Todos los nombres, cifras, agrupaciones y registros son ficticios. El dashboard es una reconstrucción parcial; el reporte actual adapta el renderer y la tipografía de la solución con datos generados para la demo, sin utilizar registros productivos.
 
 ## Contexto del proyecto
 
@@ -31,7 +31,7 @@ Mientras GitHub Pages no está configurado, las reconstrucciones pueden consulta
 - [Fuente de la réplica del dashboard](./demo/dashboard.html)
 - [Fuente del reporte HTML interactivo](./demo/index.html)
 
-También están disponibles versiones en construcción basadas en la interfaz más reciente: [dashboard actual](./demo/dashboard-actual.html) y [reporte actual](./demo/reporte-actual.html). Comparten datos ficticios reproducibles; el dashboard implementa únicamente los recorridos habilitados en la demostración. Las versiones anteriores se conservan para comparación.
+También está disponible el [reporte HTML actual interactivo](./demo/reporte-actual.html), con datos ficticios. Las versiones anteriores se conservan para comparación.
 
 ## Qué cambió
 
@@ -78,6 +78,23 @@ La información sirve para acompañar el trabajo de capacitación y señalar tar
 ![Pantalla Avance por Capacitador con el avance por capacitación seleccionado](./assets/dashboard-avance-capacitador.png)
 
 La réplica pública implementa estos flujos seleccionados con información sintética. No reproduce las seis pantallas ni todas las variantes administrativas del sistema productivo.
+
+### Evolución visual: menos es más
+
+Además de reorganizar la navegación, revisé la jerarquía visual de los componentes. Una métrica puede ser medible sin ser necesaria en una pantalla de uso diario: si nadie la consulta, ocupa espacio y obliga a las personas a recorrer más información para encontrar lo importante.
+
+La interfaz actual agrupa indicadores relacionados, incorpora el avance en las tarjetas de cada universo y reúne título, explicación, leyenda y tabla en componentes más fáciles de leer. La navegación lateral es más compacta. La antigua pantalla `Por Inspector` dejó de ser una pantalla independiente: su información útil se integró como `Actividad histórica` en `Avance por Inspector`, separando lo que una persona dictó de la responsabilidad sobre el universo que tiene asignado.
+
+| Antes: reconstrucción anterior | Después: reconstrucción actual |
+|---|---|
+| ![Resumen anterior con cuatro indicadores separados](./assets/dashboard-resumen.png) | ![Resumen actual con indicadores agrupados por universo](./assets/dashboard-resumen-actual.png) |
+| ![Prioridades anteriores por capacitador](./assets/dashboard-prioritarias-capacitador.png) | ![Prioridades actuales por inspector](./assets/dashboard-prioridades-actual.png) |
+
+Las imágenes anteriores son reconstrucciones sintéticas. Las imágenes actuales fueron generadas con los componentes y estilos de Streamlit de la solución, alimentados con datos ficticios; no contienen datos del tablero productivo. Los valores de ambos momentos son diferentes: la comparación muestra cambios de interfaz, no de resultados del programa.
+
+La [tabla completa de prioridades](./assets/dashboard-prioridades-tabla-completa.png) muestra 24 inspectores ficticios y el total ponderado de ambos grupos.
+
+![Reconstrucción actual del avance por organización](./assets/dashboard-organizacion-actual.png)
 
 ## Cómo se preparaba el seguimiento semanal
 
@@ -126,18 +143,18 @@ El documento reúne información que antes estaba distribuida entre varias panta
 - Listado final con todas las capacitaciones dictadas en el período, no sólo las que fueron definidas como prioritarias.
 - Inclusión de capacitadores sin actividad durante el período, para que la ausencia de registros también sea visible.
 - Personas y contenidos que continúan pendientes para cada capacitador responsable.
-- Filtro para mostrar sólo capacitaciones prioritarias o todas las capacitaciones pendientes, incluidas las que no son prioritarias.
+- Filtro para mostrar todas las capacitaciones operativas pendientes o sólo las prioritarias de un semestre.
 - Descarga CSV del detalle que está visible después de aplicar los filtros.
 - Tooltips que explican el significado y la fórmula de los indicadores.
 - Notas metodológicas sobre asignaciones, alcance y motivos por los que los porcentajes pueden cambiar.
 
 El listado de pendientes se obtiene cruzando el universo vigente de necesidades, la asignación actual de cada persona a un capacitador y las capacitaciones registradas durante el período acumulado. El resultado no es una lista cargada manualmente: se calcula a partir de las vistas y registros de la base.
 
-![Reporte HTML autocontenido con el resumen general y el avance por capacitador](./assets/reporte-html.png)
+La tabla de pendientes permite seleccionar un capacitador responsable, alternar entre contenidos prioritarios y el universo operativo completo, y descargar el detalle visible.
 
-La tabla de pendientes permite seleccionar un capacitador responsable, alternar entre contenidos prioritarios y el universo completo, y descargar el detalle visible. La captura siguiente muestra ese apartado con registros nominales sintéticos.
+El reporte también recibió la nueva tipografía y componentes agrupados. La versión actual conserva el filtro de pendientes por `Todos`, `1er semestre` y `2do semestre`, además de la descarga CSV del resultado visible.
 
-![Reporte HTML con la tabla de personas y capacitaciones pendientes](./assets/reporte-html-pendientes.png)
+Podés consultar el [reporte HTML actual interactivo](./demo/reporte-actual.html) para explorar directamente sus indicadores, filtros y descarga CSV.
 
 ## Por qué elegí un HTML autocontenido
 
@@ -195,7 +212,6 @@ charla5min/
 │       ├── reportes.py
 │       └── sg_sst.py
 ├── reports/
-│   ├── export_png.py              # Renderer de tablas PNG
 │   └── export_html.py             # Renderer HTML, CSS y JavaScript
 ├── tests/
 └── tools/                         # Capturas y baselines de caracterización
@@ -238,4 +254,4 @@ El objetivo no es cambiar de tecnología por sí mismo. Streamlit permitió entr
 
 ## Alcance y privacidad
 
-Este caso excluye nombres de empresa, personas, ubicaciones, correos, rutas, métricas productivas y código fuente corporativo. Las demos, capturas y animaciones utilizan información ficticia y no fueron construidas a partir de una copia anonimizada de la base real.
+Este caso excluye nombres de empresa, personas, ubicaciones, correos, rutas, métricas productivas y reglas o consultas SQL corporativas. Las demos, capturas y animaciones utilizan información ficticia y no fueron construidas a partir de una copia anonimizada de la base real. El HTML de la demo actual adapta el renderer visual productivo con datos sintéticos y terminología pública.

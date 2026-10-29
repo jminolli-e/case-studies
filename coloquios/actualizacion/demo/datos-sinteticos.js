@@ -18,17 +18,17 @@
     { codigo: 'ADM-02', nombre: 'Seguridad en oficinas', universo: 'administrativo', semestre: null },
     { codigo: 'ADM-03', nombre: 'Prevención de incendios', universo: 'administrativo', semestre: null }
   ];
-  const inspectores = ['Capacitador A01', 'Capacitador A02', 'Capacitador A03', 'Capacitador B01', 'Capacitador B02', 'Capacitador B03'];
+  const inspectores = ['A', 'B'].flatMap(grupo => Array.from({ length: 12 }, (_, i) => `Capacitador ${grupo}${String(i + 1).padStart(2, '0')}`));
   const organizaciones = ['Unidad Norte', 'Unidad Centro', 'Unidad Oeste', 'Unidad Este'];
   let estado = 82471;
   function azar() { estado = (estado * 1664525 + 1013904223) >>> 0; return estado / 4294967296; }
-  const personas = Array.from({ length: 144 }, (_, i) => ({
+  const personas = Array.from({ length: 576 }, (_, i) => ({
     id: 8001 + i,
     nombre: `Persona Ficticia ${String(i + 1).padStart(3, '0')}`,
     inspector: inspectores[i % inspectores.length],
-    organizacion: organizaciones[Math.floor(i / inspectores.length) % organizaciones.length],
+    organizacion: organizaciones[(Math.floor(i / inspectores.length) + Math.floor(i / (inspectores.length * 4))) % organizaciones.length],
     reparto: `Reparto ${String(1 + (i % 8)).padStart(2, '0')}`,
-    universo: i % 4 === 0 ? 'administrativo' : 'operativo'
+    universo: Math.floor(i / inspectores.length) % 4 === 0 ? 'administrativo' : 'operativo'
   }));
   const necesidades = [];
   const actividad = [];
