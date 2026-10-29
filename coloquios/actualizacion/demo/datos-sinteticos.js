@@ -6,18 +6,24 @@
   const capacitaciones = [
     { codigo: 'MTS-01', nombre: 'Prevención de incidentes', universo: 'operativo', semestre: null },
     { codigo: 'MTS-02', nombre: 'Preparación segura de la tarea', universo: 'operativo', semestre: null },
-    { codigo: 'MTS-03', nombre: 'Orden del espacio de trabajo', universo: 'operativo', semestre: '1er' },
-    { codigo: 'MTS-04', nombre: 'Protección de manos', universo: 'operativo', semestre: '2do' },
-    { codigo: 'MTS-09', nombre: 'Prevención de caídas', universo: 'operativo', semestre: '1er' },
-    { codigo: 'MTS-12', nombre: 'Desplazamiento seguro', universo: 'operativo', semestre: '2do' },
-    { codigo: 'MTS-18', nombre: 'Señalización del área', universo: 'operativo', semestre: '2do' },
-    { codigo: 'MTS-21', nombre: 'Manipulación de cargas', universo: 'operativo', semestre: '1er' },
-    { codigo: 'MTS-27', nombre: 'Verificación de herramientas', universo: 'operativo', semestre: '2do' },
-    { codigo: 'MTS-34', nombre: 'Control previo a la tarea', universo: 'operativo', semestre: '1er' },
+    { codigo: 'MTS-03', nombre: 'Orden del espacio de trabajo', universo: 'operativo', semestre: null },
+    { codigo: 'MTS-04', nombre: 'Protección de manos', universo: 'operativo', semestre: null },
+    { codigo: 'MTS-09', nombre: 'Prevención de caídas', universo: 'operativo', semestre: null },
+    { codigo: 'MTS-12', nombre: 'Desplazamiento seguro', universo: 'operativo', semestre: null },
+    { codigo: 'MTS-18', nombre: 'Señalización del área', universo: 'operativo', semestre: null },
+    { codigo: 'MTS-21', nombre: 'Manipulación de cargas', universo: 'operativo', semestre: null },
+    { codigo: 'MTS-27', nombre: 'Verificación de herramientas', universo: 'operativo', semestre: null },
+    { codigo: 'MTS-34', nombre: 'Control previo a la tarea', universo: 'operativo', semestre: null },
     { codigo: 'ADM-01', nombre: 'Ergonomía y pausas activas', universo: 'administrativo', semestre: null },
     { codigo: 'ADM-02', nombre: 'Seguridad en oficinas', universo: 'administrativo', semestre: null },
     { codigo: 'ADM-03', nombre: 'Prevención de incendios', universo: 'administrativo', semestre: null }
   ];
+  // Catálogo de igual extensión que la referencia: ocho prioridades entre
+  // 34 contenidos operativos, no ocho prioridades entre diez contenidos.
+  const adicionales = [8,10,11,14,15,16,17,19,20,22,28,29,30,40,44,46,47,49,50,52,56,57,58,59];
+  const codigosPrioritarios = { '1er': new Set([30,44,57,59]), '2do': new Set([16,19,29,56]) };
+  adicionales.forEach(numero => capacitaciones.push({codigo:`MTS-${String(numero).padStart(2,'0')}`,nombre:`Procedimiento seguro ${String(numero).padStart(2,'0')}`,universo:'operativo',semestre:null}));
+  capacitaciones.forEach(c=>{if(c.universo==='operativo'){const n=Number(c.codigo.slice(4));c.semestre=codigosPrioritarios['1er'].has(n)?'1er':codigosPrioritarios['2do'].has(n)?'2do':null}});
   const inspectores = ['A', 'B'].flatMap(grupo => Array.from({ length: 12 }, (_, i) => `Capacitador ${grupo}${String(i + 1).padStart(2, '0')}`));
   const organizaciones = ['Unidad Norte', 'Unidad Centro', 'Unidad Oeste', 'Unidad Este'];
   let estado = 82471;
@@ -27,7 +33,7 @@
     nombre: `Persona Ficticia ${String(i + 1).padStart(3, '0')}`,
     inspector: inspectores[i % inspectores.length],
     organizacion: organizaciones[(Math.floor(i / inspectores.length) + Math.floor(i / (inspectores.length * 4))) % organizaciones.length],
-    reparto: `Reparto ${String(1 + (i % 8)).padStart(2, '0')}`,
+    reparto: `Reparto ${String(1 + (Math.floor(i / inspectores.length) % 8)).padStart(2, '0')}`,
     universo: Math.floor(i / inspectores.length) % 4 === 0 ? 'administrativo' : 'operativo'
   }));
   const necesidades = [];
