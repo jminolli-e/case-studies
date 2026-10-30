@@ -5,7 +5,7 @@ Esta es la actualización de un [proyecto que ya había documentado](../): un ta
 La idea es poder pasar de una pregunta a una respuesta sin tener que reconstruir la información a mano. Por ejemplo:
 
 - ¿Cuántas personas forman parte del personal operativo y cuántas del administrativo?
-- ¿Cómo avanza una capacitación específica? ¿Y las capacitaciones prioritarias?
+- ¿Cómo avanza una capacitación específica? ¿Y las capacitaciones prioritarias del programa 2026?
 - ¿En qué fecha realizó una persona una capacitación?
 - ¿Cuántas personas tiene pendientes de capacitar un responsable y quiénes son?
 - ¿Dónde trabajan esas personas y qué temas del programa les faltan?
