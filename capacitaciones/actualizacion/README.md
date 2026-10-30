@@ -22,8 +22,8 @@ Esta actualización aborda ambos problemas: **reorganiza la navegación mejorand
 
 
 - **[Explorar el dashboard navegable](https://jminolli-e.github.io/case-studies/capacitaciones/actualizacion/demo/dashboard-actual.html):** recorrer las pantallas y secciones disponibles en la demo.
-- **[Abrir el reporte HTML interactivo](https://jminolli-e.github.io/case-studies/capacitaciones/actualizacion/demo/reporte-actual.html):** consultar indicadores, filtros y descarga CSV. La demo conserva algunas etiquetas «Convenio»; en este caso se utiliza «Grupo».
-- **Versiones anteriores:** se conservan la [réplica anterior del dashboard](./demo/dashboard.html) y el [reporte anterior](./demo/index.html) como archivos fuente.
+- **[Abrir el reporte HTML interactivo](https://jminolli-e.github.io/case-studies/capacitaciones/actualizacion/demo/reporte-actual.html):** consultar indicadores, filtros y descarga CSV.
+- **Versión anterior del tablero:** se conserva la [réplica anterior del dashboard](./demo/dashboard.html) como archivo fuente.
 
 ### Dos maneras de recorrer la solución
 
