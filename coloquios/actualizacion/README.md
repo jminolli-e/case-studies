@@ -7,11 +7,13 @@ La idea es poder pasar de una pregunta a una respuesta sin tener que reconstruir
 - ¿Cuántas personas forman parte del personal operativo y cuántas del administrativo?
 - ¿Cómo avanza una capacitación específica? ¿Y las capacitaciones prioritarias?
 - ¿En qué fecha realizó una persona una capacitación?
-- ¿Cuánto personal y quienes tiene pendientes de capacitar un responsable?
+- ¿Cuántas personas tiene pendientes de capacitar un responsable y quiénes son?
 - ¿Dónde trabajan esas personas y qué temas del programa les faltan?
 
-Son todas preguntas sencillas, la ventaja por sobre todo que tiene la solución es que se armo de manera que estas preguntas siempre se van a poder contestar, se actualiza solo, si tal persona esta de licencia, todas las metricas se modifican, si se cambia de puesto o organización se ajustan sus capacitaciones. 
-Las preguntas que contesta no son dificiles, pero lo que es complicado es la arquitectura detras para contestar esas preguntas y que ante distinto tipos de escenarios no haga falta recurrir a entrar y cambiar cosas porque pasaron los meses y se movieron muchos empleados de un lado a otro o ocurrieron otros imprevistos. 
+Las preguntas son sencillas. Lo desafiante es que las respuestas sigan teniendo sentido con el paso del tiempo, cuando las personas cambian de puesto u organización, toman una licencia o cambia su situación de alguna otra manera.
+
+La solución está pensada para acompañar esos cambios sin tener que corregir indicadores a mano cada vez que ocurre uno. Por ejemplo, cuando se actualizan los datos de una licencia o de un cambio de puesto, el tablero vuelve a calcular las métricas y las necesidades de capacitación que correspondan. Así, el objetivo es que el seguimiento siga siendo útil con el tiempo y requiera la menor intervención posible, sin depender de ajustes constantes en la herramienta.
+
 No todas las personas necesitan las mismas charlas: eso depende de su puesto, sus tareas y el departamento al que pertenecen. El tablero cruza esas necesidades con las capacitaciones registradas para mostrar tanto el panorama general como el detalle que permite actuar sobre los pendientes.
 
 Con el tiempo, el tablero fue sumando análisis útiles, pero también pantallas cada vez más largas. Además, para enviar el avance semanal a jefaturas y capacitadores había que navegar por distintas secciones, descargar planillas y gráficos, tomar capturas y reunir todo en un informe.
