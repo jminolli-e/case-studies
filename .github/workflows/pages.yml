@@ -7,7 +7,6 @@ on:
       - "index.html"
       - "sitio/**"
       - "capacitaciones/actualizacion/demo/**"
-      - "coloquios/actualizacion/demo/**"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -37,10 +36,6 @@ jobs:
           mkdir -p _site/sitio
           cp -R sitio/. _site/sitio/
           cp capacitaciones/actualizacion/demo/*.{html,css,js,ttf,txt} _site/capacitaciones/actualizacion/demo/
-          # Compatibilidad con enlaces públicos compartidos antes del cambio de nombre.
-          mkdir -p _site/coloquios/actualizacion/demo
-          cp _site/capacitaciones/actualizacion/demo/* _site/coloquios/actualizacion/demo/
-          cp coloquios/actualizacion/demo/*.html _site/coloquios/actualizacion/demo/
           touch _site/.nojekyll
 
       - name: Configure Pages
