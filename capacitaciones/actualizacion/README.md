@@ -64,20 +64,6 @@ Reorganicé la interfaz en dos niveles:
 
 La separación no es solamente visual. Los indicadores generales de una pantalla siguen calculándose una vez, pero las consultas y transformaciones propias de cada sección esperan hasta que alguien la elija. Así se evita preparar análisis que todavía no se están consultando. Más abajo cuento cómo se resolvió en Streamlit.
 
-### Resumen
-
-`Resumen` conserva los indicadores generales del programa y permite cambiar entre análisis como el avance por capacitación y las prioridades por capacitador. En lugar de apilar todas las tablas y gráficos, el área principal se reemplaza cuando cambia la sección.
-
-La sección de prioridades conserva la distinción operativa entre `Grupo A` y `Grupo B`, presenta sus indicadores generales y compara el avance de los capacitadores responsables. Para calcular el **avance ponderado** se dividen todos los cumplimientos por todas las capacitaciones requeridas; no se promedian los porcentajes individuales.
-
-### Avance por Capacitador
-
-Esta pantalla permite seleccionar un capacitador responsable y consultar las personas y contenidos que tiene asignados: su *universo* de seguimiento. En el tablero aparece como `Avance por Inspector`; en este caso utilizo «capacitador» para describir ese rol. Sus secciones separan el avance por contenido, el desglose por organización y las personas que todavía tienen capacitaciones pendientes.
-
-La información sirve para acompañar el trabajo de capacitación y señalar tareas pendientes, pero no pretende medir por sí sola la calidad o efectividad profesional de una persona. Los capacitadores también realizan otras tareas que no forman parte de estos indicadores.
-
-La réplica pública implementa estos flujos seleccionados con información sintética. No reproduce todas las pantallas ni todas las variantes administrativas del sistema productivo.
-
 ### Evolución visual: menos es más
 
 Además de reorganizar la navegación, revisé la jerarquía visual de los componentes. Una métrica puede ser medible sin ser necesaria en una pantalla de uso diario: si nadie la consulta, ocupa espacio y obliga a las personas a recorrer más información para encontrar lo importante.
