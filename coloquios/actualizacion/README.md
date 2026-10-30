@@ -19,7 +19,7 @@ No todas las personas necesitan las mismas charlas: eso depende de su puesto, su
 Con el tiempo, el tablero fue sumando análisis útiles, pero también pantallas cada vez más largas. Además, para enviar el avance semanal a jefaturas y capacitadores había que navegar por distintas secciones, descargar planillas y gráficos, tomar capturas y reunir todo en un informe.
 
 ### Entonces ¿Que resuelve esta actualización?
-Esta actualización aborda ambos problemas: **reorganiza la navegación y la presentación** para que sea más fácil encontrar cada consulta, y permite generar **reportes HTML interactivos** que reúnen las partes más importantes del seguimiento. La idea es que cada destinatario pueda encontrar en un mismo archivo las respuestas que necesita.
+Esta actualización aborda ambos problemas: **reorganiza la navegación mejorando el UX/UI ** para que sea más fácil encontrar cada consulta, y permite generar **reportes HTML interactivos** que reúnen las partes más importantes del seguimiento cuya idea es que cada destinatario del reporte semanal pueda encontrar en un mismo archivo las respuestas que necesita.
 
 
 - **[Explorar el dashboard navegable](https://jminolli-e.github.io/case-studies/coloquios/actualizacion/demo/dashboard-actual.html):** recorrer las pantallas y secciones disponibles en la demo.
