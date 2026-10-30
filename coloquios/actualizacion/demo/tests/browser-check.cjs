@@ -79,6 +79,8 @@ async function main() {
     await check("document.querySelectorAll('.inspector-advance-value.outside').length>0", 'etiquetas legibles en barras cortas');
     await evaluate("document.querySelector('[data-tab=organizaciones]').click()");
     await check("document.querySelectorAll('.organization-heatmap th').length===35 && getComputedStyle(document.querySelector('.organization-heatmap td')).position==='sticky'", 'mapa completo con organización fija');
+    await check("document.querySelectorAll('.organization-heatmap tbody tr').length>=8", 'mapa con al menos ocho organizaciones ficticias');
+    await check("(()=>{const p=document.querySelector('.heatmap-priority-footer'),a=[...p.querySelectorAll('.heatmap-priority-key')];const r=a.map(e=>e.getBoundingClientRect());return getComputedStyle(p).display==='flex'&&a.length===2&&Math.abs(r[0].y-r[1].y)<2&&r.every(x=>x.width<120)&&getComputedStyle(a[0]).backgroundColor==='rgb(238, 241, 230)'&&getComputedStyle(a[1]).backgroundColor==='rgb(237, 242, 247)'})()", 'referencias de semestre compactas, alineadas y con los colores correctos');
     await evaluate("document.querySelector('#desde').value='';document.querySelector('#desde').dispatchEvent(new Event('change'))");
     await check("!document.querySelector('.date-error').hidden && document.querySelector('#period').textContent.includes('01/10/2026')", 'fecha vacía no altera el período válido');
     await send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });

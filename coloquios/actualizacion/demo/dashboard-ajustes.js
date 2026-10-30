@@ -69,6 +69,13 @@
     });
     const legend = document.querySelector('#trainer-content .legend');
     if (legend) legend.insertAdjacentHTML('afterbegin', '<span><i style="background:#f1f5f9"></i>Sin necesidad</span>');
+    // El pie no es un encabezado: el grid de .panel-head estiraba una
+    // referencia sobre todo el ancho y desplazaba la otra al extremo opuesto.
+    const footer = table.closest('.panel').querySelector('.panel-head:last-child');
+    if (footer) {
+      footer.className = 'heatmap-priority-footer';
+      footer.innerHTML = '<span>Prioritarias:</span><span class="heatmap-priority-key first">1er semestre</span><span class="heatmap-priority-key second">2do semestre</span>';
+    }
   };
 
   function renderInspectorChart(inspector) {

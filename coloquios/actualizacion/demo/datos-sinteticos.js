@@ -25,14 +25,14 @@
   adicionales.forEach(numero => capacitaciones.push({codigo:`MTS-${String(numero).padStart(2,'0')}`,nombre:`Procedimiento seguro ${String(numero).padStart(2,'0')}`,universo:'operativo',semestre:null}));
   capacitaciones.forEach(c=>{if(c.universo==='operativo'){const n=Number(c.codigo.slice(4));c.semestre=codigosPrioritarios['1er'].has(n)?'1er':codigosPrioritarios['2do'].has(n)?'2do':null}});
   const inspectores = ['A', 'B'].flatMap(grupo => Array.from({ length: 12 }, (_, i) => `Capacitador ${grupo}${String(i + 1).padStart(2, '0')}`));
-  const organizaciones = ['Unidad Norte', 'Unidad Centro', 'Unidad Oeste', 'Unidad Este'];
+  const organizaciones = ['Unidad Norte', 'Unidad Centro', 'Unidad Oeste', 'Unidad Este', 'Unidad Sur', 'Unidad Río', 'Unidad Parque', 'Unidad Sierra', 'Unidad Valle', 'Unidad Lago', 'Unidad Puente', 'Unidad Jardín'];
   let estado = 82471;
   function azar() { estado = (estado * 1664525 + 1013904223) >>> 0; return estado / 4294967296; }
   const personas = Array.from({ length: 576 }, (_, i) => ({
     id: 8001 + i,
     nombre: `Persona Ficticia ${String(i + 1).padStart(3, '0')}`,
     inspector: inspectores[i % inspectores.length],
-    organizacion: organizaciones[(Math.floor(i / inspectores.length) + Math.floor(i / (inspectores.length * 4))) % organizaciones.length],
+    organizacion: organizaciones[(Math.floor(i / inspectores.length) + Math.floor(i / (inspectores.length * organizaciones.length))) % organizaciones.length],
     reparto: `Reparto ${String(1 + (Math.floor(i / inspectores.length) % 8)).padStart(2, '0')}`,
     universo: Math.floor(i / inspectores.length) % 4 === 0 ? 'administrativo' : 'operativo'
   }));
