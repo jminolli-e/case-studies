@@ -58,12 +58,10 @@ La animación reconstruye el recorrido anterior con datos ficticios; no es una g
 
 El menú lateral ya existía. El cambio fue organizar mejor lo que ocurría dentro de cada pantalla, en lugar de seguir agregando componentes uno debajo del otro. La navegación queda en dos niveles:
 
-1. **Pantallas:** se eligen desde el menú lateral y representan una consulta principal. `Resumen` y `Avance por Inspector` son dos ejemplos.
-2. **Secciones:** se eligen mediante los controles horizontales dentro de cada pantalla. Permiten pasar, por ejemplo, del avance por capacitación a las prioridades por inspector, mostrando sólo los componentes relacionados con esa consulta.
+1. **Pantallas:** se eligen desde el menú lateral y representan una consulta principal. `Resumen` y `Avance por Capacitador` son dos ejemplos.
+2. **Secciones:** se eligen mediante los controles horizontales dentro de cada pantalla. Permiten pasar, por ejemplo, del avance por capacitación a las prioridades por capacitador, mostrando sólo los componentes relacionados con esa consulta.
 
 ![Navegación actual: el número 1 encuadra las pantallas del menú lateral y el número 2 las secciones de Resumen](./assets/navegacion-secciones.png)
-
-En el tablero aparece la palabra «inspector»; en este caso utilizo «capacitador» para describir su rol en el programa.
 
 La separación no es solamente visual. Los indicadores generales de una pantalla siguen calculándose una vez, pero las consultas y transformaciones propias de cada sección esperan hasta que alguien la elija. Así se evita preparar análisis que todavía no se están consultando. Más abajo cuento cómo se resolvió en Streamlit.
 
@@ -88,7 +86,7 @@ Algunas tarjetas y tablas incorporan **tooltips**, pequeñas ayudas que aparecen
 
 </details>
 
-La navegación lateral también es más compacta. La antigua pantalla `Por Inspector` dejó de ser independiente: su información útil se integró como `Actividad histórica` en `Avance por Inspector`, separando lo que una persona dictó de la responsabilidad sobre las personas y contenidos que tiene asignados.
+La navegación lateral también es más compacta. La antigua pantalla de actividad por capacitador dejó de ser independiente: su información útil se integró como `Actividad histórica` en `Avance por Capacitador`, separando lo que una persona dictó de la responsabilidad sobre las personas y contenidos que tiene asignados.
 
 La reorganización busca reducir recorridos innecesarios y facilitar la consulta a personas con distintos niveles de familiaridad digital, sin quitar controles ni contexto útil. Al final se presenta una [comparación visual](#comparación-visual) de dos secciones.
 

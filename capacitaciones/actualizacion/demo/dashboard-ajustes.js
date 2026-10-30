@@ -36,7 +36,7 @@
     originalPriorities();
     const range = dates();
     const header = document.querySelector('#summary-content .panel-head h3');
-    if (header) header.textContent = `Avance Prioritarias por Inspector · ${range.desde.split('-').reverse().join('/')} - ${range.hasta.split('-').reverse().join('/')}`;
+    if (header) header.textContent = `Avance Prioritarias por Capacitador · ${range.desde.split('-').reverse().join('/')} - ${range.hasta.split('-').reverse().join('/')}`;
   };
 
   const originalTrainer = trainer;
