@@ -34,7 +34,7 @@ Esta actualización aborda ambos problemas: **reorganiza la navegación mejorand
 
 ## Un poco de contexto
 
-Las charlas de seguridad son capacitaciones breves. No todas las personas necesitan los mismos contenidos: estos dependen del puesto, las tareas y el departamento. Algunos se priorizan para concentrar el seguimiento durante una etapa del año.
+No todas las personas necesitan los mismos contenidos: estos dependen del puesto, las tareas y el departamento. Algunos se priorizan para concentrar el seguimiento durante una etapa del año.
 
 Además del avance general y los pendientes, el tablero permite comparar resultados por capacitación, gerencia, zona, organización y reparto; consultar la actividad histórica de los capacitadores y la situación de una persona; y revisar la cobertura de las capacitaciones obligatorias de SG-SST.
 
