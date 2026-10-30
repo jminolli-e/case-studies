@@ -1,6 +1,22 @@
 # Evolución del dashboard: navegación y reportes HTML
 
-La primera versión del tablero reemplazó un seguimiento en planillas por una base de datos y consultas en un tablero que corre localmente. Con el uso, los análisis crecieron en pantallas extensas y preparar el seguimiento semanal seguía requiriendo reunir varios archivos. Esta actualización reorganiza la navegación y genera reportes HTML interactivos por grupo, manteniendo las reglas de cálculo y la revisión humana.
+Esta es la actualización de un [proyecto que ya había documentado](../): un tablero para hacer seguimiento de las charlas de seguridad y saber cómo avanza el programa de capacitaciones.
+
+La idea es poder pasar de una pregunta a una respuesta sin tener que reconstruir la información a mano. Por ejemplo:
+
+- ¿Cuántas personas forman parte del personal operativo y cuántas del administrativo?
+- ¿Cómo avanza una capacitación específica? ¿Y las capacitaciones prioritarias?
+- ¿En qué fecha realizó una persona una capacitación?
+- ¿Cuántas personas tiene pendientes de capacitar un responsable?
+- ¿Dónde trabajan esas personas y qué temas del programa les faltan?
+
+No todas las personas necesitan las mismas charlas: eso depende de su puesto, sus tareas y el departamento al que pertenecen. El tablero cruza esas necesidades con las capacitaciones registradas para mostrar tanto el panorama general como el detalle que permite actuar sobre los pendientes.
+
+Con el tiempo, el tablero fue sumando análisis útiles, pero también pantallas cada vez más largas. Además, para enviar el avance semanal a jefaturas y capacitadores había que navegar por distintas secciones, descargar planillas y gráficos, tomar capturas y reunir todo en un informe.
+
+Esta actualización aborda ambos problemas: **reorganiza la navegación y la presentación** para que sea más fácil encontrar cada consulta, y permite generar **reportes HTML interactivos** que reúnen las partes más importantes del seguimiento. La idea es que cada destinatario pueda encontrar en un mismo archivo las respuestas que necesita.
+
+En el [caso original](../) cuento cómo el proyecto pasó de una planilla de Excel, que dificultaba responder estas preguntas y revisar los resultados, a una base de datos y un tablero de seguimiento. Aquí me centro en lo que cambió después.
 
 > **Demostraciones públicas con datos sintéticos.** Los nombres, cifras, agrupaciones y registros son ficticios. El dashboard es una reconstrucción parcial; el reporte adapta el renderer y la tipografía de la solución. Son demostraciones independientes: sus datos y períodos no deben compararse como si representaran un mismo conjunto.
 
@@ -8,7 +24,14 @@ La primera versión del tablero reemplazó un seguimiento en planillas por una b
 - **[Abrir el reporte HTML interactivo](https://jminolli-e.github.io/case-studies/coloquios/actualizacion/demo/reporte-actual.html):** consultar indicadores, filtros y descarga CSV. La demo conserva algunas etiquetas «Convenio»; en este caso se utiliza «Grupo».
 - **Versiones anteriores:** se conservan la [réplica anterior del dashboard](./demo/dashboard.html) y el [reporte anterior](./demo/index.html) como archivos fuente.
 
-## Contexto del proyecto
+### Dos maneras de recorrer la solución
+
+| Si querés... | Podés empezar por... |
+|---|---|
+| Consultar el avance, las prioridades o los pendientes | [El tablero navegable](https://jminolli-e.github.io/case-studies/coloquios/actualizacion/demo/dashboard-actual.html) |
+| Ver cómo se comparte el seguimiento con cada grupo | [El reporte HTML interactivo](https://jminolli-e.github.io/case-studies/coloquios/actualizacion/demo/reporte-actual.html) |
+
+## Un poco de contexto
 
 Un **coloquio** es una instancia breve de capacitación sobre un contenido de seguridad. No todas las personas necesitan completar los mismos contenidos: la necesidad depende del puesto, de las tareas que realizan y del departamento al que pertenecen. Algunos contenidos se definen como prioritarios para concentrar el seguimiento durante una etapa del año.
 
@@ -26,23 +49,21 @@ En resumen, el panel permite:
 
 En este caso utilizo dos términos que conviene distinguir:
 
-- **Capacitador responsable:** tiene asignado un universo de personas y contenidos sobre el que debe hacer seguimiento.
-- **Capacitador que dictó:** es quien figura en el registro de una capacitación realizada. Puede coincidir o no con el responsable del universo. Por ejemplo, una persona puede estar asignada al capacitador responsable A, pero la capacitación puede haber sido dictada por el capacitador B. Para el avance del programa importa que la persona haya cumplido el contenido; ambos roles se conservan para poder analizar responsabilidades y actividad efectiva.
-
-Esta es la segunda etapa del [caso de seguimiento de coloquios](../). La primera reemplazó un proceso basado en Excel y Power Query por una base SQLite y un dashboard en Streamlit. Esta actualización responde a dos problemas que aparecieron con el uso cotidiano: se incorporaba información necesaria para tomar decisiones, pero esa información se iba agregando en lugares poco integrados; y la interfaz acumulaba cada vez más contenido en pantallas extensas. Como consecuencia, el tablero se volvía más lento de recorrer y a las personas menos familiarizadas con herramientas informáticas les costaba encontrar el análisis que necesitaban.
+- **Capacitador responsable:** hace seguimiento de las personas y contenidos que tiene asignados. A ese conjunto también lo llamo su *universo*.
+- **Capacitador que dictó:** es quien figura en el registro de una charla realizada. Puede coincidir o no con el responsable: una persona puede estar asignada al capacitador A y recibir una charla del capacitador B. Para el avance importa que la persona haya completado el contenido; distinguir ambos roles permite ver tanto la responsabilidad de seguimiento como la actividad efectivamente dictada.
 
 ## Qué cambió
 
-| Antes | Problema | Ahora | Solución aportada |
-|---|---|---|---|
-| **Navegación del dashboard.** Una misma pantalla se extendía verticalmente y contenía indicadores, filtros, gráficos, tablas, mapas de calor y listados. Los componentes estaban separados por títulos, pero aparecían uno debajo del otro dentro de una página larga. | Si una persona necesitaba consultar un solo gráfico o un mapa de calor, tenía que desplazarse a través de todos los bloques anteriores hasta encontrarlo. Parte del contenido no era relevante para su consulta. Además, cuando se agregaba o modificaba un componente, los bloques siguientes cambiaban de posición y quienes usaban el tablero dejaban de encontrarlos donde estaban acostumbrados. | El menú lateral separa las preguntas principales en **pantallas**. Dentro de cada pantalla, controles segmentados permiten elegir una **sección** que contiene uno o dos componentes relacionados entre sí. | La navegación se volvió predecible: primero se elige el tipo de consulta y después el análisis puntual. En Streamlit, la selección también permite ejecutar la preparación específica de la sección elegida en lugar de calcular todos los análisis de la pantalla en cada actualización. |
-| **Reporte semanal.** Dos coordinadores preparaban el reporte del avance del programa y el seguimiento de aproximadamente 30 capacitadores. Descargaban archivos PNG generados por el tablero, extraían CSV, tomaban otras capturas con la herramienta de recortes y preparaban archivos Excel con los pendientes de cada capacitador. | Al haber un solo filtro de fechas que impactaba todo el tablero, para preparar los extractos había que configurar fechas y filtros varias veces, descargar archivos separados, comprobar que todos correspondieran al mismo período y reunirlos manualmente. Un filtro mal aplicado podía hacer que una parte del reporte no coincidiera con el resto. El material tampoco ofrecía en un único lugar el panorama general para jefaturas, la actividad del período y el detalle operativo de cada capacitador. | Desde la pantalla `Reportes`, cada coordinador selecciona una única vez las fechas de actividad. El sistema consulta la base y genera dos HTML autocontenidos: uno para `Grupo A` y otro para `Grupo B`, con aproximadamente 15 capacitadores en cada uno. | Cada archivo reúne el avance general del programa anual, el detalle del grupo correspondiente, la actividad del período y todos los pendientes. Las cifras provienen directamente de las mismas fuentes y reglas del tablero. La generación reemplaza el armado manual y mantiene la revisión y el envío bajo control humano. |
+| | Antes | Ahora |
+|---|---|---|
+| **Navegación** | Los análisis se iban apilando en pantallas largas. | Las pantallas y secciones agrupan cada consulta y le dan un lugar más fácil de encontrar. |
+| **Reporte semanal** | Había que reunir capturas, imágenes y planillas, y revisar sus fechas y filtros. | Se generan dos archivos HTML, uno por grupo, para revisar y enviar. |
 
 ## El problema de navegación anterior
 
 El crecimiento del dashboard era útil desde el punto de vista funcional: cada nuevo gráfico, tabla o mapa respondía una consulta real. El problema era que la interfaz seguía creciendo hacia abajo. Dentro de `Resumen`, por ejemplo, podían convivir los indicadores generales, el avance por capacitación, las prioridades por capacitador, comparaciones por gerencia y zona, mapas de calor y listados operativos.
 
-Los títulos ayudaban a separar visualmente cada bloque, pero no resolvían la navegación. Para llegar a una visualización ubicada al final había que atravesar todas las anteriores. Al actualizar el tablero o incorporar un nuevo análisis, el desplazamiento necesario cambiaba y los elementos dejaban de ocupar una ubicación estable.
+Los títulos ayudaban a separar visualmente cada bloque, pero no resolvían la navegación. Para llegar a un gráfico o mapa de calor ubicado al final había que atravesar los bloques anteriores, aunque no fueran relevantes para esa consulta. Al actualizar el tablero o incorporar un análisis, los elementos cambiaban de posición y dejaban de encontrarse donde las personas estaban acostumbradas.
 
 ## Recorrido 1: consultar el tablero
 
@@ -51,13 +72,13 @@ Reorganicé la interfaz en dos niveles:
 - Una **pantalla** representa una pregunta principal y se elige desde el menú lateral. `Resumen` y `Avance por Capacitador` son dos ejemplos.
 - Una **sección** representa un análisis puntual dentro de una pantalla. Se selecciona mediante un control horizontal y muestra sólo los componentes relacionados con esa consulta.
 
-La separación no es solamente visual. La versión productiva utiliza navegación condicional con `st.radio` y `st.segmented_control`. Los indicadores generales compartidos por una pantalla siguen calculándose una vez, pero las consultas y transformaciones específicas de las secciones inactivas no se ejecutan hasta que el usuario las elige. Esto evitó el comportamiento anterior de las pestañas de Streamlit, que preparaban contenido que todavía no se estaba consultando.
+La separación no es solamente visual. Los indicadores generales de una pantalla siguen calculándose una vez, pero las consultas y transformaciones propias de cada sección esperan hasta que alguien la elija. Así se evita preparar análisis que todavía no se están consultando. Más abajo cuento cómo se resolvió en Streamlit.
 
 ### Resumen
 
 `Resumen` conserva los indicadores generales del programa y permite cambiar entre análisis como el avance por capacitación y las prioridades por capacitador. En lugar de apilar todas las tablas y gráficos, el área principal se reemplaza cuando cambia la sección.
 
-La sección de prioridades conserva la distinción operativa entre `Grupo A` y `Grupo B`, presenta sus indicadores agregados y compara el avance ponderado de los capacitadores responsables.
+La sección de prioridades conserva la distinción operativa entre `Grupo A` y `Grupo B`, presenta sus indicadores generales y compara el avance de los capacitadores responsables. Para calcular el **avance ponderado** se dividen todos los cumplimientos por todas las capacitaciones requeridas; no se promedian los porcentajes individuales.
 
 ### Avance por Capacitador
 
@@ -81,6 +102,11 @@ La reorganización busca reducir recorridos innecesarios y facilitar la consulta
 
 El seguimiento está dividido entre dos coordinadores y dos grupos. Cada coordinador trabaja con aproximadamente 15 capacitadores de `Grupo A` o `Grupo B`. La separación responde a la organización operativa del programa, pero ese criterio no es necesario para comprender la solución técnica.
 
+```text
+Antes:  Tablero → imágenes + capturas + CSV + Excel → armado y revisión manual
+Ahora:  Elegir fechas → generar un HTML por grupo → revisar y enviar
+```
+
 Antes de esta actualización, preparar el material implicaba combinar distintas salidas:
 
 1. Configurar el período de consulta dentro del dashboard.
@@ -93,16 +119,24 @@ Antes de esta actualización, preparar el material implicaba combinar distintas 
 
 Los archivos cumplían objetivos diferentes. Los PNG y las capturas mostraban la situación general o una comparación visual; los CSV contenían el detalle nominal necesario para saber a qué personas debía capacitar cada responsable y en qué contenidos; el Excel se utilizaba para reunir y distribuir parte de ese material.
 
+Como el filtro de fechas afectaba a todo el tablero, había que cambiarlo varias veces y comprobar que cada descarga correspondiera al período esperado. Un error en ese paso podía hacer que una parte del informe no coincidiera con las demás.
+
 El proceso completo demandaba aproximadamente una hora semanal entre ambos coordinadores. Es una estimación: podía variar según la cantidad de archivos individuales solicitados y no existía una medición formal. El principal problema no era solamente el tiempo, sino también la posibilidad de aplicar fechas distintas, omitir un archivo o distribuir información que no coincidiera con el resto del paquete.
 
 ### Qué genera ahora el sistema
 
 Desde la pantalla `Reportes`, el coordinador ingresa una fecha inicial y una fecha final para definir el período de actividad que quiere revisar. Habitualmente se utiliza una ventana semanal, pero las fechas son libres: permiten contemplar un envío atrasado, un feriado o la preparación de un informe mensual sin cambiar la lógica del reporte. Con ese período se generan dos documentos, uno para cada grupo de seguimiento.
 
-Cada HTML combina dos ventanas temporales distintas:
+Cada HTML combina dos períodos distintos. Tenerlos presentes ayuda a interpretar lo que muestra el informe:
 
-- **Actividad del período:** utiliza exactamente las fechas elegidas y representa el avance semanal, mensual o del intervalo que se quiera informar. Cuenta las capacitaciones efectivamente realizadas, es decir, los registros persona-capacitación que se concretaron dentro de esas fechas. Ordena de mayor a menor la cantidad de capacitaciones dictadas por cada capacitador que figura como quien realizó la actividad, ordena las capacitaciones más dictadas y muestra, mediante tooltips, cuánto aportó cada capacitador a cada contenido. También identifica a quienes no tuvieron actividad en el período.
-- **Avance del programa y pendientes:** muestra el avance anual de las capacitaciones prioritarias y del resto del programa, tomando como fecha de corte la última fecha disponible del año de seguimiento. El apartado de pendientes permite elegir entre las prioridades de cada semestre o todos los pendientes operativos del universo del capacitador responsable. No es un promedio de la actividad semanal: es el estado acumulado del programa y de las obligaciones que todavía faltan completar.
+| Parte del reporte | Período | Pregunta que responde |
+|---|---|---|
+| **Actividad** | Las fechas elegidas para el informe. | ¿Qué capacitaciones se realizaron en ese intervalo y quiénes las dictaron? |
+| **Avance y pendientes** | Desde el inicio del año hasta la última fecha disponible del año de seguimiento. | ¿Cuánto se completó del programa y qué queda pendiente? |
+
+La actividad cuenta los registros de capacitaciones realizadas en el intervalo: ordena la cantidad dictada por cada capacitador y los contenidos más dictados, muestra mediante ayudas cuánto aportó cada persona e identifica a quienes no tuvieron actividad.
+
+El avance acumulado no es un promedio de la actividad semanal. En los pendientes se puede elegir entre las prioridades de cada semestre o todos los pendientes operativos de las personas asignadas a un responsable.
 
 Los dos documentos comparten el mismo resumen agregado del programa, que contempla a los aproximadamente 30 capacitadores. Después, cada archivo muestra únicamente el detalle del grupo correspondiente a su coordinador: cerca de 15 capacitadores, sus indicadores y sus pendientes nominales. Un grupo no recibe el detalle individual del otro, aunque ambos ven el mismo panorama agregado.
 
@@ -129,7 +163,7 @@ El documento reúne información que antes estaba distribuida entre varias panta
 - Tooltips que explican el significado y la fórmula de los indicadores.
 - Notas metodológicas sobre asignaciones, alcance y motivos por los que los porcentajes pueden cambiar.
 
-El listado de pendientes se obtiene cruzando el universo vigente de necesidades, la asignación actual de cada persona a un capacitador y las capacitaciones registradas durante el período acumulado. El resultado no es una lista cargada manualmente: se calcula a partir de las vistas y registros de la base.
+El listado de pendientes se obtiene cruzando las capacitaciones que necesita cada persona actualmente, la asignación actual a un capacitador y las capacitaciones registradas durante el período acumulado. El resultado no es una lista cargada manualmente: se calcula a partir de las vistas y registros de la base.
 
 Las necesidades y asignaciones corresponden a la situación vigente: cambiar las fechas de actividad no reconstruye las necesidades históricas del personal.
 
@@ -168,6 +202,16 @@ La primera versión concentraba gran parte de la orquestación en la aplicación
 
 La arquitectura actual es modular, pero no está dividida en capas completamente independientes. `app.py` continúa siendo el punto de entrada y coordina varias pantallas; las pantallas de avance por capacitador y reportes coordinan además sus propios recorridos de carga, cálculo y presentación.
 
+En líneas generales, la información sigue este recorrido:
+
+```text
+Base de datos y vistas → cargas y cálculos → tablero en Streamlit
+                                          ↘ reportes HTML por grupo
+```
+
+<details>
+<summary><strong>Ver organización de los archivos</strong></summary>
+
 ```text
 charla5min/
 ├── app.py                         # Entrada, navegación y orquestación
@@ -198,7 +242,11 @@ charla5min/
 └── tools/                         # Capturas y baselines de caracterización
 ```
 
+</details>
+
 El recorrido de datos parte de SQLite y sus vistas, pasa por los loaders generales o específicos de reporting, y utiliza servicios puros para los cálculos principales. El dashboard termina en componentes Streamlit; el reporte pasa por `report_service.py` y `export_html.py` para producir dos HTML autocontenidos con sus datos, estilos e interacción local. Los loaders de reporting reutilizan algunos loaders generales y universos cacheados, pero también realizan cargas propias para la actividad, el detalle prioritario y los pendientes.
+
+Para la navegación condicional, la versión productiva utiliza `st.radio` y `st.segmented_control`. Los cálculos específicos de las secciones inactivas esperan hasta que se seleccionen, a diferencia de las pestañas anteriores que preparaban contenido todavía no consultado.
 
 La evolución permitió reducir trabajo repetido en algunos recorridos, reutilizar resultados cacheados y ejecutar cálculos específicos sólo cuando se selecciona la sección correspondiente. No publico un benchmark de rendimiento porque no se realizó una medición controlada antes y después.
 
