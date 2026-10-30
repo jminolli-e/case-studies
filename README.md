@@ -1,6 +1,8 @@
 # Portfolio de Proyectos
+Bienvenido a mi portfolio :)
+Que lo disfrutes!
 
-Repositorio destinado a documentar proyectos de automatización, análisis de datos y generación de indicadores desarrollados en entornos corporativos.
+Este repositorio esta destinado a documentar proyectos de automatización, análisis de datos y generación de indicadores desarrollados en entornos corporativos.
 
 **[Visitar mi portfolio](https://jminolli-e.github.io/case-studies/)** — una introducción a los proyectos y las herramientas utilizadas.
 
