@@ -1,6 +1,12 @@
 # Evolución del dashboard: navegación y reportes HTML
 
-> **Demostración pública y sintética.** Todos los nombres, cifras, agrupaciones y registros son ficticios. El dashboard es una reconstrucción parcial; el reporte actual adapta el renderer y la tipografía de la solución con datos generados para la demo, sin utilizar registros productivos.
+La primera versión del tablero reemplazó un seguimiento en planillas por una base de datos y consultas en Streamlit. Con el uso, los análisis crecieron en pantallas extensas y preparar el seguimiento semanal seguía requiriendo reunir varios archivos. Esta actualización reorganiza la navegación y genera reportes HTML interactivos por grupo, manteniendo las reglas de cálculo y la revisión humana.
+
+> **Demostraciones públicas con datos sintéticos.** Los nombres, cifras, agrupaciones y registros son ficticios. El dashboard es una reconstrucción parcial; el reporte adapta el renderer y la tipografía de la solución. Son demostraciones independientes: sus datos y períodos no deben compararse como si representaran un mismo conjunto.
+
+- **[Explorar el dashboard navegable](https://jminolli-e.github.io/case-studies/coloquios/actualizacion/demo/dashboard-actual.html):** recorrer las pantallas y secciones disponibles en la demo.
+- **[Abrir el reporte HTML interactivo](https://jminolli-e.github.io/case-studies/coloquios/actualizacion/demo/reporte-actual.html):** consultar indicadores, filtros y descarga CSV. La demo conserva algunas etiquetas «Convenio»; en este caso se utiliza «Grupo».
+- **Versiones anteriores:** se conservan la [réplica anterior del dashboard](./demo/dashboard.html) y el [reporte anterior](./demo/index.html) como archivos fuente.
 
 ## Contexto del proyecto
 
@@ -14,7 +20,6 @@ En resumen, el panel permite:
 - Comparaciones por capacitación, gerencia, zona, organización y reparto.
 - Seguimiento de capacitaciones prioritarias.
 - Actividad histórica de capacitadores.
-- Evolución mensual de las capacitaciones realizadas.
 - Situación particular de una persona mediante su número de identificación interno.
 - Detalle nominal de personas que todavía tienen capacitaciones pendientes.
 - Cobertura y cumplimiento de capacitaciones obligatorias de SG-SST.
@@ -25,13 +30,6 @@ En este caso utilizo dos términos que conviene distinguir:
 - **Capacitador que dictó:** es quien figura en el registro de una capacitación realizada. Puede coincidir o no con el responsable del universo. Por ejemplo, una persona puede estar asignada al capacitador responsable A, pero la capacitación puede haber sido dictada por el capacitador B. Para el avance del programa importa que la persona haya cumplido el contenido; ambos roles se conservan para poder analizar responsabilidades y actividad efectiva.
 
 Esta es la segunda etapa del [caso de seguimiento de coloquios](../). La primera reemplazó un proceso basado en Excel y Power Query por una base SQLite y un dashboard en Streamlit. Esta actualización responde a dos problemas que aparecieron con el uso cotidiano: se incorporaba información necesaria para tomar decisiones, pero esa información se iba agregando en lugares poco integrados; y la interfaz acumulaba cada vez más contenido en pantallas extensas. Como consecuencia, el tablero se volvía más lento de recorrer y a las personas menos familiarizadas con herramientas informáticas les costaba encontrar el análisis que necesitaban.
-
-Mientras GitHub Pages no está configurado, las reconstrucciones pueden consultarse como archivos fuente dentro del repositorio:
-
-- [Fuente de la réplica del dashboard](./demo/dashboard.html)
-- [Fuente del reporte HTML interactivo](./demo/index.html)
-
-También está disponible el [reporte HTML actual interactivo](./demo/reporte-actual.html), con datos ficticios. Las versiones anteriores se conservan para comparación.
 
 ## Qué cambió
 
@@ -46,11 +44,7 @@ El crecimiento del dashboard era útil desde el punto de vista funcional: cada n
 
 Los títulos ayudaban a separar visualmente cada bloque, pero no resolvían la navegación. Para llegar a una visualización ubicada al final había que atravesar todas las anteriores. Al actualizar el tablero o incorporar un nuevo análisis, el desplazamiento necesario cambiaba y los elementos dejaban de ocupar una ubicación estable.
 
-La siguiente animación es una **reconstrucción sintética del funcionamiento anterior**. No es una grabación del entorno productivo: utiliza datos ficticios y apila los componentes para mostrar el recorrido que exigía una sola pantalla.
-
-![Reconstrucción sintética de la pantalla Resumen anterior, con todos sus análisis apilados verticalmente](./assets/dashboard-resumen-anterior.gif)
-
-## Pantallas y secciones
+## Recorrido 1: consultar el tablero
 
 Reorganicé la interfaz en dos niveles:
 
@@ -63,11 +57,7 @@ La separación no es solamente visual. La versión productiva utiliza navegació
 
 `Resumen` conserva los indicadores generales del programa y permite cambiar entre análisis como el avance por capacitación y las prioridades por capacitador. En lugar de apilar todas las tablas y gráficos, el área principal se reemplaza cuando cambia la sección.
 
-![Pantalla Resumen con el avance por capacitación seleccionado](./assets/dashboard-resumen.png)
-
-La sección de prioridades conserva la distinción operativa entre `Convenio A` y `Convenio B`, presenta sus indicadores agregados y compara el avance ponderado de los capacitadores responsables.
-
-![Pantalla Resumen con las prioridades por capacitador y los convenios A y B](./assets/dashboard-prioritarias-capacitador.png)
+La sección de prioridades conserva la distinción operativa entre `Grupo A` y `Grupo B`, presenta sus indicadores agregados y compara el avance ponderado de los capacitadores responsables.
 
 ### Avance por Capacitador
 
@@ -75,9 +65,7 @@ Esta pantalla permite seleccionar un capacitador responsable y consultar el univ
 
 La información sirve para acompañar el trabajo de capacitación y señalar tareas pendientes, pero no pretende medir por sí sola la calidad o efectividad profesional de una persona. Los capacitadores también realizan otras tareas que no forman parte de estos indicadores.
 
-![Pantalla Avance por Capacitador con el avance por capacitación seleccionado](./assets/dashboard-avance-capacitador.png)
-
-La réplica pública implementa estos flujos seleccionados con información sintética. No reproduce las seis pantallas ni todas las variantes administrativas del sistema productivo.
+La réplica pública implementa estos flujos seleccionados con información sintética. No reproduce todas las pantallas ni todas las variantes administrativas del sistema productivo.
 
 ### Evolución visual: menos es más
 
@@ -85,18 +73,11 @@ Además de reorganizar la navegación, revisé la jerarquía visual de los compo
 
 La interfaz actual agrupa indicadores relacionados, incorpora el avance en las tarjetas de cada universo y reúne título, explicación, leyenda y tabla en componentes más fáciles de leer. La navegación lateral es más compacta. La antigua pantalla `Por Inspector` dejó de ser una pantalla independiente: su información útil se integró como `Actividad histórica` en `Avance por Inspector`, separando lo que una persona dictó de la responsabilidad sobre el universo que tiene asignado.
 
-| Antes: reconstrucción anterior | Después: reconstrucción actual |
-|---|---|
-| ![Resumen anterior con cuatro indicadores separados](./assets/dashboard-resumen.png) | ![Resumen actual con indicadores agrupados por universo](./assets/dashboard-resumen-actual.png) |
-| ![Prioridades anteriores por capacitador](./assets/dashboard-prioritarias-capacitador.png) | ![Prioridades actuales por inspector](./assets/dashboard-prioridades-actual.png) |
+La reorganización busca reducir recorridos innecesarios y facilitar la consulta a personas con distintos niveles de familiaridad digital, sin quitar controles ni contexto útil. La [comparación visual](#comparación-visual) queda reservada para el último apartado.
 
-Las imágenes anteriores son reconstrucciones sintéticas. Las imágenes actuales fueron generadas con los componentes y estilos de Streamlit de la solución, alimentados con datos ficticios; no contienen datos del tablero productivo. Los valores de ambos momentos son diferentes: la comparación muestra cambios de interfaz, no de resultados del programa.
+## Recorrido 2: preparar y usar el reporte HTML
 
-La [tabla completa de prioridades](./assets/dashboard-prioridades-tabla-completa.png) muestra 24 inspectores ficticios y el total ponderado de ambos grupos.
-
-![Reconstrucción actual del avance por organización](./assets/dashboard-organizacion-actual.png)
-
-## Cómo se preparaba el seguimiento semanal
+### Cómo se preparaba el seguimiento semanal
 
 El seguimiento está dividido entre dos coordinadores y dos grupos. Cada coordinador trabaja con aproximadamente 15 capacitadores de `Grupo A` o `Grupo B`. La separación responde a la organización operativa del programa, pero ese criterio no es necesario para comprender la solución técnica.
 
@@ -114,22 +95,22 @@ Los archivos cumplían objetivos diferentes. Los PNG y las capturas mostraban la
 
 El proceso completo demandaba aproximadamente una hora semanal entre ambos coordinadores. Es una estimación: podía variar según la cantidad de archivos individuales solicitados y no existía una medición formal. El principal problema no era solamente el tiempo, sino también la posibilidad de aplicar fechas distintas, omitir un archivo o distribuir información que no coincidiera con el resto del paquete.
 
-## Qué genera ahora el sistema
+### Qué genera ahora el sistema
 
 Desde la pantalla `Reportes`, el coordinador ingresa una fecha inicial y una fecha final para definir el período de actividad que quiere revisar. Habitualmente se utiliza una ventana semanal, pero las fechas son libres: permiten contemplar un envío atrasado, un feriado o la preparación de un informe mensual sin cambiar la lógica del reporte. Con ese período se generan dos documentos, uno para cada grupo de seguimiento.
-
-![Pantalla Reportes con la selección del período y las salidas de los convenios A y B](./assets/dashboard-reportes.png)
 
 Cada HTML combina dos ventanas temporales distintas:
 
 - **Actividad del período:** utiliza exactamente las fechas elegidas y representa el avance semanal, mensual o del intervalo que se quiera informar. Cuenta las capacitaciones efectivamente realizadas, es decir, los registros persona-capacitación que se concretaron dentro de esas fechas. Ordena de mayor a menor la cantidad de capacitaciones dictadas por cada capacitador que figura como quien realizó la actividad, ordena las capacitaciones más dictadas y muestra, mediante tooltips, cuánto aportó cada capacitador a cada contenido. También identifica a quienes no tuvieron actividad en el período.
-- **Avance del programa y pendientes:** muestra el avance anual de las capacitaciones prioritarias y del resto del programa, tomando como fecha de corte la última fecha disponible del año de seguimiento. El apartado de pendientes permite elegir entre ver sólo los contenidos prioritarios o todas las capacitaciones pendientes del universo del capacitador responsable. No es un promedio de la actividad semanal: es el estado acumulado del programa y de las obligaciones que todavía faltan completar.
+- **Avance del programa y pendientes:** muestra el avance anual de las capacitaciones prioritarias y del resto del programa, tomando como fecha de corte la última fecha disponible del año de seguimiento. El apartado de pendientes permite elegir entre las prioridades de cada semestre o todos los pendientes operativos del universo del capacitador responsable. No es un promedio de la actividad semanal: es el estado acumulado del programa y de las obligaciones que todavía faltan completar.
 
 Los dos documentos comparten el mismo resumen agregado del programa, que contempla a los aproximadamente 30 capacitadores. Después, cada archivo muestra únicamente el detalle del grupo correspondiente a su coordinador: cerca de 15 capacitadores, sus indicadores y sus pendientes nominales. Un grupo no recibe el detalle individual del otro, aunque ambos ven el mismo panorama agregado.
 
 Todos los integrantes de un grupo, el coordinador y las jefaturas destinatarias reciben el mismo HTML de ese grupo. Esta distribución es intencional y forma parte del funcionamiento definido para el programa.
 
-## Qué contiene el reporte HTML
+El selector de capacitador facilita la consulta, pero **no restringe el acceso**: el HTML contiene los registros nominales de todos los capacitadores del grupo correspondiente.
+
+### Qué contiene el reporte HTML
 
 El documento reúne información que antes estaba distribuida entre varias pantallas, secciones y descargas:
 
@@ -150,13 +131,15 @@ El documento reúne información que antes estaba distribuida entre varias panta
 
 El listado de pendientes se obtiene cruzando el universo vigente de necesidades, la asignación actual de cada persona a un capacitador y las capacitaciones registradas durante el período acumulado. El resultado no es una lista cargada manualmente: se calcula a partir de las vistas y registros de la base.
 
+Las necesidades y asignaciones corresponden a la situación vigente: cambiar las fechas de actividad no reconstruye las necesidades históricas del personal.
+
 La tabla de pendientes permite seleccionar un capacitador responsable, alternar entre contenidos prioritarios y el universo operativo completo, y descargar el detalle visible.
 
 El reporte también recibió la nueva tipografía y componentes agrupados. La versión actual conserva el filtro de pendientes por `Todos`, `1er semestre` y `2do semestre`, además de la descarga CSV del resultado visible.
 
 Podés consultar el [reporte HTML actual interactivo](./demo/reporte-actual.html) para explorar directamente sus indicadores, filtros y descarga CSV.
 
-## Por qué elegí un HTML autocontenido
+### Por qué elegí un HTML autocontenido
 
 El HTML permite reunir información para distintas audiencias dentro de un único archivo. Una jefatura puede comenzar por el panorama general; un coordinador puede revisar la actividad y comparar avances; un capacitador puede filtrar su nombre y consultar las personas que todavía tiene pendientes.
 
@@ -171,13 +154,11 @@ Frente al conjunto anterior de PNG, capturas, CSV y Excel, el formato aporta:
 
 El documento incluye su estructura, estilos, datos e interacción. Python realiza las cargas y calcula los indicadores antes de generar el archivo. El reporte comparte con el dashboard la base, los universos cacheados y el cálculo del resumen general; para la actividad, el detalle prioritario y los pendientes utiliza cargas específicas. De esta manera, las reglas centrales se mantienen unificadas sin presentar como reutilizados en memoria resultados que pertenecen a otra pantalla. JavaScript no redefine las reglas de negocio: se limita a cambiar paneles visibles, abrir ayudas, filtrar información ya calculada y construir el CSV local.
 
+El HTML exportado utiliza JavaScript local, no incorpora Plotly y no necesita Node.js para abrirse. Esto no significa que Plotly ni otras bibliotecas gráficas se hayan eliminado del proyecto; la demo navegable del dashboard, por ejemplo, utiliza Plotly local.
+
 ## Una salida controlada y trazable en lugar de un reporte generado de forma ad hoc
 
-Una alternativa posible, previa a esta solución, era entregar a una herramienta de IA los PNG, las capturas, los CSV y el Excel para pedirle que armara un reporte. Decidí anticiparme porque una generación de ese tipo podía modificar cifras, nombres, colores o criterios, o producir conclusiones que después no fueran controladas de manera consistente.
-
-El reporte actual no interpreta libremente los extractos. Consume fuentes y resultados calculados mediante reglas definidas en código, y mantiene alineado el resumen general con el dashboard. Para un mismo estado de las fuentes, configuración y fechas, produce los mismos indicadores, aunque el archivo conserve metadatos propios de cada generación. La revisión y el envío siguen siendo decisiones humanas.
-
-Esa alternativa podía generar problemas de confianza y retrabajo: si un avance se informaba de forma incorrecta, los capacitadores podían cuestionar el resultado y los coordinadores debían reconstruir por qué el reporte no coincidía con otros tableros ya enviados. Por eso opté por una salida calculada con reglas conocidas, fuentes trazables y un formato común.
+En lugar de reconstruir el informe a partir de extractos, manualmente o mediante una herramienta de IA, el reporte consume fuentes y resultados calculados mediante reglas definidas en código y mantiene alineado el resumen general con el dashboard. Para un mismo estado de las fuentes, configuración y fechas, produce los mismos indicadores, aunque el archivo conserve metadatos propios de cada generación. La revisión y el envío siguen siendo decisiones humanas.
 
 El reporte también mejora el control cruzado. Antes, algunos detalles podían omitirse de los informes enviados a los capacitadores porque una inconsistencia podía generar confusión y reclamos. Ahora los capacitadores reciben el detalle necesario para revisar sus propios pendientes y detectar registros faltantes o diferencias. Como los coordinadores cargan los datos mediante otro desarrollo del mismo proceso, esta visibilidad permite detectar errores u omisiones de carga y revisar también la calidad del trabajo de data entry. El resultado es una comprensión compartida del estado del programa y una oportunidad concreta para pulir los datos antes de que las inconsistencias se acumulen.
 
@@ -241,7 +222,7 @@ A partir de esos pedidos diseñé e implementé individualmente la reorganizaci�
 
 ## Adopción inicial
 
-Los dos coordinadores utilizan los reportes semanalmente desde hace dos semanas. Durante este período inicial, la generación y el primer control contra el dashboard no demandaron más de aproximadamente cinco minutos por ciclo.
+Durante las primeras dos semanas de uso, los dos coordinadores utilizaron los reportes semanalmente. En ese período inicial, la generación y el primer control contra el dashboard no demandaron más de aproximadamente cinco minutos por ciclo.
 
 La comparación con la hora semanal del proceso anterior debe leerse como una estimación operativa temprana, no como un estudio formal de ahorro. Todavía no existe una ventana de observación suficiente para afirmar un resultado sostenido de largo plazo.
 
@@ -250,8 +231,12 @@ La comparación con la hora semanal del proceso anterior debe leerse como una es
 
 La interfaz operativa sigue construida en Streamlit. Existe en otro repositorio un primer borrador de migración hacia React y TypeScript con FastAPI como backend.
 
-El objetivo no es cambiar de tecnología por sí mismo. Streamlit permitió entregar rápidamente una herramienta útil, pero ofrece menos control sobre el layout y utiliza un modelo de ejecución basado en reruns. Una separación más explícita entre frontend y API permitiría construir interacciones más flexibles, controlar mejor la experiencia visual y evolucionar la interfaz sin volver a implementar las reglas que ya fueron validadas.
+El objetivo no es cambiar de tecnología por sí mismo. Streamlit permitió entregar rápidamente una herramienta útil, pero ofrece menos control sobre el layout y utiliza un modelo de ejecución basado en reruns. Como exploración posible, una separación más explícita entre frontend y API podría permitir construir interacciones más flexibles, controlar mejor la experiencia visual y evolucionar la interfaz sin volver a implementar las reglas que ya fueron validadas. La interfaz también puede seguir mejorando visualmente sin que una migración sea inevitable.
 
 ## Alcance y privacidad
 
 Este caso excluye nombres de empresa, personas, ubicaciones, correos, rutas, métricas productivas y reglas o consultas SQL corporativas. Las demos, capturas y animaciones utilizan información ficticia y no fueron construidas a partir de una copia anonimizada de la base real. El HTML de la demo actual adapta el renderer visual productivo con datos sintéticos y terminología pública.
+
+## Comparación visual
+
+La comparación puntual entre la interfaz anterior y la actual queda pendiente para una etapa posterior. Se seleccionarán unas pocas capturas de viewport que ilustren cambios concretos; mientras tanto, la demo navegable permite explorar la solución actual.
