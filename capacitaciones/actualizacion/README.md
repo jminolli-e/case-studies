@@ -61,7 +61,7 @@ En el tablero aparece la palabra «inspector»; en este caso utilizo «capacitad
 
 La separación no es solamente visual. Los indicadores generales de una pantalla siguen calculándose una vez, pero las consultas y transformaciones propias de cada sección esperan hasta que alguien la elija. Así se evita preparar análisis que todavía no se están consultando. Más abajo cuento cómo se resolvió en Streamlit.
 
-### Evolución visual: menos es más
+### Una interfaz con más contexto y menos ruido
 
 También me tocó dejar ir algunos componentes. Había gráficos detallados e interesantes que no se utilizaban y terminaban haciendo ruido. Aunque me había llevado trabajo construirlos, mantenerlos sólo por eso no ayudaba a quienes necesitaban encontrar una respuesta.
 
