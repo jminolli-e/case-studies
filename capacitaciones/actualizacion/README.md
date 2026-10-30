@@ -59,16 +59,20 @@ Los títulos ayudaban a separar visualmente cada bloque, pero no resolvían la n
 
 Reorganicé la interfaz en dos niveles:
 
-- Una **pantalla** representa una pregunta principal y se elige desde el menú lateral. `Resumen` y `Avance por Capacitador` son dos ejemplos.
+- Las **pantalla** que se encuentran en el sidebar, que ya estaban en la implementación anterior, y contestan una pregunta principal y se elige desde el menú lateral. `Resumen` y `Avance por Capacitador` son dos ejemplos.
 - Una **sección** representa un análisis puntual dentro de una pantalla. Se selecciona mediante un control horizontal y muestra sólo los componentes relacionados con esa consulta.
+
+[Adjuntar ejemplo]
 
 La separación no es solamente visual. Los indicadores generales de una pantalla siguen calculándose una vez, pero las consultas y transformaciones propias de cada sección esperan hasta que alguien la elija. Así se evita preparar análisis que todavía no se están consultando. Más abajo cuento cómo se resolvió en Streamlit.
 
 ### Evolución visual: menos es más
 
-Además de reorganizar la navegación, revisé la jerarquía visual de los componentes. Una métrica puede ser medible sin ser necesaria en una pantalla de uso diario: si nadie la consulta, ocupa espacio y obliga a las personas a recorrer más información para encontrar lo importante.
+Aunque me costo, habían muchos componentes muy interesantes, gráficos detallados y complejos pero no se utilizaban y hacían ruido, por lo que me di cuenta que no tenia sentido mantenerlos
+ya que si nadie los consulta, ocupan espacio y obliga a las personas a recorrer más información para encontrar lo importante.
 
 La interfaz actual agrupa indicadores relacionados, incorpora el avance en las tarjetas de cada universo y reúne título, explicación, leyenda y tabla en componentes más fáciles de leer. La navegación lateral es más compacta. La antigua pantalla `Por Inspector` dejó de ser una pantalla independiente: su información útil se integró como `Actividad histórica` en `Avance por Inspector`, separando lo que una persona dictó de la responsabilidad sobre el universo que tiene asignado.
+[Adjuntar un ejemplo]
 
 La reorganización busca reducir recorridos innecesarios y facilitar la consulta a personas con distintos niveles de familiaridad digital, sin quitar controles ni contexto útil. Al final se presenta una [comparación visual](#comparación-visual) de dos secciones.
 
