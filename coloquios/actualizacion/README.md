@@ -14,8 +14,6 @@ Las preguntas son sencillas. Lo desafiante es que las respuestas sigan teniendo 
 
 El tablero tiene incorporada toda esta lógica de negocio para acompañar esos cambios sin tener que corregir indicadores a mano cada vez que ocurre uno. Por ejemplo, cuando se actualizan los datos de una licencia o de un cambio de puesto, el tablero vuelve a calcular las métricas y las necesidades de capacitación que correspondan. Así, el objetivo es que el seguimiento siga siendo útil con el tiempo y requiera la menor intervención posible, sin depender de ajustes constantes en el backend.
 
-No todas las personas necesitan las mismas charlas: eso depende de su puesto, sus tareas y el departamento al que pertenecen. El tablero cruza esas necesidades con las capacitaciones registradas para mostrar tanto el panorama general como el detalle que permite actuar sobre los pendientes.
-
 Con el tiempo, el tablero fue sumando análisis útiles, pero también pantallas cada vez más largas. Además, para enviar el avance semanal a jefaturas y capacitadores había que navegar por distintas secciones, descargar planillas y gráficos, tomar capturas y reunir todo en un informe.
 
 ### Entonces ¿Que resuelve esta actualización?
