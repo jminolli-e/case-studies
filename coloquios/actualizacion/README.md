@@ -73,7 +73,7 @@ Además de reorganizar la navegación, revisé la jerarquía visual de los compo
 
 La interfaz actual agrupa indicadores relacionados, incorpora el avance en las tarjetas de cada universo y reúne título, explicación, leyenda y tabla en componentes más fáciles de leer. La navegación lateral es más compacta. La antigua pantalla `Por Inspector` dejó de ser una pantalla independiente: su información útil se integró como `Actividad histórica` en `Avance por Inspector`, separando lo que una persona dictó de la responsabilidad sobre el universo que tiene asignado.
 
-La reorganización busca reducir recorridos innecesarios y facilitar la consulta a personas con distintos niveles de familiaridad digital, sin quitar controles ni contexto útil. La [comparación visual](#comparación-visual) queda reservada para el último apartado.
+La reorganización busca reducir recorridos innecesarios y facilitar la consulta a personas con distintos niveles de familiaridad digital, sin quitar controles ni contexto útil. Al final se presenta una [comparación visual](#comparación-visual) de dos secciones.
 
 ## Recorrido 2: preparar y usar el reporte HTML
 
@@ -239,4 +239,34 @@ Este caso excluye nombres de empresa, personas, ubicaciones, correos, rutas, mé
 
 ## Comparación visual
 
-La comparación puntual entre la interfaz anterior y la actual queda pendiente para una etapa posterior. Se seleccionarán unas pocas capturas de viewport que ilustren cambios concretos; mientras tanto, la demo navegable permite explorar la solución actual.
+Las siguientes capturas corresponden a reconstrucciones con datos ficticios y períodos diferentes. Comparan la organización visual de las interfaces, no los resultados del programa.
+
+<details>
+<summary><strong>Resumen: indicadores y avance por capacitación</strong></summary>
+
+Los cuatro indicadores separados pasan a agruparse por universo, junto con el porcentaje de avance. La tabla reúne su título, explicación y referencias en un mismo componente.
+
+**Versión anterior**
+
+![Resumen anterior con cuatro indicadores separados y tabla de avance](./assets/resumen-anterior.png)
+
+**Versión actual**
+
+![Resumen actual con indicadores agrupados por universo y tabla de avance](./assets/resumen-actual.png)
+
+</details>
+
+<details>
+<summary><strong>Prioridades: avance por grupo</strong></summary>
+
+Los indicadores que antes estaban repartidos en cuatro tarjetas se presentan en dos componentes, uno por grupo, que reúnen el avance ponderado, las personas con necesidad y los cumplimientos.
+
+**Versión anterior**
+
+![Prioridades anteriores con cuatro tarjetas separadas](./assets/prioridades-anterior.png)
+
+**Versión actual**
+
+![Prioridades actuales con indicadores agrupados para los grupos A y B](./assets/prioridades-actual.png)
+
+</details>

@@ -22,6 +22,7 @@ El pipeline funciona como puerta de entrada para comprender la solución complet
 
 ## Otros proyectos
 
+- [Auditorías - Validación, histórico y reportes](./auditorias/): consolidación de ediciones desde Excel, conservación de su contexto en SQLite y generación de reportes HTML y PNG.
 - Gestor de Consultas
 
 Cada caso de estudio describe el problema abordado, la solución implementada, las tecnologías utilizadas y los resultados obtenidos, sin divulgar información confidencial ni propiedad intelectual.
