@@ -107,6 +107,7 @@ El proceso completo demandaba aproximadamente una hora semanal entre ambos coord
 
 Desde la pantalla `Reportes`, el coordinador ingresa una fecha inicial y una fecha final para definir el período de actividad que quiere revisar. Habitualmente se utiliza una ventana semanal, pero las fechas son libres: permiten contemplar un envío atrasado, un feriado o la preparación de un informe mensual sin cambiar la lógica del reporte. Con ese período se generan dos documentos, uno para cada grupo de seguimiento.
 
+[Adjuntar un ejemplo PNG] 
 Cada HTML combina dos períodos distintos. Tenerlos presentes ayuda a interpretar lo que muestra el informe:
 
 | Parte del reporte | Período | Pregunta que responde |
