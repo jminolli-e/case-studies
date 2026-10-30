@@ -4,6 +4,8 @@ Repositorio destinado a documentar proyectos de automatización, análisis de da
 
 **[Visitar el portfolio de Joaquín Minolli](https://jminolli-e.github.io/case-studies/)** — una introducción a los proyectos, sus decisiones y las herramientas utilizadas.
 
+La portada se encuentra en `index.html` y utiliza los recursos de `sitio/`. Los casos de estudio se pueden explorar directamente desde los enlaces siguientes.
+
 ## Pipeline de Coloquios
 
 Este es el caso principal del proyecto de seguimiento de coloquios e instancias formativas. Explica cómo se conectan la carga operativa, la base de datos y el dashboard para transformar una actividad registrada en información de gestión.

@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
     paths:
+      - "index.html"
       - "sitio/**"
       - "coloquios/actualizacion/demo/**"
       - ".github/workflows/pages.yml"
@@ -31,7 +32,9 @@ jobs:
       - name: Prepare public artifact
         run: |
           mkdir -p _site/coloquios/actualizacion/demo
-          cp -R sitio/. _site/
+          cp index.html _site/
+          mkdir -p _site/sitio
+          cp -R sitio/. _site/sitio/
           cp coloquios/actualizacion/demo/*.{html,css,js,ttf,txt} _site/coloquios/actualizacion/demo/
           touch _site/.nojekyll
 
