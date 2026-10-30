@@ -1,9 +1,10 @@
-name: Deploy coloquios demos to Pages
+name: Deploy portfolio to Pages
 
 on:
   push:
     branches: [main]
     paths:
+      - "sitio/**"
       - "coloquios/actualizacion/demo/**"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
@@ -21,7 +22,7 @@ jobs:
   deploy:
     environment:
       name: github-pages
-      url: https://jminolli-e.github.io/case-studies/coloquios/actualizacion/demo/dashboard.html
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -30,7 +31,8 @@ jobs:
       - name: Prepare public artifact
         run: |
           mkdir -p _site/coloquios/actualizacion/demo
-          cp coloquios/actualizacion/demo/*.html _site/coloquios/actualizacion/demo/
+          cp -R sitio/. _site/
+          cp coloquios/actualizacion/demo/*.{html,css,js,ttf,txt} _site/coloquios/actualizacion/demo/
           touch _site/.nojekyll
 
       - name: Configure Pages
