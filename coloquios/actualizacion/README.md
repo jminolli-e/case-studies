@@ -1,6 +1,6 @@
 # Evolución del dashboard: navegación y reportes HTML
 
-La primera versión del tablero reemplazó un seguimiento en planillas por una base de datos y consultas en Streamlit. Con el uso, los análisis crecieron en pantallas extensas y preparar el seguimiento semanal seguía requiriendo reunir varios archivos. Esta actualización reorganiza la navegación y genera reportes HTML interactivos por grupo, manteniendo las reglas de cálculo y la revisión humana.
+La primera versión del tablero reemplazó un seguimiento en planillas por una base de datos y consultas en un tablero que corre localmente. Con el uso, los análisis crecieron en pantallas extensas y preparar el seguimiento semanal seguía requiriendo reunir varios archivos. Esta actualización reorganiza la navegación y genera reportes HTML interactivos por grupo, manteniendo las reglas de cálculo y la revisión humana.
 
 > **Demostraciones públicas con datos sintéticos.** Los nombres, cifras, agrupaciones y registros son ficticios. El dashboard es una reconstrucción parcial; el reporte adapta el renderer y la tipografía de la solución. Son demostraciones independientes: sus datos y períodos no deben compararse como si representaran un mismo conjunto.
 
