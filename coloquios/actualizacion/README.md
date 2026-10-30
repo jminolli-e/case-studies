@@ -30,8 +30,8 @@ Esta actualización aborda ambos problemas: **reorganiza la navegación mejorand
 
 | Si querés... | Podés empezar por... |
 |---|---|
-| Consultar el avance, las prioridades o los pendientes | [El tablero navegable](https://jminolli-e.github.io/case-studies/coloquios/actualizacion/demo/dashboard-actual.html) |
-| Ver cómo se comparte el seguimiento con cada grupo | [El reporte HTML interactivo](https://jminolli-e.github.io/case-studies/coloquios/actualizacion/demo/reporte-actual.html) |
+| Revisar una demo del tablero | [El tablero navegable](https://jminolli-e.github.io/case-studies/coloquios/actualizacion/demo/dashboard-actual.html) |
+| Ver el diseño del reporte semanal | [El reporte HTML interactivo](https://jminolli-e.github.io/case-studies/coloquios/actualizacion/demo/reporte-actual.html) |
 
 ## Un poco de contexto
 
