@@ -6,17 +6,17 @@ Este repositorio esta destinado a documentar proyectos de automatización, anál
 
 **[Visitar mi portfolio](https://jminolli-e.github.io/case-studies/)** — una introducción a los proyectos y las herramientas utilizadas.
 
-## Pipeline de Coloquios
+## Pipeline de capacitaciones
 
-Este es el caso principal del proyecto de seguimiento de coloquios e instancias formativas. Explica cómo se conectan la carga operativa, la base de datos y el dashboard para transformar una actividad registrada en información de gestión.
+Este es el caso principal del proyecto de seguimiento de charlas de seguridad y otras capacitaciones. Explica cómo se conectan la carga operativa, la base de datos y el dashboard para transformar una actividad registrada en información de gestión.
 
-- [Pipeline de Coloquios](./pipeline_coloquios/)
+- [Pipeline de capacitaciones](./pipeline_capacitaciones/)
 
 El pipeline se apoya en dos casos de estudio complementarios:
 
-- [Coloquios.db - Modelado de datos en SQLite](./coloquios.db/): diseño de la base, históricos, catálogos, vistas, índices y reglas de datos.
-- [Coloquios - Dashboard de seguimiento](./coloquios/): funcionamiento del dashboard, cálculos, indicadores, visualizaciones y reportes.
-- [Evolución del dashboard](./coloquios/actualizacion/): reorganización de la navegación y generación de reportes HTML semanales por coordinador.
+- [Base de capacitaciones - Modelado de datos en SQLite](./capacitaciones.db/): diseño de la base, históricos, catálogos, vistas, índices y reglas de datos.
+- [Capacitaciones - Dashboard de seguimiento](./capacitaciones/): funcionamiento del dashboard, cálculos, indicadores, visualizaciones y reportes.
+- [Evolución del dashboard](./capacitaciones/actualizacion/): reorganización de la navegación y generación de reportes HTML semanales por coordinador.
 
 El pipeline funciona como puerta de entrada para comprender la solución completa. Los otros documentos permiten profundizar en cada componente sin repetir toda la implementación en un único README.
 

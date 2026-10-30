@@ -58,5 +58,5 @@
     const total = necesidadesFiltradas.length;
     return { personas: seleccion.length, necesidad: total, capacitados, pendientes: total - capacitados, porcentaje: total ? capacitados * 100 / total : null };
   }
-  root.ColoquiosDatos = { capacitaciones, inspectores, organizaciones, personas, necesidades, actividad, calcular };
+  root.CapacitacionesDatos = { capacitaciones, inspectores, organizaciones, personas, necesidades, actividad, calcular };
 })(typeof window === 'undefined' ? globalThis : window);

@@ -4,7 +4,7 @@
  */
 const assert = require('node:assert/strict');
 const port = process.env.CDP_PORT || '9236';
-const url = process.env.DEMO_URL || 'http://127.0.0.1:18836/coloquios/actualizacion/demo/dashboard-actual.html';
+const url = process.env.DEMO_URL || 'http://127.0.0.1:18836/capacitaciones/actualizacion/demo/dashboard-actual.html';
 
 async function main() {
   const pages = await (await fetch(`http://127.0.0.1:${port}/json`)).json();
