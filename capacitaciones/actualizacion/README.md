@@ -50,12 +50,18 @@ El crecimiento del dashboard era útil desde el punto de vista funcional: cada n
 
 Los títulos ayudaban a separar visualmente cada bloque, pero no resolvían la navegación. Para llegar a un gráfico o mapa de calor ubicado al final había que atravesar los bloques anteriores, aunque no fueran relevantes para esa consulta.
 
+![Reconstrucción sintética del desplazamiento por los análisis apilados en la pantalla Resumen anterior](./assets/dashboard-resumen-anterior.gif)
+
+La animación reconstruye el recorrido anterior con datos ficticios; no es una grabación del entorno productivo.
+
 ### La solución: elegir qué consultar
 
 El menú lateral ya existía. El cambio fue organizar mejor lo que ocurría dentro de cada pantalla, en lugar de seguir agregando componentes uno debajo del otro. La navegación queda en dos niveles:
 
 1. **Pantallas:** se eligen desde el menú lateral y representan una consulta principal. `Resumen` y `Avance por Inspector` son dos ejemplos.
 2. **Secciones:** se eligen mediante los controles horizontales dentro de cada pantalla. Permiten pasar, por ejemplo, del avance por capacitación a las prioridades por inspector, mostrando sólo los componentes relacionados con esa consulta.
+
+![Navegación actual: el número 1 encuadra las pantallas del menú lateral y el número 2 las secciones de Resumen](./assets/navegacion-secciones.png)
 
 En el tablero aparece la palabra «inspector»; en este caso utilizo «capacitador» para describir su rol en el programa.
 
@@ -67,7 +73,20 @@ También me tocó dejar ir algunos componentes. Había gráficos detallados e in
 
 No se trataba únicamente de quitar cosas, sino de reunir lo que tiene sentido leer junto. Los indicadores de Grupo A y Grupo B, por ejemplo, ahora presentan el avance ponderado, las personas con necesidad y los cumplimientos dentro de un mismo contenedor por grupo. Ya no hace falta recorrer varias tarjetas para reconstruir esa relación.
 
-Lo mismo ocurre con los indicadores de personas a cargo y pendientes prioritarios: cada bloque reúne valores, unidades y aclaraciones. Algunas tarjetas y tablas incorporan **tooltips**, pequeñas ayudas que aparecen al pasar el cursor y explican qué representa un valor o cómo se calcula. Así se conserva el contexto sin llenar la pantalla de explicaciones permanentes.
+![Indicadores agrupados de Grupo A y Grupo B: avance ponderado, personas con necesidad y cumplimientos en un contenedor por grupo](./assets/indicadores-grupos.png)
+
+Lo mismo ocurre con los indicadores de personas a cargo y pendientes prioritarios: cada bloque reúne valores, unidades y aclaraciones.
+
+![Tarjetas de personas a cargo y personas pendientes de capacitaciones prioritarias, con sus aclaraciones y desglose por semestre](./assets/indicadores-capacitador.png)
+
+Algunas tarjetas y tablas incorporan **tooltips**, pequeñas ayudas que aparecen al pasar el cursor y explican qué representa un valor o cómo se calcula. Así se conserva el contexto sin llenar la pantalla de explicaciones permanentes.
+
+<details>
+<summary><strong>Ver un ejemplo de ayuda sobre los indicadores</strong></summary>
+
+![Ayuda desplegada en la tarjeta Personas a cargo, que explica la asignación y el criterio de personas pendientes](./assets/indicadores-ayuda.png)
+
+</details>
 
 La navegación lateral también es más compacta. La antigua pantalla `Por Inspector` dejó de ser independiente: su información útil se integró como `Actividad histórica` en `Avance por Inspector`, separando lo que una persona dictó de la responsabilidad sobre las personas y contenidos que tiene asignados.
 
@@ -126,6 +145,8 @@ Podés [abrir el reporte HTML interactivo](https://jminolli-e.github.io/case-stu
 ### Los pendientes también viajan en el informe
 
 Una parte importante de la solución fue incluir en el HTML el detalle necesario para **descargar los pendientes en CSV**. Cada capacitador puede seleccionar su nombre, elegir entre todos sus pendientes operativos o las prioridades de un semestre y descargar el resultado visible.
+
+![Reporte HTML de Grupo A con un capacitador seleccionado, los filtros por semestre, el detalle de pendientes y el botón Descargar CSV](./assets/reporte-pendientes-csv.png)
 
 Esto resuelve algo que el informe visual por sí solo no podía resolver: además de ver cuánto falta, cada responsable necesita saber a quién capacitar y en qué temas. Al incluir el detalle en el reporte, ya no hace falta preparar y enviar un archivo individual para cada uno de los aproximadamente 30 capacitadores.
 
