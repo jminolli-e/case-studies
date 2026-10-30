@@ -2,9 +2,7 @@
 
 Repositorio destinado a documentar proyectos de automatización, análisis de datos y generación de indicadores desarrollados en entornos corporativos.
 
-**[Visitar el portfolio de Joaquín Minolli](https://jminolli-e.github.io/case-studies/)** — una introducción a los proyectos, sus decisiones y las herramientas utilizadas.
-
-La portada se encuentra en `index.html` y utiliza los recursos de `sitio/`. Los casos de estudio se pueden explorar directamente desde los enlaces siguientes.
+**[Visitar mi portfolio](https://jminolli-e.github.io/case-studies/)** — una introducción a los proyectos y las herramientas utilizadas.
 
 ## Pipeline de Coloquios
 
