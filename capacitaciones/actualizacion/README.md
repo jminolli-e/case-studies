@@ -53,9 +53,11 @@ El menú lateral ya existía; el cambio estuvo en cómo se organizó la informac
 
 De esta manera, cada persona puede elegir la consulta que necesita sin recorrer todos los análisis anteriores. Podés [explorar el dashboard navegable](https://jminolli-e.github.io/case-studies/capacitaciones/actualizacion/demo/dashboard-actual.html) y probar sus pantallas y secciones con datos ficticios.
 
-La separación no es solamente visual. Los indicadores generales de una pantalla siguen calculándose una vez, pero las consultas y transformaciones propias de cada sección esperan hasta que alguien la elija. Así se evita preparar análisis que todavía no se están consultando. Más abajo cuento cómo se resolvió en Streamlit.
+La separación tampoco es solamente visual: las consultas y transformaciones específicas de una sección esperan hasta que alguien la selecciona. Así se evita preparar análisis que todavía no se están consultando. Más abajo cuento cómo se resolvió en Streamlit.
 
 ### Una interfaz con más contexto y menos ruido
+
+Reorganizar no era solamente repartir lo que ya existía en nuevas secciones. También tuve que decidir qué componentes seguían ayudando y cuáles ocupaban espacio sin responder una necesidad actual.
 
 También me tocó dejar ir algunos componentes. Había gráficos detallados e interesantes que no se utilizaban y terminaban haciendo ruido. Aunque me había llevado trabajo construirlos, mantenerlos sólo por eso no ayudaba a quienes necesitaban encontrar una respuesta.
 
@@ -65,7 +67,12 @@ No se trataba únicamente de quitar cosas, sino de reunir lo que tiene sentido l
 
 Lo mismo ocurre con los indicadores de personas a cargo y pendientes prioritarios: cada bloque reúne valores, unidades y aclaraciones.
 
+<details>
+<summary><strong>Ver las tarjetas de personas a cargo y pendientes</strong></summary>
+
 ![Tarjetas de personas a cargo y personas pendientes de capacitaciones prioritarias, con sus aclaraciones y desglose por semestre](./assets/indicadores-capacitador.png)
+
+</details>
 
 Algunas tarjetas y tablas incorporan **tooltips**, pequeñas ayudas que aparecen al pasar el cursor y explican qué representa un valor o cómo se calcula. Así se conserva el contexto sin llenar la pantalla de explicaciones permanentes.
 
