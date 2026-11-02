@@ -14,7 +14,6 @@ Esta actualización nace de ese uso cotidiano: reorganizar un tablero que había
 
 Las demos utilizan datos ficticios y permiten recorrer la solución mientras leés el caso.
 
-- **[Explorar el dashboard](https://jminolli-e.github.io/case-studies/capacitaciones/actualizacion/demo/dashboard-actual.html):** navegar por las pantallas y secciones de la versión actual.
 - **[Abrir el reporte interactivo](https://jminolli-e.github.io/case-studies/capacitaciones/actualizacion/demo/reporte-actual.html):** probar los filtros y la descarga de pendientes en CSV.
 - **[Ver la versión anterior del dashboard](https://jminolli-e.github.io/case-studies/capacitaciones/actualizacion/demo/dashboard.html):** comparar la navegación anterior con la actual.
 
@@ -43,14 +42,16 @@ Los títulos ayudaban a separar visualmente cada bloque, pero no resolvían la n
 > [!NOTE]
 > **Sobre el GIF:** busca ilustrar el recorrido que exigía la pantalla. Se recreo apartir de capturas anteriores del tablero por lo que no refleja fielmente cada detalle visual del tablero anterior.
 
-### La solución: elegir qué consultar
+### Elegir primero qué consultar
 
-El menú lateral ya existía. El cambio fue organizar mejor lo que ocurría dentro de cada pantalla, en lugar de seguir agregando componentes uno debajo del otro. La navegación queda en dos niveles:
+El menú lateral ya existía; el cambio estuvo en cómo se organizó la información dentro de cada pantalla. En lugar de seguir apilando componentes, la navegación quedó en dos niveles:
 
 1. **Pantallas:** se eligen desde el menú lateral y representan una consulta principal. `Resumen` y `Avance por Capacitador` son dos ejemplos.
 2. **Secciones:** se eligen mediante los controles horizontales dentro de cada pantalla. Permiten pasar, por ejemplo, del avance por capacitación a las prioridades por capacitador, mostrando sólo los componentes relacionados con esa consulta.
 
 ![Navegación actual: el número 1 encuadra las pantallas del menú lateral y el número 2 las secciones de Resumen](./assets/navegacion-secciones.png)
+
+De esta manera, cada persona puede elegir la consulta que necesita sin recorrer todos los análisis anteriores. Podés [explorar el dashboard navegable](https://jminolli-e.github.io/case-studies/capacitaciones/actualizacion/demo/dashboard-actual.html) y probar sus pantallas y secciones con datos ficticios.
 
 La separación no es solamente visual. Los indicadores generales de una pantalla siguen calculándose una vez, pero las consultas y transformaciones propias de cada sección esperan hasta que alguien la elija. Así se evita preparar análisis que todavía no se están consultando. Más abajo cuento cómo se resolvió en Streamlit.
 
