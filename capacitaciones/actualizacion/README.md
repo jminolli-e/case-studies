@@ -1,4 +1,4 @@
-# Evolución del dashboard: navegación y reportes HTML
+# Capacitaciones de seguridad: cómo evolucionó el tablero
 
 Esta es la actualización de un [proyecto que ya había documentado](../): un tablero para hacer seguimiento de las capacitaciones de seguridad y saber cómo avanza el programa.
 
@@ -24,6 +24,15 @@ Esta actualización nace de ese uso cotidiano: reorganizar un tablero que había
 
 El seguimiento se distribuye entre dos grupos de capacitadores, cada uno con su coordinador. Por eso se genera un reporte HTML para cada grupo; más adelante se explica cómo se utiliza.
 
+## Índice
+
+- [Navegación y decisiones de interfaz](#navegación-cuando-encontrar-una-respuesta-empezó-a-llevar-más-recorrido)
+- [Reporte semanal y pendientes](#reporte-semanal-del-armado-manual-a-un-html-por-grupo)
+- [Actividad del período y avance acumulado](#actividad-del-período-y-avance-acumulado)
+- [Evolución técnica de la solución](#evolución-técnica-de-la-solución)
+- [Cómo preservé las reglas de cálculo](#cómo-preservé-las-reglas-de-cálculo)
+- [Comparación visual](#comparación-visual)
+
 ## Navegación: cuando encontrar una respuesta empezó a llevar más recorrido
 
 Cada nuevo gráfico, tabla o mapa respondía una consulta real. El problema no era que hubiera más información, sino que todos esos análisis seguían apareciendo uno debajo del otro.
@@ -48,6 +57,9 @@ El menú lateral ya existía; el cambio estuvo en cómo se organizó la informac
 
 De esta manera, cada persona puede elegir la consulta que necesita sin recorrer todos los análisis anteriores. Podés [explorar el dashboard navegable](https://jminolli-e.github.io/case-studies/capacitaciones/actualizacion/demo/dashboard-actual.html) y probar sus pantallas y secciones con datos ficticios.
 
+> [!NOTE]
+> **Sobre las imágenes y la demo actual:** a diferencia de los mockups de la primera etapa, las capturas actuales se generaron con componentes y estilos del tablero original, utilizando datos ficticios. La demo navegable reproduce parte de esa interfaz en HTML con datos sintéticos; no es el tablero productivo completo. La versión anterior se presenta como una reconstrucción aproximada.
+
 La separación tampoco es solamente visual: las consultas y transformaciones específicas de una sección esperan hasta que alguien la selecciona. Así se evita preparar análisis que todavía no se están consultando. Más abajo cuento cómo se resolvió en Streamlit.
 
 ### Una interfaz con más contexto y menos ruido
@@ -58,29 +70,23 @@ También me tocó dejar ir algunos componentes. Había gráficos detallados e in
 
 No se trataba únicamente de quitar cosas, sino de reunir lo que tiene sentido leer junto. Los indicadores de Grupo A y Grupo B, por ejemplo, ahora presentan el avance ponderado, las personas con necesidad y los cumplimientos dentro de un mismo contenedor por grupo. Ya no hace falta recorrer varias tarjetas para reconstruir esa relación.
 
+**Antes: cuatro indicadores separados**
+
+![Cuatro indicadores anteriores separados: avance ponderado y personas con necesidad para cada grupo](./assets/indicadores-grupos-anterior.png)
+
+**Ahora: un contenedor por grupo**
+
 ![Indicadores agrupados de Grupo A y Grupo B: avance ponderado, personas con necesidad y cumplimientos en un contenedor por grupo](./assets/indicadores-grupos.png)
 
-Lo mismo ocurre con los indicadores de personas a cargo y pendientes prioritarios: cada bloque reúne valores, unidades y aclaraciones.
-
-<details>
-<summary><strong>Ver las tarjetas de personas a cargo y pendientes</strong></summary>
-
-![Tarjetas de personas a cargo y personas pendientes de capacitaciones prioritarias, con sus aclaraciones y desglose por semestre](./assets/indicadores-capacitador.png)
-
-</details>
+Las imágenes utilizan datos ficticios y períodos diferentes: comparan la organización visual, no los resultados del programa.
 
 Algunas tarjetas y tablas incorporan **tooltips**, pequeñas ayudas que aparecen al pasar el cursor y explican qué representa un valor o cómo se calcula. Así se conserva el contexto sin llenar la pantalla de explicaciones permanentes.
 
-<details>
-<summary><strong>Ver un ejemplo de ayuda sobre los indicadores</strong></summary>
-
 ![Ayuda desplegada en la tarjeta Personas a cargo, que explica la asignación y el criterio de personas pendientes](./assets/indicadores-ayuda.png)
-
-</details>
 
 La navegación lateral también es más compacta. La antigua pantalla de actividad por capacitador dejó de ser independiente: su información útil se integró como `Actividad histórica` en `Avance por Capacitador`, separando lo que una persona dictó de la responsabilidad sobre las personas y contenidos que tiene asignados.
 
-La reorganización busca reducir recorridos innecesarios y facilitar la consulta a personas con distintos niveles de familiaridad digital, sin quitar controles ni contexto útil. Al final se presenta una [comparación visual](#comparación-visual) de dos secciones.
+La reorganización busca reducir recorridos innecesarios y facilitar la consulta a personas con distintos niveles de familiaridad digital, sin quitar controles ni contexto útil. Al final se presenta otra [comparación visual](#comparación-visual) de la pantalla Resumen.
 
 ## Reporte semanal: del armado manual a un HTML por grupo
 
@@ -264,11 +270,11 @@ A partir de esos pedidos diseñé e implementé individualmente la reorganizaci�
 
 ## Alcance y privacidad
 
-Este caso excluye nombres de empresa, personas, ubicaciones, correos, rutas, métricas productivas y reglas o consultas SQL corporativas. Las demos, capturas y animaciones utilizan información ficticia y no fueron construidas a partir de una copia anonimizada de la base real. El HTML de la demo actual adapta el renderer visual productivo con datos sintéticos y terminología pública.
+Este caso excluye nombres de empresa, personas, ubicaciones, correos, rutas, métricas productivas y reglas o consultas SQL corporativas. Las demos, capturas y animaciones utilizan información ficticia y no fueron construidas a partir de una copia anonimizada de la base real. Las capturas actuales usan componentes y estilos del tablero original; la demo navegable reproduce parte de esa interfaz y el reporte adapta el renderer visual productivo, ambos con datos sintéticos y terminología pública.
 
 ## Comparación visual
 
-Las siguientes capturas corresponden a reconstrucciones con datos ficticios y períodos diferentes. Comparan la organización visual de las interfaces, no los resultados del programa.
+Las siguientes capturas utilizan datos ficticios y períodos diferentes. La versión anterior es una reconstrucción y la actual usa componentes y estilos del tablero original. Comparan la organización visual de las interfaces, no los resultados del programa.
 
 <details>
 <summary><strong>Resumen: indicadores y avance por capacitación</strong></summary>
