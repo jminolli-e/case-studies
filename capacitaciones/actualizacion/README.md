@@ -32,17 +32,16 @@ Las demos utilizan datos ficticios y permiten recorrer la solución mientras le�
 
 El seguimiento se distribuye entre dos grupos de capacitadores, cada uno con su coordinador. Por eso se genera un reporte HTML para cada grupo; más adelante se explica cómo se utiliza.
 
-## Navegación: de pantallas largas a secciones
+## Navegación: cuando encontrar una respuesta empezó a llevar más recorrido
 
-### El problema de navegación anterior
+Cada nuevo gráfico, tabla o mapa respondía una consulta real. El problema no era que hubiera más información, sino que todos esos análisis seguían apareciendo uno debajo del otro.
 
-El crecimiento del dashboard era útil desde el punto de vista funcional: cada nuevo gráfico, tabla o mapa respondía una consulta real. El problema era que la interfaz seguía creciendo hacia abajo. Dentro de `Resumen`, por ejemplo, podían convivir los indicadores generales, el avance por capacitación, las prioridades por capacitador, comparaciones por gerencia y zona, mapas de calor y listados operativos.
-
-Los títulos ayudaban a separar visualmente cada bloque, pero no resolvían la navegación. Para llegar a un gráfico o mapa de calor ubicado al final había que atravesar los bloques anteriores, aunque no fueran relevantes para esa consulta.
+Los títulos ayudaban a separar visualmente cada bloque, pero no resolvían la navegación. **Si alguien solo necesitaba consultar un mapa de calor, ¿por qué tenía que atravesar todos los análisis anteriores para llegar a él?**
 
 ![Reconstrucción sintética del desplazamiento por los análisis apilados en la pantalla Resumen anterior](./assets/dashboard-resumen-anterior.gif)
 
-La animación reconstruye el recorrido anterior con datos ficticios; no es una grabación del entorno productivo.
+> [!NOTE]
+> **Sobre la animación:** se reconstruyó con datos ficticios a partir de capturas e imágenes de versiones anteriores. Algunos componentes se recrearon de forma aproximada: busca ilustrar el recorrido que exigía la pantalla, no reproducir fielmente cada detalle visual del tablero anterior.
 
 ### La solución: elegir qué consultar
 
