@@ -41,7 +41,7 @@ Los títulos ayudaban a separar visualmente cada bloque, pero no resolvían la n
 ![Reconstrucción sintética del desplazamiento por los análisis apilados en la pantalla Resumen anterior](./assets/dashboard-resumen-anterior.gif)
 
 > [!NOTE]
-> **Sobre la animación:** se reconstruyó con datos ficticios a partir de capturas e imágenes de versiones anteriores. Algunos componentes se recrearon de forma aproximada: busca ilustrar el recorrido que exigía la pantalla, no reproducir fielmente cada detalle visual del tablero anterior.
+> **Sobre el GIF:** busca ilustrar el recorrido que exigía la pantalla. Se recreo apartir de capturas anteriores del tablero por lo que no refleja fielmente cada detalle visual del tablero anterior.
 
 ### La solución: elegir qué consultar
 
