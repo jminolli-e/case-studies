@@ -10,13 +10,6 @@ Los datos y las reglas ya estaban en el sistema. Lo que faltaba era una forma m�
 
 Esta actualización nace de ese uso cotidiano: reorganizar un tablero que había crecido para responder tanto las preguntas originales como las nuevas que fueron surgiendo, y generar un reporte HTML donde cada destinatario del seguimiento semanal pueda consultar lo que necesita.
 
-### Antes de seguir, podés explorar las demos
-
-Las demos utilizan datos ficticios y permiten recorrer la solución mientras leés el caso.
-
-- **[Abrir el reporte interactivo](https://jminolli-e.github.io/case-studies/capacitaciones/actualizacion/demo/reporte-actual.html):** probar los filtros y la descarga de pendientes en CSV.
-- **[Ver la versión anterior del dashboard](https://jminolli-e.github.io/case-studies/capacitaciones/actualizacion/demo/dashboard.html):** comparar la navegación anterior con la actual.
-
 > [!NOTE]
 > **Para entender el seguimiento:** no todas las personas necesitan las mismas capacitaciones. Entre otros factores, importa la organización donde trabajan y las tareas que realizan. El tablero relaciona esas necesidades con las capacitaciones registradas y con el responsable asignado a cada organización. Así permite ver el avance y saber qué personas y contenidos siguen pendientes.
 >
@@ -27,7 +20,7 @@ Las demos utilizan datos ficticios y permiten recorrer la solución mientras le�
 | Tema | Antes | Ahora | ¿Qué aporta? |
 |---|---|---|---|
 | **Navegación** | Los indicadores, gráficos y tablas se acumulaban en pantallas largas. | Cada pantalla se organiza en secciones con análisis relacionados. | Es más fácil encontrar una consulta sin recorrer todos los bloques anteriores. |
-| **Reporte semanal** | Se reunían PNG y capturas de distintas pantallas; y 30 CSVs individuales de los pendientes de cada capacitador. | Se genera un HTML por grupo con métricas generales y pendientes. | Cada destinatario puede consultar el reporte y descargar el detalle que necesita. |
+| **Reporte semanal** | Se reunían varios PNGs y capturas; los pendientes se descargaban en CSVs individuales para cada capacitador. | Se genera un HTML por grupo con métricas generales y pendientes. | Cada destinatario puede consultar el reporte y descargar el detalle que necesita. |
 
 El seguimiento se distribuye entre dos grupos de capacitadores, cada uno con su coordinador. Por eso se genera un reporte HTML para cada grupo; más adelante se explica cómo se utiliza.
 
@@ -41,6 +34,8 @@ Los títulos ayudaban a separar visualmente cada bloque, pero no resolvían la n
 
 > [!NOTE]
 > **Sobre el GIF:** busca ilustrar el recorrido que exigía la pantalla. Se recreo apartir de capturas anteriores del tablero por lo que no refleja fielmente cada detalle visual del tablero anterior.
+
+También podés [explorar la réplica anterior del dashboard](https://jminolli-e.github.io/case-studies/capacitaciones/actualizacion/demo/dashboard.html), construida con datos ficticios.
 
 ### Elegir primero qué consultar
 
@@ -91,34 +86,39 @@ La reorganización busca reducir recorridos innecesarios y facilitar la consulta
 
 ### Cómo se preparaba el seguimiento semanal
 
-El seguimiento está dividido entre dos coordinadores y dos grupos. Cada coordinador trabaja con aproximadamente 15 capacitadores de `Grupo A` o `Grupo B`. La separación responde a la organización operativa del programa, pero ese criterio no es necesario para comprender la solución técnica.
+El seguimiento está dividido entre dos grupos y dos coordinadores. Cada coordinador trabaja con aproximadamente 15 capacitadores de `Grupo A` o `Grupo B`.
 
-Preparar el seguimiento implicaba recorrer el tablero, extraer información de distintos lugares y armar el informe por fuera:
+Para preparar el informe semanal, los coordinadores descargaban varios PNGs con indicadores, tomaban capturas de otros componentes y organizaban la información por fuera del tablero. También compartían los pendientes de los capacitadores, pero obtener ese detalle requería un recorrido individual.
+
+**Si los pendientes ya estaban en el tablero, ¿por qué había que descargarlos uno por uno?** Para cada capacitador, el coordinador entraba en `Avance por Capacitador`, lo seleccionaba y descargaba su CSV. Si necesitaba el detalle de todo su grupo, debía repetir el recorrido para los demás: aproximadamente 15 capacitadores por coordinador.
+
+> [!NOTE]
+> Para evitar enviar a las jefaturas hasta 30 archivos individuales, en ocasiones los pendientes se enviaban por correo directamente a cada capacitador. Además, como preparar los CSVs demandaba tiempo, no siempre se enviaban a todos: a menudo se preparaban para quienes los solicitaban.
 
 ```mermaid
 flowchart TD
-    A["Elegir fechas y filtros en el tablero"] --> B["Descargar PNG y CSV<br/>y tomar capturas de otros componentes"]
-    B --> C["Reunir la información en Excel"]
-    C --> D["Preparar detalles individuales<br/>cuando se solicitaban"]
-    D --> E["Revisar fechas, filtros y archivos"]
-    E --> F["Enviar el seguimiento"]
+    A["Elegir fechas y filtros en el tablero"] --> B["Descargar varios PNGs<br/>y tomar capturas"]
+    B --> C["Reunir la información<br/>y revisar fechas y filtros"]
+    C --> D["Enviar el seguimiento"]
+    B -.-> E["Seleccionar capacitadores<br/>y descargar CSVs individuales"]
+    E -.-> F["Compartir pendientes<br/>según la necesidad"]
 ```
 
 Cada material cubría una necesidad distinta:
 
 | Material | Para qué se usaba |
 |---|---|
-| **PNG y capturas** | Mostrar el panorama general y comparar avances. |
+| **PNGs y capturas** | Mostrar el panorama general y comparar avances. |
 | **CSV** | Identificar qué personas seguían pendientes y qué contenidos les faltaban. |
 | **Excel** | Reunir y distribuir parte de la información del seguimiento. |
 
 Como el filtro de fechas afectaba a todo el tablero, había que cambiarlo varias veces y comprobar que cada descarga correspondiera al período esperado. Un error en ese paso podía hacer que una parte del informe no coincidiera con las demás.
 
-El proceso completo demandaba aproximadamente una hora semanal entre ambos coordinadores. Es una estimación: podía variar según la cantidad de archivos individuales solicitados y no existía una medición formal. El principal problema no era solamente el tiempo, sino también la posibilidad de aplicar fechas distintas, omitir un archivo o distribuir información que no coincidiera con el resto del paquete.
+El proceso completo demandaba aproximadamente una hora semanal entre ambos coordinadores. Es una estimación operativa, no una medición formal. El problema no era solamente el tiempo: también existía la posibilidad de aplicar fechas distintas, omitir un archivo o distribuir información que no coincidiera con el resto del paquete.
 
 ### La solución: generar, revisar y compartir
 
-Decidí llevar ese armado al propio tablero. En lugar de reconstruir el informe a partir de extractos, manualmente o con una herramienta de IA, el sistema prepara una salida con fuentes y reglas definidas. Para las mismas fuentes, configuración y fechas, se obtienen los mismos indicadores; la revisión y el envío siguen siendo decisiones humanas.
+Decidí llevar ese armado al propio tablero. En lugar de reconstruir el informe a partir de extractos separados, el sistema prepara una salida con fuentes y reglas definidas. Para las mismas fuentes, configuración y fechas, se obtienen los mismos indicadores; la revisión y el envío siguen siendo decisiones humanas.
 
 Desde la pantalla `Reportes`, el coordinador ingresa una fecha inicial y una fecha final para definir la actividad que quiere informar. Habitualmente se utiliza una ventana semanal, pero las fechas son libres: permiten contemplar un envío atrasado, un feriado o un informe mensual sin cambiar la lógica del reporte.
 
@@ -135,13 +135,18 @@ flowchart LR
 
 Los dos documentos comparten el mismo resumen general del programa. Después, cada archivo muestra el detalle de su grupo: cerca de 15 capacitadores, sus indicadores y sus pendientes nominales. Un grupo no recibe el detalle individual del otro, aunque ambos ven el mismo panorama agregado.
 
-Podés [abrir el reporte HTML interactivo](https://jminolli-e.github.io/case-studies/capacitaciones/actualizacion/demo/reporte-actual.html) para explorar cómo se presenta el seguimiento y probar sus filtros.
+Podés [abrir el reporte HTML interactivo](https://jminolli-e.github.io/case-studies/capacitaciones/actualizacion/demo/reporte-actual.html) para explorar cómo se presenta el seguimiento y probar sus filtros con datos ficticios.
 
-### Los pendientes también viajan en el informe
+### Ya vi el porcentaje. ¿A quién tengo que capacitar?
 
 Una parte importante de la solución fue incluir en el HTML el detalle necesario para **descargar los pendientes en CSV**. Cada capacitador puede seleccionar su nombre, elegir entre todos sus pendientes operativos o las prioridades de un semestre y descargar el resultado visible.
 
+<details>
+<summary><strong>Ver los pendientes y la descarga CSV en el reporte</strong></summary>
+
 ![Reporte HTML de Grupo A con un capacitador seleccionado, los filtros por semestre, el detalle de pendientes y el botón Descargar CSV](./assets/reporte-pendientes-csv.png)
+
+</details>
 
 Esto resuelve algo que el informe visual por sí solo no podía resolver: además de ver cuánto falta, cada responsable necesita saber a quién capacitar y en qué temas. Al incluir el detalle en el reporte, ya no hace falta preparar y enviar un archivo individual para cada uno de los aproximadamente 30 capacitadores.
 
@@ -156,7 +161,7 @@ La misma visibilidad permite a los capacitadores revisar sus pendientes y señal
 
 El HTML permite reunir información para distintas audiencias dentro de un único archivo. Una jefatura puede comenzar por el panorama general; un coordinador puede revisar la actividad y comparar avances; un capacitador puede filtrar su nombre y consultar las personas que todavía tiene pendientes.
 
-Frente al conjunto anterior de PNG, capturas, CSV y Excel, el formato aporta:
+Frente al conjunto anterior de PNGs, capturas, CSVs y Excel, el formato aporta:
 
 - Un único archivo por grupo.
 - Apertura local en cualquier navegador, sin instalar Python ni conectarse al dashboard.
