@@ -2,23 +2,17 @@
 
 Esta es la actualización de un [proyecto que ya había documentado](../): un tablero para hacer seguimiento de las capacitaciones de seguridad y saber cómo avanza el programa.
 
-La idea es poder pasar de una pregunta a una respuesta sin tener que reconstruir la información a mano. Por ejemplo:
+La primera versión de este proyecto permitió responder, entre algunas cosas, qué capacitaciones necesitaba cada persona, cuáles había realizado y qué quedaba pendiente. Con el tiempo, el tablero empezó a responder cada vez más preguntas. Pero trajo un problema nuevo: encontrar una respuesta puntual requería recorrer cada vez más información.
 
-- ¿Cuántas personas forman parte del personal operativo y cuántas del administrativo?
-- ¿Cómo avanza una capacitación específica? ¿Y las capacitaciones prioritarias del programa 2026?
-- ¿En qué fecha realizó una persona una capacitación?
-- ¿Cuántas personas tiene pendientes de capacitar un responsable y quiénes son?
-- ¿Dónde trabajan esas personas y qué temas del programa les faltan?
+El tablero crecía en pantallas cada vez más largas y, para preparar el informe semanal, los coordinadores recorrían el tablero, cambiaban filtros, descargaban gráficos y CSV, tomaban capturas y reunían la información en una planilla.
 
-Las preguntas son sencillas. Lo desafiante es que las respuestas sigan teniendo sentido con el paso del tiempo, cuando las personas cambian de puesto u organización, toman una licencia o cambia su situación de alguna otra manera.
+Los datos y las reglas ya estaban en el sistema. Lo que faltaba era una forma más directa de encontrarlos, consolidarlos y compartirlos. ¿cómo llevar desde el tablero hasta cada persona la información que necesita, sin volver a prepararla manualmente?
 
-El tablero tiene incorporada toda esta lógica de negocio para acompañar esos cambios sin tener que corregir indicadores a mano cada vez que ocurre uno. Por ejemplo, cuando se actualizan los datos de una licencia o de un cambio de puesto, el tablero vuelve a calcular las métricas y las necesidades de capacitación que correspondan. Así, el objetivo es que el seguimiento siga siendo útil con el tiempo y requiera la menor intervención posible, sin depender de ajustes constantes en el backend.
-
-Con el tiempo, el tablero fue sumando análisis útiles, pero también pantallas cada vez más largas. Además, para enviar el avance semanal a jefaturas y capacitadores había que navegar por distintas secciones, descargar planillas y gráficos, tomar capturas y reunir todo en un informe.
+Esta actualización nace de ese uso cotidiano: reorganizar un tablero que había crecido para contestar las preguntas viejas y las nuevas que fueron surgiendo y generar un reporte HTML donde cada destinatario de dicho reporte semanal pueda consultar lo que necesita.
 
 ### Entonces, ¿qué resuelve esta actualización?
 
-Esta actualización aborda ambos problemas: **reorganiza la navegación mejorando el UX/UI** para que sea más fácil encontrar cada consulta, y permite generar **reportes HTML interactivos** que reúnen las partes más importantes del seguimiento, cuya idea es que cada destinatario del reporte semanal pueda encontrar en un mismo archivo las respuestas que necesita.
+Esta actualización cuenta cómo reorganizé la navegación y desarrollé reportes HTML interactivos para que cada destinatario encuentre, en un mismo archivo, las respuestas que necesita.
 
 
 - **[Explorar el dashboard navegable](https://jminolli-e.github.io/case-studies/capacitaciones/actualizacion/demo/dashboard-actual.html):** recorrer las pantallas y secciones disponibles en la demo.
