@@ -26,8 +26,8 @@ El seguimiento se distribuye entre dos grupos de capacitadores, cada uno con su 
 
 ## Índice
 
-- [Navegación y decisiones de interfaz](#navegación-cuando-encontrar-una-respuesta-empezó-a-llevar-más-recorrido)
-- [Reporte semanal y pendientes](#reporte-semanal-del-armado-manual-a-un-html-por-grupo)
+- [Navegación y decisiones de interfaz (UX/UI)](#navegación-cuando-encontrar-una-respuesta-empezó-a-llevar-más-recorrido)
+- [Generación de reportes HTML interactivos](#reporte-semanal-del-armado-manual-a-un-html-por-grupo)
 - [Actividad del período y avance acumulado](#actividad-del-período-y-avance-acumulado)
 - [Evolución técnica de la solución](#evolución-técnica-de-la-solución)
 - [Cómo preservé las reglas de cálculo](#cómo-preservé-las-reglas-de-cálculo)
