@@ -18,15 +18,10 @@ Las demos utilizan datos ficticios y permiten recorrer la solución mientras le�
 - **[Abrir el reporte interactivo](https://jminolli-e.github.io/case-studies/capacitaciones/actualizacion/demo/reporte-actual.html):** probar los filtros y la descarga de pendientes en CSV.
 - **[Ver la versión anterior del dashboard](https://jminolli-e.github.io/case-studies/capacitaciones/actualizacion/demo/dashboard.html):** comparar la navegación anterior con la actual.
 
-## Un poco de contexto
-
-No todas las personas necesitan los mismos contenidos: estos dependen del puesto, las tareas y el departamento. Algunos se priorizan para concentrar el seguimiento durante una etapa del año.
-
-Además del avance general y los pendientes, el tablero permite comparar resultados por capacitación, gerencia, zona, organización y reparto; consultar la actividad histórica de los capacitadores y la situación de una persona; y revisar la cobertura de las capacitaciones obligatorias de SG-SST.
-
 > [!NOTE]
-> **Responsable y quien dictó:** una persona puede estar asignada a un capacitador para su seguimiento y recibir una charla de otro. El tablero conserva ambos datos para distinguir la responsabilidad sobre los pendientes de la actividad efectivamente dictada.
-> Para el avance del programa importa que la persona haya completado el contenido, aunque lo haya dictado otro capacitador.
+> **Para entender el seguimiento:** no todas las personas necesitan las mismas capacitaciones. Entre otros factores, importa la organización donde trabajan y las tareas que realizan. El tablero relaciona esas necesidades con las capacitaciones registradas y con el responsable asignado a cada organización. Así permite ver el avance y saber qué personas y contenidos siguen pendientes.
+>
+> La [primera etapa del proyecto](../#cómo-se-calcula-el-porcentaje-de-avance) explica con más detalle cómo se construyen las necesidades y se calcula el avance.
 
 ## Qué cambió
 
