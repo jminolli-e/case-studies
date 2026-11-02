@@ -6,18 +6,17 @@ La primera versión de este proyecto permitió responder, entre algunas cosas, q
 
 El tablero crecía en pantallas cada vez más largas y, para preparar el informe semanal, los coordinadores recorrían el tablero, cambiaban filtros, descargaban gráficos y CSV, tomaban capturas y reunían la información en una planilla.
 
-Los datos y las reglas ya estaban en el sistema. Lo que faltaba era una forma más directa de encontrarlos, consolidarlos y compartirlos. ¿cómo llevar desde el tablero hasta cada persona la información que necesita, sin volver a prepararla manualmente?
+Los datos y las reglas ya estaban en el sistema. Lo que faltaba era una forma más directa de encontrarlos, consolidarlos y compartirlos. **¿Cómo llevar desde el tablero hasta cada persona la información que necesita, sin volver a prepararla manualmente?**
 
-Esta actualización nace de ese uso cotidiano: reorganizar un tablero que había crecido para contestar las preguntas viejas y las nuevas que fueron surgiendo y generar un reporte HTML donde cada destinatario de dicho reporte semanal pueda consultar lo que necesita.
+Esta actualización nace de ese uso cotidiano: reorganizar un tablero que había crecido para responder tanto las preguntas originales como las nuevas que fueron surgiendo, y generar un reporte HTML donde cada destinatario del seguimiento semanal pueda consultar lo que necesita.
 
-### Entonces, ¿qué resuelve esta actualización?
+### Antes de seguir, podés explorar las demos
 
-Esta actualización cuenta cómo reorganizé la navegación y desarrollé reportes HTML interactivos para que cada destinatario encuentre, en un mismo archivo, las respuestas que necesita.
+Las demos utilizan datos ficticios y permiten recorrer la solución mientras leés el caso.
 
-
-- **[Explorar el dashboard navegable](https://jminolli-e.github.io/case-studies/capacitaciones/actualizacion/demo/dashboard-actual.html):** recorrer las pantallas y secciones disponibles en la demo.
-- **[Abrir el reporte HTML interactivo](https://jminolli-e.github.io/case-studies/capacitaciones/actualizacion/demo/reporte-actual.html):** consultar indicadores, filtros y descarga CSV.
-- **Versión anterior del tablero:** se conserva la [réplica anterior del dashboard](./demo/dashboard.html) como archivo fuente.
+- **[Explorar el dashboard](https://jminolli-e.github.io/case-studies/capacitaciones/actualizacion/demo/dashboard-actual.html):** navegar por las pantallas y secciones de la versión actual.
+- **[Abrir el reporte interactivo](https://jminolli-e.github.io/case-studies/capacitaciones/actualizacion/demo/reporte-actual.html):** probar los filtros y la descarga de pendientes en CSV.
+- **[Ver la versión anterior del dashboard](https://jminolli-e.github.io/case-studies/capacitaciones/actualizacion/demo/dashboard.html):** comparar la navegación anterior con la actual.
 
 ## Un poco de contexto
 
