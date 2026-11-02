@@ -42,7 +42,7 @@ Los títulos ayudaban a separar visualmente cada bloque, pero no resolvían la n
 ![Reconstrucción sintética del desplazamiento por los análisis apilados en la pantalla Resumen anterior](./assets/dashboard-resumen-anterior.gif)
 
 > [!NOTE]
-> **Sobre el GIF:** busca ilustrar el recorrido que exigía la pantalla. Se recreo apartir de capturas anteriores del tablero por lo que no refleja fielmente cada detalle visual del tablero anterior.
+> **Sobre el GIF:** busca ilustrar el recorrido que exigía la pantalla. Se recreó apartir de capturas anteriores del tablero por lo que no refleja fielmente cada detalle visual del tablero anterior.
 
 También podés [explorar la réplica anterior del dashboard](https://jminolli-e.github.io/case-studies/capacitaciones/actualizacion/demo/dashboard.html), construida con datos ficticios.
 
@@ -66,7 +66,7 @@ La separación tampoco es solamente visual: las consultas y transformaciones esp
 
 Reorganizar no era solamente repartir lo que ya existía en nuevas secciones. También tuve que decidir qué componentes seguían ayudando y cuáles ocupaban espacio sin responder una necesidad actual.
 
-También me tocó dejar ir algunos componentes. Había gráficos detallados e interesantes que no se utilizaban y terminaban haciendo ruido. Aunque me había llevado trabajo construirlos, mantenerlos sólo por eso no ayudaba a quienes necesitaban encontrar una respuesta.
+Me tocó dejar ir algunos componentes. Había gráficos detallados e interesantes que no se utilizaban y terminaban haciendo ruido. Aunque me había llevado trabajo construirlos, mantenerlos sólo por eso no ayudaba a quienes necesitaban encontrar una respuesta.
 
 No se trataba únicamente de quitar cosas, sino de reunir lo que tiene sentido leer junto. Los indicadores de Grupo A y Grupo B, por ejemplo, ahora presentan el avance ponderado, las personas con necesidad y los cumplimientos dentro de un mismo contenedor por grupo. Ya no hace falta recorrer varias tarjetas para reconstruir esa relación.
 
