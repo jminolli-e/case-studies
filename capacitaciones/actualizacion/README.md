@@ -25,10 +25,12 @@ Las demos utilizan datos ficticios y permiten recorrer la solución mientras le�
 
 ## Qué cambió
 
-| Tema | Antes | Problema | Ahora | Solución aportada |
-|---|---|---|---|---|
-| **Navegación** | Los indicadores, gráficos, tablas y mapas se apilaban en pantallas largas. | Para llegar a un análisis había que atravesar otros que no siempre eran relevantes. Al agregar contenido, los bloques cambiaban de posición. | Las pantallas del menú lateral se organizan en secciones con componentes relacionados. | Cada consulta tiene un lugar más predecible: primero se elige la pantalla y después el análisis puntual, sin recorrer todos los bloques anteriores. |
-| **Reporte semanal** | Los coordinadores reunían PNG, capturas, CSV y planillas para preparar el seguimiento de aproximadamente 30 capacitadores. | Había que configurar fechas y filtros varias veces, comprobar que los extractos coincidieran y preparar detalles individuales. | Desde el tablero se genera un HTML para Grupo A y otro para Grupo B, con información general y detalle descargable. | El armado se automatiza y cada capacitador puede obtener sus pendientes del mismo reporte. La revisión y el envío siguen bajo control humano. |
+| Tema | Antes | Ahora | ¿Qué aporta? |
+|---|---|---|---|
+| **Navegación** | Los indicadores, gráficos y tablas se acumulaban en pantallas largas. | Cada pantalla se organiza en secciones con análisis relacionados. | Es más fácil encontrar una consulta sin recorrer todos los bloques anteriores. |
+| **Reporte semanal** | Se reunían PNG y capturas de distintas pantallas; y 30 CSVs individuales de los pendientes de cada capacitador. | Se genera un HTML por grupo con métricas generales y pendientes. | Cada destinatario puede consultar el reporte y descargar el detalle que necesita. |
+
+El seguimiento se distribuye entre dos grupos de capacitadores, cada uno con su coordinador. Por eso se genera un reporte HTML para cada grupo; más adelante se explica cómo se utiliza.
 
 ## Navegación: de pantallas largas a secciones
 
