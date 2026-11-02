@@ -5,9 +5,10 @@
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
 /* Documentación desplegable y habilidades */
-.document-list{align-items:start}
+.document-list{align-items:stretch}
 details.document{display:block;padding:0}
 .document summary{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:17px;cursor:pointer;list-style:none;min-height:90px}
+.document-list .document summary{min-height:120px}
 .document summary::-webkit-details-marker{display:none}
 .document summary:hover,.document[open] summary{background:#faf4ee}
 .document summary:focus-visible{outline:3px solid var(--clay);outline-offset:-3px}
@@ -28,4 +29,5 @@ details.document{display:block;padding:0}
 .tool-card{background:var(--white);border:1px solid var(--line);padding:22px;display:flex;flex-direction:column;align-items:flex-start}
 .tool-card h3{font:500 21px/1.25 var(--serif);letter-spacing:-.02em;margin:0}
 .tool-card p{font-size:13px;color:var(--muted);margin:8px 0 18px;flex:1}
-@media(max-width:700px){.tool-groups{grid-template-columns:1fr;gap:10px}.tool-card{padding:18px}.document summary{min-height:0}}
+@media(min-width:701px) and (max-width:900px){.document-list .document summary{min-height:140px}}
+@media(max-width:700px){.tool-groups{grid-template-columns:1fr;gap:10px}.tool-card{padding:18px}.document summary,.document-list .document summary{min-height:0}}
