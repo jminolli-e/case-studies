@@ -15,7 +15,7 @@ Esta actualización nace de ese uso cotidiano: reorganizar un tablero que había
 >
 > La [primera etapa del proyecto](../#cómo-se-calcula-el-porcentaje-de-avance) explica con más detalle cómo se construyen las necesidades y se calcula el avance.
 
-## Qué cambió
+## Qué cambió en esta actualización
 
 | Tema | Antes | Ahora | ¿Qué aporta? |
 |---|---|---|---|
