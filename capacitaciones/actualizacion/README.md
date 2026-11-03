@@ -96,13 +96,17 @@ Para preparar el informe semanal del avance del programa, los coordinadores desc
 > [!NOTE]
 > Para evitar enviar a las jefaturas hasta 30 archivos individuales, en ocasiones el personal pendiente de capacitar para cada capacitador se enviaban por correo directamente a cada capacitador. Además, como preparar los CSVs demandaba tiempo, no siempre se enviaban a todos: a menudo se preparaban para quienes los solicitaban unicamente.
 
+Los filtros de fecha eran globales: al cambiarlos, cambiaba el período de todo el tablero. Para preparar el informe había que consultar primero las fechas del año y obtener el avance acumulado y los pendientes; después, cambiar a la última semana para capturar las capacitaciones realizadas en ese período.
+
 ```mermaid
-flowchart TD
-    A["Elegir fechas y filtros en el tablero"] --> B["Descargar varios PNGs<br/>y tomar capturas"]
-    B --> C["Reunir la información<br/>y revisar fechas y filtros"]
-    C --> D["Enviar el seguimiento"]
-    B -.-> E["Seleccionar capacitadores<br/>y descargar CSVs individuales"]
-    E -.-> F["Compartir pendientes<br/>según la necesidad"]
+flowchart LR
+    A["Fechas del año"] --> B["PNGs y capturas"]
+    B --> C["CSVs de pendientes"]
+    C --> D["Fechas de la última semana"]
+    D --> E["Captura de actividad semanal"]
+    E --> F["Revisar períodos y resultados"]
+    F --> G["Armar y enviar el correo"]
+    G --> H["Enviar pendientes solicitados"]
 ```
 
 Cada material cubría una necesidad distinta:
@@ -113,7 +117,7 @@ Cada material cubría una necesidad distinta:
 | **CSV** | Identificar qué personas seguían pendientes y qué contenidos les faltaban. |
 | **Excel** | Reunir y distribuir parte de la información del seguimiento. |
 
-Como el filtro de fechas afectaba a todo el tablero, había que cambiarlo varias veces y comprobar que cada descarga correspondiera al período esperado. Un error en ese paso podía hacer que una parte del informe no coincidiera con las demás.
+Había que comprobar que cada descarga correspondiera al período esperado. Un error al cambiar las fechas podía hacer que una parte del informe no coincidiera con las demás.
 
 El proceso completo demandaba aproximadamente una hora semanal entre ambos coordinadores. Es una estimación operativa, no una medición formal. El problema no era solamente el tiempo: también existía la posibilidad de aplicar fechas distintas, omitir un archivo o distribuir información que no coincidiera con el resto del paquete.
 
@@ -127,11 +131,9 @@ Con ese período, el sistema genera dos archivos: **Reporte Grupo A** y **Report
 
 ```mermaid
 flowchart LR
-    A["Elegir fechas de actividad"] --> B["Generar reportes"]
-    B --> C["Reporte Grupo A"]
-    B --> D["Reporte Grupo B"]
-    C --> E["Revisar y enviar"]
-    D --> E
+    A["Elegir fechas"] --> B["Generar HTML: Grupo A y Grupo B"]
+    B --> C["Revisar"]
+    C --> D["Enviar a cada grupo"]
 ```
 
 Los dos documentos comparten el mismo resumen general del programa. Después, cada archivo muestra el detalle de su grupo: cerca de 15 capacitadores, sus indicadores y sus pendientes nominales. Un grupo no recibe el detalle individual del otro, aunque ambos ven el mismo panorama agregado.
