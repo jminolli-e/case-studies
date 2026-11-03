@@ -265,9 +265,11 @@ El feedback de las primeras revisiones también produjo cambios visibles. Se agr
 
 ## Mi participación
 
-La necesidad no surgió de un único pedido formal. Distintas personas plantearon problemas parciales: agrupar CSV, reunir componentes para no enviar capturas separadas y reducir el tiempo perdido preparando el reporte. También señalaron errores derivados de configurar manualmente los filtros de fecha varias veces.
+Los coordinadores me habían comentado más de una vez cuánto tiempo les llevaba preparar el seguimiento y me preguntaron si podía automatizar alguna parte. Yo también le había dado vueltas al problema. Ya había generado reportes HTML a partir de datos en el proyecto de auditorías, pero tardé en hacer una conexión que ahora parece evidente: si la información y los cálculos ya estaban en el tablero, ¿por qué no generar el reporte ahí mismo y descargarlo desde un botón?
 
-A partir de esos pedidos diseñé e implementé individualmente la reorganización de la navegación, las optimizaciones de consultas, el modelo de reporting y el renderer HTML. Los coordinadores aportaron el contexto operativo y el feedback necesario para ajustar la salida a la forma en que realizan el seguimiento.
+Sinceramente siento que el proyecto no resuelve un problema espectacular, sino uno cotidiano: evita tener que reunir archivos y capturas cada semana y reduce las oportunidades de enviar información con fechas o filtros que no coinciden. No elimina la revisión humana ni corrige por sí solo un dato mal cargado, pero sí quita pasos manuales que podían introducir errores.
+
+También disfruté poder dedicar atención a la experiencia de uso. Cuando las reglas de cálculo y las cargas están mejor organizadas, queda espacio para preguntarse si alguien encuentra lo que busca, entiende un indicador o puede recorrer el tablero sin perderse. Me pone contento haber construido algo que mis compañeros usan y agradecen. Para mí, automatizar estas tareas tiene sentido precisamente por eso: les devuelve tiempo y atención para trabajos que necesitan más de ellos.
 
 ## Alcance y privacidad
 
