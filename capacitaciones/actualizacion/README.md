@@ -82,10 +82,6 @@ Algunas tarjetas y tablas incorporan **tooltips**, pequeñas ayudas que aparecen
 
 ![Ayuda desplegada en la tarjeta Personas a cargo, que explica la asignación y el criterio de personas pendientes](./assets/indicadores-ayuda.png)
 
-La navegación lateral también es más compacta. La antigua pantalla de actividad por capacitador dejó de ser independiente: su información útil se integró como `Actividad histórica` en `Avance por Capacitador`, separando lo que una persona dictó de la responsabilidad sobre las personas y contenidos que tiene asignados.
-
-La reorganización busca reducir recorridos innecesarios y facilitar la consulta a personas con distintos niveles de familiaridad digital, sin quitar controles ni contexto útil.
-
 > [!NOTE]
 > Podés ver otra comparación de la interfaz anterior y la actual en el apartado [Comparación visual](#comparación-visual), al final del caso.
 
