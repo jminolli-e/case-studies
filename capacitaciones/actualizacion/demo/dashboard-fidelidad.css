@@ -92,3 +92,18 @@ h1,.period,.sidebar,.card,.convention-card,.segments,.tabs,.panel{font-family:'P
 .inspector-advance-value.inside{left:8px}.inspector-advance-value.outside{color:#1a2e2b}
 @media(max-width:600px){.inspector-advance-row{grid-template-columns:140px minmax(0,1fr)}}
 @media(max-width:800px){.convention-body{grid-template-columns:110px 1fr}.legend{justify-content:flex-start!important}.panel-head{display:block}.chart-row{grid-template-columns:140px 1fr}.card h3{gap:8px;flex-wrap:wrap}}
+
+/* Pantalla de reportes: estilos aislados del resto de la demo. */
+#reports{font-family:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;color:#1a2e2b}
+#reports .report-builder-header{margin-bottom:18px;padding:18px 20px;background:linear-gradient(135deg,#e8f5f2,#fff);border:1px solid #e1f1ee;border-left:5px solid #18856f;border-radius:10px}
+#reports .report-builder-kicker{margin:0;color:#18856f;font-size:10px;font-weight:800;letter-spacing:.09em;text-transform:uppercase}
+#reports .report-builder-title{margin:3px 0 0;color:#0f5c4d;font-size:20px;font-weight:800;line-height:1.3}
+#reports .report-builder-caption{max-width:760px;margin:5px 0 0;color:#64748b;font-size:12px;line-height:1.45}
+#reports .report-dates{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:0 0 16px}
+#reports .report-dates label{display:grid;gap:8px;min-width:0;color:#1a2e2b;font-size:12px;font-weight:600}
+#reports .report-dates input{width:100%;min-width:0;height:40px;padding:8px 12px;border:2px solid #18856f;border-radius:8px;background:#fff;color:#1a2e2b;font:400 12px 'Plus Jakarta Sans',system-ui,sans-serif;opacity:1;-webkit-text-fill-color:#1a2e2b}
+#reports .report-dates input:disabled{cursor:not-allowed}
+#reports .report-generate{min-height:36px;padding:7px 16px;border:1px solid #e2e8f0;border-radius:8px;background:#f1f5f9;color:#64748b;font:700 12px 'Plus Jakarta Sans',system-ui,sans-serif;opacity:1}
+#reports .report-info{display:flex;align-items:flex-start;gap:12px;margin-top:16px;padding:16px;border-radius:8px;background:#e8f4fc;color:#1a2e2b;font-size:12px;line-height:1.5}
+#reports .report-info-icon{color:#0068c9;font-size:17px;line-height:1;font-weight:700}
+@media(max-width:600px){#reports .report-dates{grid-template-columns:1fr}}
