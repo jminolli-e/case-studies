@@ -68,7 +68,7 @@ Reorganizar no era solamente repartir lo que ya existía en nuevas secciones. Ta
 
 Me tocó dejar ir algunos componentes. Había gráficos detallados, complejos y que a mi personalmente me parecían interesantes, pero que no se utilizaban y terminaban haciendo ruido. Aunque me había llevado trabajo construirlos, mantenerlos sólo por eso no ayudaba a quienes necesitaban encontrar una respuesta y en la practica, algunas soluciones mas sencillas ya brindaban esa información por lo que mas que nada molestaban.
 
-No se trataba únicamente de quitar cosas, sino de reunir lo que tiene sentido leer junto. Los indicadores de Grupo A y Grupo B, por ejemplo, ahora presentan el avance ponderado, las personas con necesidad y los cumplimientos dentro de un mismo contenedor por grupo. Ya no hace falta recorrer varias tarjetas para reconstruir esa relación.
+No se trataba únicamente de quitar cosas, sino de reunir lo que tiene sentido leer junto. Los indicadores de Grupo A y Grupo B, por ejemplo, ahora presentan el avance ponderado, las personas con necesidad y los cumplimientos dentro de un mismo contenedor por grupo.
 
 **Antes: cuatro indicadores separados**
 
