@@ -140,7 +140,7 @@ Podés [abrir el reporte HTML interactivo](https://jminolli-e.github.io/case-stu
 
 ### Ya vi el porcentaje. ¿A quién tengo que capacitar?
 
-Una parte importante de la solución fue incluir en el HTML el detalle necesario para **descargar los pendientes en CSV**. Cada capacitador puede seleccionar su nombre, elegir entre todos sus pendientes operativos o las prioridades de un semestre y descargar el resultado visible.
+Una parte importante de la solución fue incluir en el HTML la posibilidad de **descargar los pendientes en CSV**. Cada capacitador puede seleccionar su nombre, y descargar el listado de que que personal tiene pendiente de capacitar y en que capacitaciones.
 
 <details>
 <summary><strong>Ver los pendientes y la descarga CSV en el reporte</strong></summary>
