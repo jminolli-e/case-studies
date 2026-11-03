@@ -2,10 +2,7 @@
 
 > Esta es la actualización de un [proyecto que ya había documentado](../): un tablero para hacer seguimiento de las capacitaciones de seguridad y saber cómo avanza el programa.
 
-La primera versión de este proyecto permitió responder, entre algunas cosas:
- *Qué capacitaciones necesitaba cada persona.
- *Cuáles había realizado y qué quedaba pendiente. 
-Con el tiempo, el tablero empezó a responder cada vez más preguntas. Pero trajo un problema nuevo: encontrar una respuesta puntual requería recorrer cada vez más información.
+La primera versión de este proyecto permitió responder, entre algunas cosas: qué capacitaciones necesitaba cada persona, cuáles había realizado y qué quedaba pendiente. Con el tiempo, el tablero empezó a responder cada vez más preguntas. Pero trajo un problema nuevo: encontrar una respuesta puntual requería recorrer cada vez más información.
 
 El tablero crecía en pantallas cada vez más largas y, para preparar el informe semanal, los coordinadores recorrían el tablero, cambiaban filtros, descargaban gráficos y CSV, tomaban capturas y reunían la información en una planilla.
 
