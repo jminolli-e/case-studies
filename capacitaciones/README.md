@@ -1,6 +1,6 @@
 # Charlas de seguridad - Sistema de seguimiento de capacitaciones
 
-> **Primera etapa del proyecto.** Este documento describe la construcción de la base de datos y la primera versión del dashboard. La [actualización de navegación y reportes semanales](./actualizacion/) documenta su evolución posterior.
+> **Primera etapa del proyecto.** Este documento describe la construcción de la base de datos y la primera versión del dashboard. La [actualización de navegación y reportes semanales](./actualizacion/) documenta su evolución posterior. Además, en esta versión las imágenes son mockups que no se parecían a la versión real del tablero, en la actualización se muestran imágenes que representan el UI real del tablero.
 
 ## Resumen Ejecutivo
 
