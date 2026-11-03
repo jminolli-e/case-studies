@@ -8,11 +8,13 @@
 .document-list{align-items:stretch}
 details.document{display:block;padding:0}
 .document summary{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:17px;cursor:pointer;list-style:none;min-height:90px}
-.document-list .document summary{min-height:120px}
+.document-list .document summary{min-height:165px}
 .document summary::-webkit-details-marker{display:none}
 .document summary:hover,.document[open] summary{background:#f1f5f9}
 .document summary:focus-visible{outline:3px solid var(--clay);outline-offset:-3px}
 .document summary small{display:block;color:var(--muted);font-size:13px;line-height:1.5;margin-top:5px}
+.document-tags{margin-top:12px}
+.document summary>span:first-child{min-width:0}
 .disclosure-icon{flex:none;width:24px;height:24px;border:1px solid #b8c8d8;border-radius:50%;position:relative;margin-top:1px}
 .disclosure-icon:before,.disclosure-icon:after{content:'';position:absolute;background:var(--clay);left:6px;right:6px;top:10px;height:2px}
 .disclosure-icon:after{transform:rotate(90deg)}
@@ -29,5 +31,5 @@ details.document{display:block;padding:0}
 .tool-card{background:var(--white);border:1px solid var(--line);padding:22px;display:flex;flex-direction:column;align-items:flex-start}
 .tool-card h3{font:500 21px/1.25 var(--serif);letter-spacing:-.02em;margin:0}
 .tool-card p{font-size:13px;color:var(--muted);margin:8px 0 18px;flex:1}
-@media(min-width:701px) and (max-width:900px){.document-list .document summary{min-height:140px}}
+@media(min-width:701px) and (max-width:900px){.document-list .document summary{min-height:195px}}
 @media(max-width:700px){.tool-groups{grid-template-columns:1fr;gap:10px}.tool-card{padding:18px}.document summary,.document-list .document summary{min-height:0}}
