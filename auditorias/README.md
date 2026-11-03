@@ -30,6 +30,10 @@ La idea creció más allá de diseñar una página. Para generar un informe todo
 
 En el HTML puedo recorrer los resultados de una edición, consultar desgloses y revisar qué unidades o equipos enviaron una auditoría. Según el tipo de auditoría, también puedo explorar resultados por categoría, pregunta o clasificación y consultar tendencias disponibles.
 
+![Tarjetas de cobertura por gerencia con sectores auditados y pendientes](imagenes/cobertura-ficticia.png)
+
+*Imagen ilustrativa: todos los sectores, cantidades y resultados mostrados son ficticios.*
+
 El PNG cumple otro propósito: presentar un resumen visual sin tener que recorrer el detalle interactivo. Genero ambas salidas a partir de la edición almacenada en la base, no de capturas manuales de la planilla.
 
 ## Cómo llega la información al reporte
@@ -79,6 +83,10 @@ Antes de guardar una edición, valido el archivo y sus datos. Si una recarga fal
 ## Comparar meses también tiene límites
 
 Incorporé estadísticas históricas para dar contexto a los resultados, pero no asumí que todas las ediciones se pueden comparar de la misma manera. Algunas tienen errores en los datos de origen; en otras cambian la cantidad o el contenido de las preguntas.
+
+![Gráficos históricos de cobertura y conformidad por categoría](imagenes/evolucion-ficticia.png)
+
+*Imagen ilustrativa: todos los sectores, cantidades y resultados mostrados son ficticios.*
 
 Si cambia el cuestionario, una variación en la conformidad puede deberse en parte a qué se preguntó, no solo a un cambio en las condiciones auditadas. Por eso algunas estadísticas no se incluyen cuando no hay una base suficientemente comparable, y cuando una diferencia relevante forma parte del cálculo debe explicarse en el reporte. Prefiero señalar ese límite antes que presentar una tendencia que parezca precisa pero lleve a una conclusión equivocada.
 
