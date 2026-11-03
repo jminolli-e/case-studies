@@ -78,8 +78,6 @@ No se trataba únicamente de quitar cosas, sino de reunir lo que tiene sentido l
 
 ![Indicadores agrupados de Grupo A y Grupo B: avance ponderado, personas con necesidad y cumplimientos en un contenedor por grupo](./assets/indicadores-grupos.png)
 
-Las imágenes utilizan datos ficticios y períodos diferentes: comparan la organización visual, no los resultados del programa.
-
 Algunas tarjetas y tablas incorporan **tooltips**, pequeñas ayudas que aparecen al pasar el cursor y explican qué representa un valor o cómo se calcula. Así se conserva el contexto sin llenar la pantalla de explicaciones permanentes.
 
 ![Ayuda desplegada en la tarjeta Personas a cargo, que explica la asignación y el criterio de personas pendientes](./assets/indicadores-ayuda.png)
