@@ -1,108 +1,62 @@
-# De capturas de Excel a reportes de auditoría interactivos
+# Reportes de auditorías de seguridad
 
-**Un correo lleno de capturas podía mostrar los resultados de una auditoría, pero no permitía explorarlos.** Para consultar otro sector, entender un indicador o comparar un mes con otro, había que volver a la planilla.
+Las auditorías de seguridad permiten revisar las condiciones de distintos sectores y hacer seguimiento de sus resultados. Al terminar cada edición, el reporte busca responder dos preguntas: **qué sectores participaron** y **qué tan conformes fueron sus respuestas**. Esta información permite a gerentes, directores, jefes y auditores revisar el desempeño de cada gerencia y profundizar en los sectores y preguntas que necesiten atención.
 
-Transformé ese proceso en un sistema que toma los resultados de auditorías desde Excel, los valida y conserva su contexto histórico. Con esos datos genero un **reporte HTML interactivo** para explorar los resultados y un **PNG** para compartir un resumen visual.
+Antes, las respuestas del formulario se copiaban a un Excel. Se preparaban cuadros y gráficos, se pegaban capturas en un correo y se adjuntaba también la planilla. Para revisar las respuestas había que abrir ese Excel con los datos en bruto, ensanchar columnas para leer las preguntas y filtrar manualmente sector por sector. Las respuestas no estaban agrupadas para facilitar esa consulta y abrir la planilla desde un celular resultaba incómodo.
 
-> Este caso describe mi trabajo en un entorno corporativo. Para proteger la información, no incluyo nombres, archivos ni resultados reales; los ejemplos numéricos son ficticios.
+Desarrollé un proceso en **Python** que valida la información y genera automáticamente un **reporte interactivo con HTML y CSS**. El reporte reúne más información que las capturas anteriores, pero la organiza con menos elementos para que se pueda interpretar más rápido. Tiene un diseño adaptable para consultarlo desde una computadora o un celular, aunque todavía hay detalles de visualización por mejorar.
 
-## Cómo se preparaba el informe
+> Este caso describe un proyecto realizado en un entorno corporativo. Las imágenes y cifras son ilustrativas; no se incluyen datos ni resultados reales.
 
-El proceso empezaba con un formulario de Google Forms. Las respuestas se copiaban y pegaban en un Excel, donde se armaban cuadros, gráficos y resultados de la auditoría. Para comunicar la edición, se tomaban capturas de esos cuadros y se pegaban en un correo.
+## Qué permite consultar el reporte
 
-El correo permitía compartir la información, pero el resultado era una colección de imágenes estáticas: difícil de leer con comodidad y limitada a lo que se había decidido capturar. Si quería revisar otro detalle o dar contexto a los números, la respuesta seguía estando en la planilla.
+El HTML presenta la **cobertura por gerencia** —qué proporción de los sectores esperados envió su auditoría— y la **conformidad de las respuestas**. A partir de esa vista general se puede entrar en el detalle por sector, pregunta o categoría y consultar la evolución de los resultados cuando los períodos son comparables.
 
-Mi primer intento de mejora fue usar Python para acomodar y pegar las imágenes en el correo. Resolví parte del trabajo de presentación, pero no el problema de fondo: el informe seguía siendo un conjunto de capturas y la experiencia de lectura seguía siendo incómoda.
+![Ejemplo ficticio de cobertura de auditorías por gerencia](imagenes/cobertura-ficticia.png)
 
-## El cambio de enfoque
+*Vista ilustrativa con datos ficticios.*
 
-Ya había creado reportes HTML para otras soluciones. En una conversación, mi jefe me dijo: «Pensé que ahora mandabas todos esos archivos HTML». Esa frase me hizo replantear el informe: en lugar de seguir acomodando imágenes en el correo, podía ofrecer un reporte que se abriera en el navegador y permitiera consultar los resultados directamente.
+Agregué ayudas breves o *tooltips* junto a algunos indicadores para explicar cálculos puntuales sin recargar la pantalla. Por ejemplo, permiten aclarar qué se incluye en el cálculo de la conformidad.
 
-La idea creció más allá de diseñar una página. Para generar un informe todos los meses necesitaba validar los datos, definir qué contaba como una auditoría recibida y conservar el contexto de cada edición. También quería incorporar comparaciones históricas, pero solo cuando los datos permitieran hacerlas con sentido.
+![Ilustración de una ayuda que explica el cálculo de conformidad](imagenes/tooltip-ficticio.svg)
 
-## Del Excel a dos formas de consultar los resultados
+*Ilustración de la ayuda, no una captura del entorno productivo.*
 
-| Antes | Ahora |
-|---|---|
-| Copiaba las respuestas del formulario al Excel y preparaba cuadros y gráficos. | Mantengo el Excel como fuente y valido su estructura y sus datos antes de cargar una edición. |
-| Compartía capturas estáticas pegadas en un correo. | Genero un HTML interactivo para explorar resultados y un PNG con un resumen visual. |
-| Para volver a consultar detalles o comparar períodos, tenía que recurrir a las planillas. | Conservo cada edición en SQLite y uso esos datos para generar resultados y comparaciones históricas cuando corresponden. |
+El proceso también genera un **PNG para dar un pantallazo rápido en el correo**. El HTML es el reporte completo, donde se consultan los detalles.
 
-En el HTML puedo recorrer los resultados de una edición, consultar desgloses y revisar qué unidades o equipos enviaron una auditoría. Según el tipo de auditoría, también puedo explorar resultados por categoría, pregunta o clasificación y consultar tendencias disponibles.
-
-![Tarjetas de cobertura por gerencia con sectores auditados y pendientes](imagenes/cobertura-ficticia.png)
-
-*Imagen ilustrativa: todos los sectores, cantidades y resultados mostrados son ficticios.*
-
-El PNG cumple otro propósito: presentar un resumen visual sin tener que recorrer el detalle interactivo. Genero ambas salidas a partir de la edición almacenada en la base, no de capturas manuales de la planilla.
-
-## Cómo llega la información al reporte
+## Cómo se genera
 
 ```mermaid
 flowchart LR
-    A["Formulario"] -->|"Copia de resultados"| B["Excel de la edición"]
+    A["Formulario"] -->|"Copia de respuestas"| B["Excel de la edición"]
     B --> C["Validación y normalización"]
-    C --> D[("SQLite: edición, universo,<br/>preguntas y respuestas")]
+    C --> D[("SQLite: edición y contexto")]
     D --> E["Cálculo de indicadores"]
-    E --> F["HTML interactivo"]
-    E --> G["PNG de resumen"]
+    E --> F["Reporte HTML"]
+    E --> G["PNG para el correo"]
 ```
 
-1. Parto del Excel que contiene el universo esperado y los resultados de la edición. La copia desde el formulario forma parte del proceso previo; no la presento como una integración automática.
-2. Valido la estructura del archivo y los datos necesarios para identificar la edición, el universo, las preguntas y las respuestas. Normalizo los valores y aplico reglas para resolver reenvíos.
-3. Guardo en SQLite una fotografía de la edición, junto con una referencia y una huella del archivo utilizado. Si recargo una edición, reemplazo su información completa dentro de una transacción.
-4. Calculo los indicadores desde la base y genero el HTML y el PNG. También puedo volver a generar los reportes de una edición ya cargada.
+La copia de las respuestas desde el formulario al Excel sigue siendo manual. A partir de ese archivo, el proceso valida y normaliza los datos, guarda la edición en SQLite y genera ambas salidas. También permite regenerar los reportes de una edición ya cargada.
 
-Implementé el circuito para dos tipos de auditoría: una centrada en unidades organizativas y otra en equipos. Comparten el recorrido general, pero no necesariamente el mismo universo, cuestionario o reglas de validación.
+El circuito contempla dos tipos de auditoría: una por unidades organizativas y otra por equipos. Comparten el proceso general, pero tienen universos, cuestionarios y validaciones propios.
 
-## Las decisiones detrás de los números
+## Decisiones técnicas
 
-### No confundir una auditoría enviada con un resultado conforme
-
-Separé dos preguntas que podrían confundirse:
-
-- **Cobertura:** ¿qué proporción de las unidades o equipos esperados envió una auditoría?
-- **Conformidad:** entre las respuestas aplicables, ¿qué proporción fue afirmativa?
-
-Por ejemplo, si recibo auditorías de 8 de 10 unidades, la cobertura es del 80 %. Si en esas auditorías hay 18 respuestas afirmativas y 2 negativas, la conformidad es del 90 %. Una auditoría enviada puede contener respuestas negativas; por eso, ambos indicadores cuentan cosas distintas.
-
-Para calcular la conformidad excluyo las respuestas «No aplica». En los acumulados históricos sumo los conteos originales y vuelvo a calcular el porcentaje, en lugar de promediar los porcentajes mensuales.
-
-### Mantener el contexto de cada edición
-
-El universo de una auditoría puede cambiar: una unidad puede incorporarse, dejar de estar activa o cambiar de clasificación. Por eso guardo el universo correspondiente a cada edición, en lugar de reconstruir el pasado usando el catálogo actual.
-
-También conservo las preguntas y respuestas asociadas a esa edición. Así puedo saber con qué información se calculó un resultado y mantener en el denominador a las unidades o equipos que debían participar aunque no hayan enviado una auditoría.
-
-### Resolver los reenvíos de forma consistente
-
-Una unidad o equipo puede enviar el formulario más de una vez. Para evitar contar esos envíos como auditorías independientes, conservo el más reciente según la fecha de envío y, como criterio adicional, el identificador del formulario. La base guarda la respuesta consolidada, no una copia separada de los reenvíos descartados.
-
-Antes de guardar una edición, valido el archivo y sus datos. Si una recarga falla durante el reemplazo, la transacción evita dejar una edición parcialmente actualizada. Esto no elimina la necesidad de revisar los datos de origen: una respuesta válida en el formulario no garantiza por sí sola que describa correctamente la situación real.
-
-## Comparar meses también tiene límites
-
-Incorporé estadísticas históricas para dar contexto a los resultados, pero no asumí que todas las ediciones se pueden comparar de la misma manera. Algunas tienen errores en los datos de origen; en otras cambian la cantidad o el contenido de las preguntas.
-
-![Gráficos históricos de cobertura y conformidad por categoría](imagenes/evolucion-ficticia.png)
-
-*Imagen ilustrativa: todos los sectores, cantidades y resultados mostrados son ficticios.*
-
-Si cambia el cuestionario, una variación en la conformidad puede deberse en parte a qué se preguntó, no solo a un cambio en las condiciones auditadas. Por eso algunas estadísticas no se incluyen cuando no hay una base suficientemente comparable, y cuando una diferencia relevante forma parte del cálculo debe explicarse en el reporte. Prefiero señalar ese límite antes que presentar una tendencia que parezca precisa pero lleve a una conclusión equivocada.
+- **Cobertura y conformidad son indicadores distintos.** La cobertura mide las auditorías recibidas sobre las esperadas; la conformidad mide las respuestas afirmativas sobre las aplicables. Las respuestas «No aplica» se excluyen de este último cálculo.
+- **Cada edición conserva su contexto.** Se guardan su universo, preguntas y respuestas para no recalcular un período pasado con una estructura organizativa posterior. En los acumulados se suman los conteos originales y se vuelve a calcular el porcentaje, en lugar de promediar porcentajes mensuales.
+- **Los reenvíos se consolidan.** Si un sector o equipo envió más de una respuesta, se conserva la más reciente según la fecha de envío y, como criterio adicional, el identificador del formulario.
+- **La carga se valida antes de reemplazar una edición.** Una recarga reemplaza la edición completa dentro de una transacción; si falla, no debería quedar parcialmente actualizada. La validación no reemplaza la revisión de los datos de origen.
+- **Las comparaciones históricas tienen límites.** Si cambian las preguntas o hay errores en el origen, una variación puede no ser comparable. El reporte limita o explica esas estadísticas según corresponda.
 
 ## Herramientas
 
-| Herramienta | Para qué la utilicé |
+| Herramienta | Uso |
 |---|---|
-| Python | Coordinar la carga, aplicar validaciones y cálculos, y generar los reportes. |
-| OpenPyXL | Leer las hojas, estructuras y valores de los archivos Excel. |
-| SQLite y SQL | Conservar las ediciones y su contexto histórico. |
-| HTML, CSS y JavaScript | Construir el reporte interactivo para el navegador. |
-| Pillow | Generar el PNG de resumen. |
-| pytest | Probar reglas, cargas y generación de reportes. |
+| Python | Validaciones, cálculos y generación de los reportes. |
+| OpenPyXL | Lectura de los archivos Excel. |
+| SQLite y SQL | Almacenamiento y consulta de las ediciones. |
+| HTML, CSS y JavaScript | Presentación e interacción del reporte. |
+| Pillow | Generación del PNG para el correo. |
+| pytest | Pruebas de cargas, reglas y reportes. |
 
-## Resultado y aprendizaje
-
-Pasé de preparar un correo con capturas a generar un informe que permite explorar resultados y un resumen visual a partir de datos almacenados. No medí formalmente el ahorro de tiempo, así que no le atribuyo una cifra al cambio.
-
-El aprendizaje más importante fue que mejorar un reporte no consiste solo en hacerlo más atractivo: también implica entender de dónde viene cada número, qué comparación tiene sentido y qué necesita consultar quien recibe la información. El HTML resolvió la presentación; las validaciones y el histórico le dieron una base para volver a generar y explicar esos resultados.
+El resultado es un reporte que reúne la información de cada edición y permite pasar de una vista general al detalle sin recorrer manualmente la planilla. No se realizó una medición formal del tiempo ahorrado.

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="570" height="180" viewBox="0 0 570 180" role="img" aria-labelledby="title desc">
+  <title id="title">Ejemplo ilustrativo de ayuda sobre conformidad</title>
+  <desc id="desc">Una tarjeta ficticia muestra el indicador de conformidad y una ayuda que explica su cálculo.</desc>
+  <rect width="570" height="180" rx="12" fill="#f2f4f7"/>
+  <rect x="16" y="16" width="538" height="148" rx="10" fill="#fff" stroke="#dbe2e8"/>
+  <text x="35" y="49" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#18354b">Conformidad</text>
+  <circle cx="145" cy="44" r="9" fill="#eef2f5" stroke="#8a9dac"/>
+  <text x="142" y="49" font-family="Arial, sans-serif" font-size="13" fill="#405d70">?</text>
+  <text x="35" y="88" font-family="Arial, sans-serif" font-size="27" font-weight="bold" fill="#18354b">90 %</text>
+  <path d="M158 56 L166 65 L150 65 Z" fill="#18354b"/>
+  <rect x="137" y="64" width="397" height="77" rx="7" fill="#18354b"/>
+  <text x="152" y="88" font-family="Arial, sans-serif" font-size="13" fill="#fff">Respuestas afirmativas ÷ respuestas aplicables × 100</text>
+  <text x="152" y="112" font-family="Arial, sans-serif" font-size="13" fill="#dce8ef">Las respuestas «No aplica» quedan excluidas.</text>
+</svg>
