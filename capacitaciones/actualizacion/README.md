@@ -19,71 +19,19 @@ Esta actualización nace de ese uso cotidiano: reorganizar un tablero que había
 
 | Tema | Antes | Ahora | ¿Qué aporta? |
 |---|---|---|---|
-| **Navegación (UX/UI)** | Los indicadores, gráficos y tablas se acumulaban en pantallas largas. | Cada pantalla se organiza en secciones con análisis relacionados. | Es más fácil encontrar una consulta sin recorrer todos los bloques anteriores. |
 | **Reporte semanal (HTML)** | Se reunían varios PNGs y capturas; los pendientes se descargaban en CSVs individuales para cada capacitador. | Se genera un HTML por grupo con métricas generales y pendientes. | Cada destinatario puede consultar el reporte y descargar el detalle que necesita. |
+| **Navegación (UX/UI)** | Los indicadores, gráficos y tablas se acumulaban en pantallas largas. | Cada pantalla se organiza en secciones con análisis relacionados. | Es más fácil encontrar una consulta sin recorrer todos los bloques anteriores. |
 
 El seguimiento se distribuye entre dos grupos de capacitadores, cada uno con su coordinador. Por eso se genera un reporte HTML para cada grupo; más adelante se explica cómo se utiliza.
 
 ## Índice
 
-- [Navegación y decisiones de interfaz (UX/UI)](#navegación-cuando-encontrar-una-respuesta-empezó-a-llevar-más-recorrido)
 - [Generación de reportes HTML interactivos](#reporte-semanal-del-armado-manual-a-un-html-por-grupo)
 - [Actividad del período y avance acumulado](#actividad-del-período-y-avance-acumulado)
+- [Navegación y decisiones de interfaz (UX/UI)](#navegación-cuando-encontrar-una-respuesta-empezó-a-llevar-más-recorrido)
 - [Evolución técnica de la solución](#evolución-técnica-de-la-solución)
 - [Cómo preservé las reglas de cálculo](#cómo-preservé-las-reglas-de-cálculo)
 - [Comparación visual](#comparación-visual)
-
-## Navegación: cuando encontrar una respuesta empezó a llevar más recorrido
-
-Cada nuevo gráfico, tabla o mapa respondía una consulta real. El problema no era que hubiera más información, sino que todos esos análisis seguían apareciendo uno debajo del otro.
-
-Los títulos ayudaban a separar visualmente cada bloque, pero no resolvían la navegación. **Si alguien solo necesitaba consultar un mapa de calor, ¿por qué tenía que atravesar todos los análisis anteriores para llegar a él?**
-
-El recorrido tampoco era el único costo. Cada cambio de filtros hacía que el backend volviera a preparar los análisis de la pantalla: consultas, transformaciones y cálculos para gráficos, tablas e indicadores, incluso cuando la persona sólo necesitaba consultar uno de ellos. Eso añadía segundos de espera por información que no iba a utilizar.
-
-![Reconstrucción sintética del desplazamiento por los análisis apilados en la pantalla Resumen anterior](./assets/dashboard-resumen-anterior.gif)
-
-> [!NOTE]
-> **Sobre el GIF:** busca ilustrar el recorrido que exigía la pantalla. Se recreó apartir de capturas anteriores del tablero por lo que no refleja fielmente cada detalle visual del tablero anterior.
-
-También podés [explorar la réplica anterior del dashboard](https://jminolli-e.github.io/case-studies/capacitaciones/actualizacion/demo/dashboard.html), construida con datos ficticios.
-
-### Elegir primero qué consultar
-
-El menú lateral ya existía; el cambio estuvo en cómo se organizó la información dentro de cada pantalla. En lugar de seguir apilando componentes, la navegación quedó en dos niveles:
-
-1. **Pantallas:** se eligen desde el menú lateral y representan una consulta principal. `Resumen` y `Avance por Capacitador` son dos ejemplos.
-2. **Secciones:** se eligen mediante los controles horizontales dentro de cada pantalla. Permiten pasar, por ejemplo, del avance por capacitación a las prioritarias por capacitador, mostrando sólo los componentes relacionados con esa consulta.
-
-![Navegación actual: el número 1 encuadra las pantallas del menú lateral y el número 2 las secciones de Resumen](./assets/navegacion-secciones.png)
-
-De esta manera, cada persona puede elegir la consulta que necesita sin recorrer todos los análisis anteriores. Podés [explorar el dashboard navegable](https://jminolli-e.github.io/case-studies/capacitaciones/actualizacion/demo/dashboard-actual.html) y probar sus pantallas y secciones con datos ficticios.
-
-> [!NOTE]
-> **Sobre las imágenes y la demo actual:** a diferencia de los mockups de la primera etapa, las capturas actuales se generaron con componentes y estilos del tablero original, utilizando datos ficticios. La demo navegable reproduce parte de esa interfaz en HTML con datos sintéticos; no es el tablero productivo completo. La versión anterior se presenta como una reconstrucción aproximada.
-
-### Una interfaz con más contexto y menos ruido
-
-Reorganizar no era solamente repartir lo que ya existía en nuevas secciones. También tuve que decidir qué componentes seguían ayudando y cuáles ocupaban espacio sin responder una necesidad actual.
-
-Me tocó dejar ir algunos componentes. Había gráficos detallados y complejos que personalmente me parecían interesantes, pero que no se utilizaban. En la práctica, otras soluciones más sencillas ya ofrecían esa información. Aunque me había llevado trabajo construirlos, conservarlos sólo por eso no ayudaba a quienes necesitaban encontrar una respuesta.
-
-También identifiqué componentes relacionados que estaban separados sin necesidad y los agrupé en una misma tarjeta para facilitar su lectura y mejorar la presentación visual. Por ejemplo, cada grupo —A y B— ahora reúne el avance ponderado, las personas con necesidad y los cumplimientos, lo que permite interpretar esa información en conjunto.
-
-**Antes: cuatro indicadores separados**
-
-![Cuatro indicadores anteriores separados: avance ponderado y personas con necesidad para cada grupo](./assets/indicadores-grupos-anterior.png)
-
-**Ahora: un contenedor por grupo**
-
-![Indicadores agrupados de Grupo A y Grupo B: avance ponderado, personas con necesidad y cumplimientos en un contenedor por grupo](./assets/indicadores-grupos.png)
-
-Algunas tarjetas y tablas incorporan **tooltips**, pequeñas ayudas que aparecen al pasar el cursor y explican qué representa un valor o cómo se calcula. Así se conserva el contexto sin llenar la pantalla de explicaciones permanentes.
-
-![Ayuda desplegada en la tarjeta Personas a cargo, que explica la asignación y el criterio de personas pendientes](./assets/indicadores-ayuda.png)
-
-> [!NOTE]
-> Podés ver otra comparación de la interfaz anterior y la actual en el apartado [Comparación visual](#comparación-visual), al final del caso.
 
 ## Reporte semanal: del armado manual a un HTML por grupo
 
@@ -196,6 +144,58 @@ El listado de pendientes surge del cruce entre las capacitaciones que necesita c
 
 > [!NOTE]
 > Las necesidades y asignaciones corresponden a la situación vigente. Cambiar las fechas de actividad no reconstruye las necesidades históricas del personal; un traslado, una licencia o un cambio de asignación puede modificar los porcentajes.
+
+## Navegación: cuando encontrar una respuesta empezó a llevar más recorrido
+
+Cada nuevo gráfico, tabla o mapa respondía una consulta real. El problema no era que hubiera más información, sino que todos esos análisis seguían apareciendo uno debajo del otro.
+
+Los títulos ayudaban a separar visualmente cada bloque, pero no resolvían la navegación. **Si alguien solo necesitaba consultar un mapa de calor, ¿por qué tenía que atravesar todos los análisis anteriores para llegar a él?**
+
+El recorrido tampoco era el único costo. Cada cambio de filtros hacía que el backend volviera a preparar los análisis de la pantalla: consultas, transformaciones y cálculos para gráficos, tablas e indicadores, incluso cuando la persona sólo necesitaba consultar uno de ellos. Eso añadía segundos de espera por información que no iba a utilizar.
+
+![Reconstrucción sintética del desplazamiento por los análisis apilados en la pantalla Resumen anterior](./assets/dashboard-resumen-anterior.gif)
+
+> [!NOTE]
+> **Sobre el GIF:** busca ilustrar el recorrido que exigía la pantalla. Se recreó apartir de capturas anteriores del tablero por lo que no refleja fielmente cada detalle visual del tablero anterior.
+
+También podés [explorar la réplica anterior del dashboard](https://jminolli-e.github.io/case-studies/capacitaciones/actualizacion/demo/dashboard.html), construida con datos ficticios.
+
+### Elegir primero qué consultar
+
+El menú lateral ya existía; el cambio estuvo en cómo se organizó la información dentro de cada pantalla. En lugar de seguir apilando componentes, la navegación quedó en dos niveles:
+
+1. **Pantallas:** se eligen desde el menú lateral y representan una consulta principal. `Resumen` y `Avance por Capacitador` son dos ejemplos.
+2. **Secciones:** se eligen mediante los controles horizontales dentro de cada pantalla. Permiten pasar, por ejemplo, del avance por capacitación a las prioritarias por capacitador, mostrando sólo los componentes relacionados con esa consulta.
+
+![Navegación actual: el número 1 encuadra las pantallas del menú lateral y el número 2 las secciones de Resumen](./assets/navegacion-secciones.png)
+
+De esta manera, cada persona puede elegir la consulta que necesita sin recorrer todos los análisis anteriores. Podés [explorar el dashboard navegable](https://jminolli-e.github.io/case-studies/capacitaciones/actualizacion/demo/dashboard-actual.html) y probar sus pantallas y secciones con datos ficticios.
+
+> [!NOTE]
+> **Sobre las imágenes y la demo actual:** a diferencia de los mockups de la primera etapa, las capturas actuales se generaron con componentes y estilos del tablero original, utilizando datos ficticios. La demo navegable reproduce parte de esa interfaz en HTML con datos sintéticos; no es el tablero productivo completo. La versión anterior se presenta como una reconstrucción aproximada.
+
+### Una interfaz con más contexto y menos ruido
+
+Reorganizar no era solamente repartir lo que ya existía en nuevas secciones. También tuve que decidir qué componentes seguían ayudando y cuáles ocupaban espacio sin responder una necesidad actual.
+
+Me tocó dejar ir algunos componentes. Había gráficos detallados y complejos que personalmente me parecían interesantes, pero que no se utilizaban. En la práctica, otras soluciones más sencillas ya ofrecían esa información. Aunque me había llevado trabajo construirlos, conservarlos sólo por eso no ayudaba a quienes necesitaban encontrar una respuesta.
+
+También identifiqué componentes relacionados que estaban separados sin necesidad y los agrupé en una misma tarjeta para facilitar su lectura y mejorar la presentación visual. Por ejemplo, cada grupo —A y B— ahora reúne el avance ponderado, las personas con necesidad y los cumplimientos, lo que permite interpretar esa información en conjunto.
+
+**Antes: cuatro indicadores separados**
+
+![Cuatro indicadores anteriores separados: avance ponderado y personas con necesidad para cada grupo](./assets/indicadores-grupos-anterior.png)
+
+**Ahora: un contenedor por grupo**
+
+![Indicadores agrupados de Grupo A y Grupo B: avance ponderado, personas con necesidad y cumplimientos en un contenedor por grupo](./assets/indicadores-grupos.png)
+
+Algunas tarjetas y tablas incorporan **tooltips**, pequeñas ayudas que aparecen al pasar el cursor y explican qué representa un valor o cómo se calcula. Así se conserva el contexto sin llenar la pantalla de explicaciones permanentes.
+
+![Ayuda desplegada en la tarjeta Personas a cargo, que explica la asignación y el criterio de personas pendientes](./assets/indicadores-ayuda.png)
+
+> [!NOTE]
+> Podés ver otra comparación de la interfaz anterior y la actual en el apartado [Comparación visual](#comparación-visual), al final del caso.
 
 ## Evolución técnica de la solución
 
