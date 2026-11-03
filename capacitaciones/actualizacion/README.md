@@ -39,6 +39,8 @@ Cada nuevo gráfico, tabla o mapa respondía una consulta real. El problema no e
 
 Los títulos ayudaban a separar visualmente cada bloque, pero no resolvían la navegación. **Si alguien solo necesitaba consultar un mapa de calor, ¿por qué tenía que atravesar todos los análisis anteriores para llegar a él?**
 
+El recorrido tampoco era el único costo. Cada cambio de filtros hacía que el backend volviera a preparar los análisis de la pantalla: consultas, transformaciones y cálculos para gráficos, tablas e indicadores, incluso cuando la persona sólo necesitaba consultar uno de ellos. Eso añadía segundos de espera por información que no iba a utilizar.
+
 ![Reconstrucción sintética del desplazamiento por los análisis apilados en la pantalla Resumen anterior](./assets/dashboard-resumen-anterior.gif)
 
 > [!NOTE]
@@ -60,15 +62,15 @@ De esta manera, cada persona puede elegir la consulta que necesita sin recorrer 
 > [!NOTE]
 > **Sobre las imágenes y la demo actual:** a diferencia de los mockups de la primera etapa, las capturas actuales se generaron con componentes y estilos del tablero original, utilizando datos ficticios. La demo navegable reproduce parte de esa interfaz en HTML con datos sintéticos; no es el tablero productivo completo. La versión anterior se presenta como una reconstrucción aproximada.
 
-La separación tampoco es solamente visual: las consultas y transformaciones específicas de una sección esperan hasta que alguien la selecciona. Así se evita preparar análisis que todavía no se están consultando. Más abajo cuento cómo se resolvió en Streamlit.
+La separación tampoco es solamente visual: las consultas y transformaciones específicas se ejecutan cuando se selecciona el análisis correspondiente. Las demás secciones mantienen una **carga diferida (*lazy*)**: no preparan su contenido hasta que se las consulta. Los indicadores compartidos por la pantalla se mantienen fuera de esa separación. Más abajo cuento cómo se resolvió en Streamlit.
 
 ### Una interfaz con más contexto y menos ruido
 
 Reorganizar no era solamente repartir lo que ya existía en nuevas secciones. También tuve que decidir qué componentes seguían ayudando y cuáles ocupaban espacio sin responder una necesidad actual.
 
-Me tocó dejar ir algunos componentes. Había gráficos detallados, complejos y que a mi personalmente me parecían interesantes, pero que no se utilizaban y terminaban haciendo ruido. Aunque me había llevado trabajo construirlos, mantenerlos sólo por eso no ayudaba a quienes necesitaban encontrar una respuesta y en la practica, algunas soluciones mas sencillas ya brindaban esa información por lo que mas que nada molestaban.
+Me tocó dejar ir algunos componentes. Había gráficos detallados y complejos que personalmente me parecían interesantes, pero que no se utilizaban. En la práctica, otras soluciones más sencillas ya ofrecían esa información. Aunque me había llevado trabajo construirlos, conservarlos sólo por eso no ayudaba a quienes necesitaban encontrar una respuesta.
 
-No se trataba únicamente de quitar cosas, sino de reunir lo que tiene sentido leer junto. Los indicadores de Grupo A y Grupo B, por ejemplo, ahora presentan el avance ponderado, las personas con necesidad y los cumplimientos dentro de un mismo contenedor por grupo. Ya no hace falta recorrer varias tarjetas para reconstruir esa relación.
+Esa revisión también me llevó a mirar los componentes que sí eran útiles: no alcanzaba con conservarlos, había que presentarlos de una manera más clara. Por eso, además de quitar lo que hacía ruido, agrupé los indicadores que tiene sentido leer juntos. Los indicadores de Grupo A y Grupo B, por ejemplo, ahora presentan el avance ponderado, las personas con necesidad y los cumplimientos dentro de un mismo contenedor por grupo. Ya no hace falta recorrer varias tarjetas para reconstruir esa relación.
 
 **Antes: cuatro indicadores separados**
 
@@ -86,7 +88,10 @@ Algunas tarjetas y tablas incorporan **tooltips**, pequeñas ayudas que aparecen
 
 La navegación lateral también es más compacta. La antigua pantalla de actividad por capacitador dejó de ser independiente: su información útil se integró como `Actividad histórica` en `Avance por Capacitador`, separando lo que una persona dictó de la responsabilidad sobre las personas y contenidos que tiene asignados.
 
-La reorganización busca reducir recorridos innecesarios y facilitar la consulta a personas con distintos niveles de familiaridad digital, sin quitar controles ni contexto útil. Al final se presenta otra [comparación visual](#comparación-visual) de la pantalla Resumen.
+La reorganización busca reducir recorridos innecesarios y facilitar la consulta a personas con distintos niveles de familiaridad digital, sin quitar controles ni contexto útil.
+
+> [!NOTE]
+> Podés ver otra comparación de la interfaz anterior y la actual en el apartado [Comparación visual](#comparación-visual), al final del caso.
 
 ## Reporte semanal: del armado manual a un HTML por grupo
 
