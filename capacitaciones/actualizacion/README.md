@@ -8,7 +8,7 @@ El tablero crecía en pantallas cada vez más largas y, para preparar el informe
 
 Los datos y las reglas ya estaban en el sistema. Lo que faltaba era una forma más directa de encontrarlos, consolidarlos y compartirlos. **¿Cómo llevar desde el tablero hasta cada persona la información que necesita, sin volver a prepararla manualmente?**
 
-Esta actualización nace de ese uso cotidiano: reorganizar un tablero que había crecido para responder tanto las preguntas originales como las nuevas que fueron surgiendo, y generar un reporte HTML donde cada destinatario del seguimiento semanal pueda consultar lo que necesita.
+Esta actualización nace de ese uso cotidiano: reorganizar un tablero que había crecido para responder tanto las preguntas originales como las nuevas que fueron surgiendo, y generar un reporte HTML donde cada destinatario del seguimiento semanal, del programa de capacitaciones, pueda consultar lo que necesita.
 
 > [!NOTE]
 > **Para entender el seguimiento:** no todas las personas necesitan las mismas capacitaciones. Entre otros factores, importa la organización donde trabajan y las tareas que realizan. El tablero relaciona esas necesidades con las capacitaciones registradas y con el responsable asignado a cada organización. Así permite ver el avance y saber qué personas y contenidos siguen pendientes.
