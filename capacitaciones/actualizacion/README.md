@@ -265,7 +265,7 @@ El feedback de las primeras revisiones también produjo cambios visibles. Se agr
 
 ## Mi participación
 
-Los coordinadores me habían comentado más de una vez cuánto tiempo les llevaba preparar el seguimiento y me preguntaron si podía automatizar alguna parte. Yo también le había dado vueltas al problema. Ya había generado reportes HTML a partir de datos en el proyecto de auditorías, pero tardé en hacer una conexión que ahora parece evidente: si la información y los cálculos ya estaban en el tablero, ¿por qué no generar el reporte ahí mismo y descargarlo desde un botón?
+Los coordinadores me habían comentado más de una vez cuánto tiempo les llevaba preparar el seguimiento y me preguntaron si podía automatizar alguna parte. Yo también le había dado vueltas al problema. Ya había generado reportes HTML a partir de datos en el [proyecto de auditorías](../../auditorias/), pero tardé en hacer una conexión que ahora parece evidente: si la información y los cálculos ya estaban en el tablero, ¿por qué no generar el reporte ahí mismo y descargarlo desde un botón?
 
 Sinceramente siento que el proyecto no resuelve un problema espectacular, sino uno cotidiano: evita tener que reunir archivos y capturas cada semana y reduce las oportunidades de enviar información con fechas o filtros que no coinciden. No elimina la revisión humana ni corrige por sí solo un dato mal cargado, pero sí quita pasos manuales que podían introducir errores.
 
