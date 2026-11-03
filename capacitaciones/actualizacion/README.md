@@ -91,12 +91,10 @@ Algunas tarjetas y tablas incorporan **tooltips**, pequeñas ayudas que aparecen
 
 El seguimiento está dividido entre dos grupos y dos coordinadores. Cada coordinador trabaja con aproximadamente 15 capacitadores de `Grupo A` o `Grupo B`.
 
-Para preparar el informe semanal, los coordinadores descargaban varios PNGs con indicadores, tomaban capturas de otros componentes y organizaban la información por fuera del tablero. También compartían los pendientes de los capacitadores, pero obtener ese detalle requería un recorrido individual.
-
-**Si los pendientes ya estaban en el tablero, ¿por qué había que descargarlos uno por uno?** Para cada capacitador, el coordinador entraba en `Avance por Capacitador`, lo seleccionaba y descargaba su CSV. Si necesitaba el detalle de todo su grupo, debía repetir el recorrido para los demás: aproximadamente 15 capacitadores por coordinador.
+Para preparar el informe semanal del avance del programa, los coordinadores descargaban varios PNGs con indicadores, tomaban capturas de otros componentes y organizaban la información por fuera del tablero. También compartían el personal pendiente de capacitar de sus 15 capacitadores, pero obtener ese detalle requería un recorrido individual dentro del tablero y implicaba descargar 15 CSVs individuales para cada coordinador.
 
 > [!NOTE]
-> Para evitar enviar a las jefaturas hasta 30 archivos individuales, en ocasiones los pendientes se enviaban por correo directamente a cada capacitador. Además, como preparar los CSVs demandaba tiempo, no siempre se enviaban a todos: a menudo se preparaban para quienes los solicitaban.
+> Para evitar enviar a las jefaturas hasta 30 archivos individuales, en ocasiones el personal pendiente de capacitar para cada capacitador se enviaban por correo directamente a cada capacitador. Además, como preparar los CSVs demandaba tiempo, no siempre se enviaban a todos: a menudo se preparaban para quienes los solicitaban unicamente.
 
 ```mermaid
 flowchart TD
