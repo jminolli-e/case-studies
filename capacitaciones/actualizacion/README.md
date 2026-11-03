@@ -11,7 +11,7 @@ Los datos y las reglas ya estaban en el sistema. Lo que faltaba era una forma m�
 Esta actualización nace de ese uso cotidiano: reorganizar un tablero que había crecido para responder tanto las preguntas originales como las nuevas que fueron surgiendo, y generar un reporte HTML donde cada destinatario del seguimiento semanal, del programa de capacitaciones, pueda consultar lo que necesita.
 
 > [!NOTE]
-> **Para entender el seguimiento:** no todas las personas necesitan las mismas capacitaciones. Entre otros factores, importa la organización donde trabajan y las tareas que realizan. El tablero relaciona esas necesidades con las capacitaciones registradas y con el responsable asignado a cada organización. Así permite ver el avance y saber qué personas y contenidos siguen pendientes.
+> **Para entender el seguimiento:**Dentro del programa de capacitación no todas las personas necesitan las mismas capacitaciones. Entre otros factores, importa la organización donde trabajan y las tareas que realizan. El tablero relaciona esas necesidades con las capacitaciones registradas y con el responsable asignado a cada organización. Así permite ver el avance y saber qué personas y contenidos siguen pendientes.
 >
 > La [primera etapa del proyecto](../#cómo-se-calcula-el-porcentaje-de-avance) explica con más detalle cómo se construyen las necesidades y se calcula el avance.
 
