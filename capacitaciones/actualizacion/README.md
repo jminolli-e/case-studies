@@ -166,7 +166,7 @@ La misma visibilidad permite a los capacitadores revisar sus pendientes y señal
 
 ### Por qué elegí un HTML autocontenido
 
-El HTML permite reunir información para distintas audiencias dentro de un único archivo. Una jefatura puede comenzar por el panorama general; un coordinador puede revisar la actividad y comparar avances; un capacitador puede filtrar su nombre y consultar las personas que todavía tiene pendientes.
+El HTML permite reunir información para distintas audiencias dentro de un único archivo. Un Gerente puede comenzar por el panorama general; un Jefe puede revisar la actividad y comparar avances; un capacitador puede filtrar su nombre y consultar las personas que todavía tiene pendientes.
 
 Frente al conjunto anterior de PNGs, capturas, CSVs y Excel, el formato aporta:
 
