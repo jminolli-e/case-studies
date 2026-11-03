@@ -99,14 +99,20 @@ Para preparar el informe semanal del avance del programa, los coordinadores desc
 Los filtros de fecha eran globales: al cambiarlos, cambiaba el período de todo el tablero. Para preparar el informe había que consultar primero las fechas del año y obtener el avance acumulado y los pendientes; después, cambiar a la última semana para capturar las capacitaciones realizadas en ese período.
 
 ```mermaid
-flowchart LR
-    A["Fechas del año"] --> B["PNGs y capturas"]
-    B --> C["CSVs de pendientes"]
-    C --> D["Fechas de la última semana"]
-    D --> E["Captura de actividad semanal"]
-    E --> F["Revisar períodos y resultados"]
-    F --> G["Armar y enviar el correo"]
-    G --> H["Enviar pendientes solicitados"]
+flowchart TD
+    subgraph primera[" "]
+        direction LR
+        A["1. Elegir fechas<br/>del año"] --> B["2. Descargar PNGs<br/>y tomar capturas"]
+        B --> C["3. Descargar CSVs<br/>de pendientes"]
+        C --> D["4. Cambiar fechas<br/>a la última semana"]
+    end
+    subgraph segunda[" "]
+        direction RL
+        E["5. Capturar actividad<br/>de la semana"] --> F["6. Revisar períodos<br/>y resultados"]
+        F --> G["7. Armar y enviar<br/>el correo"]
+        G --> H["8. Enviar pendientes<br/>a quienes los soliciten"]
+    end
+    primera --> segunda
 ```
 
 Cada material cubría una necesidad distinta:
@@ -129,9 +135,9 @@ Con esas fechas, el sistema genera dos archivos: Reporte **Grupo A** y Reporte *
 
 ```mermaid
 flowchart LR
-    A["Elegir fechas"] --> B["Generar HTML: Grupo A y Grupo B"]
-    B --> C["Revisar"]
-    C --> D["Enviar a cada grupo"]
+    A["Elegir fechas<br/>de actividad"] --> B["Generar HTML<br/>Grupo A y Grupo B"]
+    B --> C["Revisar<br/>los informes"]
+    C --> D["Enviar a<br/>cada grupo"]
 ```
 
 Los dos documentos comparten el mismo resumen general del programa. Después, cada archivo muestra el detalle de su grupo: cerca de 15 capacitadores, sus indicadores y sus pendientes nominales. Un grupo no recibe el detalle individual del otro, aunque ambos ven el mismo panorama agregado.
