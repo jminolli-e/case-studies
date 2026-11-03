@@ -117,17 +117,15 @@ Cada material cubría una necesidad distinta:
 | **CSV** | Identificar qué personas seguían pendientes y qué contenidos les faltaban. |
 | **Excel** | Reunir y distribuir parte de la información del seguimiento. |
 
-Había que comprobar que cada descarga correspondiera al período esperado. Un error al cambiar las fechas podía hacer que una parte del informe no coincidiera con las demás.
-
-El proceso completo demandaba aproximadamente una hora semanal entre ambos coordinadores. Es una estimación operativa, no una medición formal. El problema no era solamente el tiempo: también existía la posibilidad de aplicar fechas distintas, omitir un archivo o distribuir información que no coincidiera con el resto del paquete.
+El proceso completo demandaba aproximadamente una hora semanal para cada coordinador. Es una estimación operativa, no una medición formal. El problema no era solamente el tiempo: también existía la posibilidad de aplicar fechas distintas, omitir un archivo o distribuir información que no coincidiera con el resto del los archivos adjuntados.
 
 ### La solución: generar, revisar y compartir
 
-Decidí llevar ese armado al propio tablero. En lugar de reconstruir el informe a partir de extractos separados, el sistema prepara una salida con fuentes y reglas definidas. Para las mismas fuentes, configuración y fechas, se obtienen los mismos indicadores; la revisión y el envío siguen siendo decisiones humanas.
+Decidí incorporar la generación del informe al propio tablero. Así, los coordinadores ya no necesitan reunir extractos separados: el sistema prepara el reporte con fuentes y reglas definidas e incluye automáticamente el avance anual del programa.
 
-Desde la pantalla `Reportes`, el coordinador ingresa una fecha inicial y una fecha final para definir la actividad que quiere informar. Habitualmente se utiliza una ventana semanal, pero las fechas son libres: permiten contemplar un envío atrasado, un feriado o un informe mensual sin cambiar la lógica del reporte.
+Desde la pantalla Reportes, el coordinador ingresa una fecha inicial y una fecha final para definir el período de actividad que quiere informar. Habitualmente se utiliza una semana, pero las fechas son libres para contemplar envíos atrasados, feriados o informes mensuales, sin modificar la lógica del reporte ni el período del avance anual.
 
-Con ese período, el sistema genera dos archivos: **Reporte Grupo A** y **Reporte Grupo B**. Cada coordinador puede descargar el que corresponde a su grupo, revisarlo y enviarlo.
+Con esas fechas, el sistema genera dos archivos: Reporte **Grupo A** y Reporte **Grupo B**. Cada coordinador solo debe descargar el correspondiente a su grupo, revisar la información y enviarlo por correo.
 
 ```mermaid
 flowchart LR
