@@ -62,15 +62,13 @@ De esta manera, cada persona puede elegir la consulta que necesita sin recorrer 
 > [!NOTE]
 > **Sobre las imágenes y la demo actual:** a diferencia de los mockups de la primera etapa, las capturas actuales se generaron con componentes y estilos del tablero original, utilizando datos ficticios. La demo navegable reproduce parte de esa interfaz en HTML con datos sintéticos; no es el tablero productivo completo. La versión anterior se presenta como una reconstrucción aproximada.
 
-La separación tampoco es solamente visual: las consultas y transformaciones específicas se ejecutan cuando se selecciona el análisis correspondiente. Las demás secciones mantienen una **carga diferida (*lazy*)**: no preparan su contenido hasta que se las consulta. Los indicadores compartidos por la pantalla se mantienen fuera de esa separación. Más abajo cuento cómo se resolvió en Streamlit.
-
 ### Una interfaz con más contexto y menos ruido
 
 Reorganizar no era solamente repartir lo que ya existía en nuevas secciones. También tuve que decidir qué componentes seguían ayudando y cuáles ocupaban espacio sin responder una necesidad actual.
 
 Me tocó dejar ir algunos componentes. Había gráficos detallados y complejos que personalmente me parecían interesantes, pero que no se utilizaban. En la práctica, otras soluciones más sencillas ya ofrecían esa información. Aunque me había llevado trabajo construirlos, conservarlos sólo por eso no ayudaba a quienes necesitaban encontrar una respuesta.
 
-Esa revisión también me llevó a mirar los componentes que sí eran útiles: no alcanzaba con conservarlos, había que presentarlos de una manera más clara. Por eso, además de quitar lo que hacía ruido, agrupé los indicadores que tiene sentido leer juntos. Los indicadores de Grupo A y Grupo B, por ejemplo, ahora presentan el avance ponderado, las personas con necesidad y los cumplimientos dentro de un mismo contenedor por grupo. Ya no hace falta recorrer varias tarjetas para reconstruir esa relación.
+También identifiqué componentes relacionados que estaban separados sin necesidad y los agrupé en una misma tarjeta para facilitar su lectura y mejorar la presentación visual. Por ejemplo, cada grupo —A y B— ahora reúne el avance ponderado, las personas con necesidad y los cumplimientos, lo que permite interpretar esa información en conjunto.
 
 **Antes: cuatro indicadores separados**
 
