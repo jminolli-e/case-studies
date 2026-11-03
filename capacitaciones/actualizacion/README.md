@@ -51,7 +51,7 @@ También podés [explorar la réplica anterior del dashboard](https://jminolli-e
 El menú lateral ya existía; el cambio estuvo en cómo se organizó la información dentro de cada pantalla. En lugar de seguir apilando componentes, la navegación quedó en dos niveles:
 
 1. **Pantallas:** se eligen desde el menú lateral y representan una consulta principal. `Resumen` y `Avance por Capacitador` son dos ejemplos.
-2. **Secciones:** se eligen mediante los controles horizontales dentro de cada pantalla. Permiten pasar, por ejemplo, del avance por capacitación a las prioridades por capacitador, mostrando sólo los componentes relacionados con esa consulta.
+2. **Secciones:** se eligen mediante los controles horizontales dentro de cada pantalla. Permiten pasar, por ejemplo, del avance por capacitación a las prioritarias por capacitador, mostrando sólo los componentes relacionados con esa consulta.
 
 ![Navegación actual: el número 1 encuadra las pantallas del menú lateral y el número 2 las secciones de Resumen](./assets/navegacion-secciones.png)
 
