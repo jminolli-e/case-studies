@@ -1,6 +1,6 @@
 # Capacitaciones de seguridad: cómo evolucionó el tablero
 
-Esta es la actualización de un [proyecto que ya había documentado](../): un tablero para hacer seguimiento de las capacitaciones de seguridad y saber cómo avanza el programa.
+> Esta es la actualización de un [proyecto que ya había documentado](../): un tablero para hacer seguimiento de las capacitaciones de seguridad y saber cómo avanza el programa.
 
 La primera versión de este proyecto permitió responder, entre algunas cosas, qué capacitaciones necesitaba cada persona, cuáles había realizado y qué quedaba pendiente. Con el tiempo, el tablero empezó a responder cada vez más preguntas. Pero trajo un problema nuevo: encontrar una respuesta puntual requería recorrer cada vez más información.
 
