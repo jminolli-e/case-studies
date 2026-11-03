@@ -151,7 +151,7 @@ Una parte importante de la solución fue incluir en el HTML la posibilidad de **
 
 Esto resuelve algo que el informe visual por sí solo no podía resolver: además de ver cuánto falta, cada responsable necesita saber a quién capacitar y en qué temas. Al incluir el detalle en el reporte, ya no hace falta preparar y enviar un archivo individual para cada uno de los aproximadamente 30 capacitadores.
 
-La decisión tiene un costo: incorporar esos registros aumenta el peso del HTML. A cambio, el informe y el detalle operativo llegan juntos, y la descarga funciona sin conectarse al tablero. El archivo contiene los datos; el CSV se construye en el navegador al solicitar la descarga, no se busca en un servidor ni se adjunta como un archivo separado.
+Incluir estos datos hace que el HTML pese más, pero permite compartir el informe y el detalle operativo en un solo archivo, sin depender del acceso al tablero. Al descargar el CSV, el navegador lo genera con los datos que ya están dentro del HTML, sin consultar un servidor ni necesitar un archivo adjunto.
 
 > [!IMPORTANT]
 > Todos los integrantes de un grupo, el coordinador y las jefaturas destinatarias reciben el mismo HTML de ese grupo. El selector facilita la consulta, pero **no restringe el acceso** a los demás registros nominales incluidos en el archivo.
