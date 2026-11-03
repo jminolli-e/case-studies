@@ -19,8 +19,8 @@ Esta actualización nace de ese uso cotidiano: reorganizar un tablero que había
 
 | Tema | Antes | Ahora | ¿Qué aporta? |
 |---|---|---|---|
-| **Navegación** | Los indicadores, gráficos y tablas se acumulaban en pantallas largas. | Cada pantalla se organiza en secciones con análisis relacionados. | Es más fácil encontrar una consulta sin recorrer todos los bloques anteriores. |
-| **Reporte semanal** | Se reunían varios PNGs y capturas; los pendientes se descargaban en CSVs individuales para cada capacitador. | Se genera un HTML por grupo con métricas generales y pendientes. | Cada destinatario puede consultar el reporte y descargar el detalle que necesita. |
+| **Navegación (UX/UI)** | Los indicadores, gráficos y tablas se acumulaban en pantallas largas. | Cada pantalla se organiza en secciones con análisis relacionados. | Es más fácil encontrar una consulta sin recorrer todos los bloques anteriores. |
+| **Reporte semanal (HTML)** | Se reunían varios PNGs y capturas; los pendientes se descargaban en CSVs individuales para cada capacitador. | Se genera un HTML por grupo con métricas generales y pendientes. | Cada destinatario puede consultar el reporte y descargar el detalle que necesita. |
 
 El seguimiento se distribuye entre dos grupos de capacitadores, cada uno con su coordinador. Por eso se genera un reporte HTML para cada grupo; más adelante se explica cómo se utiliza.
 
