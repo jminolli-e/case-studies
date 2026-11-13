@@ -94,3 +94,9 @@
     .row .tags{margin:0;justify-content:flex-end}
     .js-motion .row.reveal{transition:background .35s,opacity .9s var(--ease),transform .9s var(--ease);transition-delay:0s,calc(var(--d,0)*1ms),calc(var(--d,0)*1ms)}
     @media(max-width:760px){.hero{padding-top:48px}.split,.row{grid-template-columns:1fr}.split{gap:22px}.split .side{position:static}.row{gap:12px;padding:25px 12px}.row .tags{justify-content:flex-start}}
+    @media(max-width:720px){
+      .hero:before{content:none}
+      .footer-inner{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px 16px}
+      .footer-inner p{grid-column:1 / -1;grid-row:2;min-width:0;white-space:normal}
+      .footer-inner>a:last-child{grid-column:2;grid-row:1}
+    }
