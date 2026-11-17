@@ -190,12 +190,67 @@
       .pending-semester-filter span { min-height:40px; display:flex; align-items:center; justify-content:center; padding:6px 4px; white-space:normal; text-align:center; }
       .mts-rank-name > span:last-child { white-space:normal; overflow-wrap:anywhere; }
       .note p,.mts-name,.table-note { overflow-wrap:anywhere; } }
+    .mobile-table-hint,.pending-code-name,.mobile-notice { display:none; }
+    @media(max-width:760px) {
+      .mobile-notice { display:block; padding:14px 16px; background:#fff5d6; color:#57451b; font-size:13px; line-height:1.5; }
+      .mobile-notice strong { display:block; margin-bottom:3px; font-size:14px; }
+      header { padding:24px 16px; }
+      .header-row { gap:18px; }
+      .header-kpis { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+      .header-value { font-size:17px; }
+      .header-summary strong { font-size:30px; }
+      main { min-width:0; padding:26px 16px 48px; }
+      section { margin-bottom:32px; }
+      .card,.kpi { min-width:0; padding:16px; }
+      .card-head { flex-wrap:wrap; }
+      .card-title { flex:1 1 100%; }
+      .weighted { align-items:flex-start; text-align:left; }
+      .activity-card,.chart-card { height:auto; }
+      .activity-scroll,.mts-ranking { overflow:visible; }
+      .activity-scroll { overflow-x:auto; }
+      .mts-rank-name > span:last-child { white-space:normal; overflow-wrap:anywhere; }
+      .inspector-table { min-width:600px; }
+      .inspector-table th.inspector,.inspector-table td.inspector { min-width:135px; max-width:160px; white-space:normal; }
+      .mobile-table-hint { display:block; padding:9px 16px; color:var(--muted); font-size:12px; }
+      .pending-field select,#pending-download,.inspector-semester-button { min-height:44px; }
+      .pending-field select { font-size:16px; }
+      .pending-semester-filter span { min-height:44px; }
+      .pending-results { height:auto; }
+      .pending-scroll { height:auto; overflow:visible; }
+      .pending-table { min-width:0; }
+      .pending-table,.pending-table tbody,.pending-table tr,.pending-table td { display:block; width:100%; }
+      .pending-table thead { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+      .pending-table tr { padding:14px 16px; border-bottom:1px solid var(--border); }
+      .pending-table tr:last-child { border-bottom:0; }
+      .pending-table td { padding:5px 0; border:0; overflow-wrap:anywhere; font-size:13px; }
+      .pending-table td::before { display:block; color:var(--muted); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; }
+      .pending-table td:nth-child(1)::before { content:'Sobre'; }
+      .pending-table td:nth-child(2)::before { content:'Apellido y nombre'; }
+      .pending-table td:nth-child(3)::before { content:'Organización'; }
+      .pending-table td:nth-child(4)::before { content:'Capacitaciones pendientes'; }
+      .pending-code { display:block; margin:6px 0; padding:6px 8px; font-size:12px; cursor:auto; }
+      .pending-code-name { display:inline; font-weight:400; }
+      .priority-table,.priority-table tbody,.priority-table tr,.priority-table td { display:block; width:100%; }
+      .priority-table thead { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+      .priority-table tr { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; padding:12px 0; border-bottom:1px solid var(--border); }
+      .priority-table tr:last-child { border-bottom:0; }
+      .priority-table td,.priority-table td:first-child { width:auto; padding:0; border:0; text-align:left; }
+      .priority-table td:first-child { grid-column:1 / -1; }
+      .priority-table td:not(:first-child)::before { display:block; margin-bottom:4px; color:var(--muted); font-size:10px; font-weight:700; text-transform:uppercase; }
+      .priority-table td:nth-child(2)::before { content:'Capacitados'; }
+      .priority-table td:nth-child(3)::before { content:'Necesidad'; }
+      .priority-table td:nth-child(4)::before { content:'Avance'; }
+    }
     @media print { body { background:white; } .card,.table-wrap,.kpi,.note { break-inside:avoid; } .bubble { display:none; }
       .activity-card,.chart-card,.pending-results { height:auto; }
       .activity-scroll,.mts-ranking,.pending-scroll { height:auto; overflow:visible; }
       header,footer { -webkit-print-color-adjust:exact; print-color-adjust:exact; } }
     </style></head>
 <body><div style="padding:8px;text-align:center;background:#fff5d6;font:12px sans-serif">Demostración interactiva · Todos los nombres y valores son ficticios</div>
+  <aside class="mobile-notice" aria-label="Recomendación de visualización">
+    <strong>Mejor experiencia en computadora</strong>
+    Este reporte está diseñado para consultarse desde una computadora. En el celular, algunas tablas y visualizaciones pueden resultar difíciles de leer. Podés continuar o girar el dispositivo para disponer de más espacio.
+  </aside>
   <header><div class="header-row"><div><h1>Avance MTS Capacitadores</h1>
     <div class="badge">Reporte Grupo A · Área de Seguridad Industrial</div>
     <div class="header-kpis"><div><div class="header-label">Avance acumulado</div><div class="header-value">01/01 al 30/09</div></div>
@@ -631,6 +686,16 @@ Capacitador A03: 1">
   </main>
   <footer>Charlas de Seguridad · Demostración sintética · Reporte Grupo A · Generado 01/10/2031 09:30</footer>
   <script>
+  document.querySelectorAll('.inspector-table').forEach(table=>{
+    const scroll=table.closest('.table-scroll');
+    scroll.setAttribute('tabindex','0');
+    scroll.setAttribute('role','region');
+    scroll.setAttribute('aria-label','Tabla de avance por capacitador. Desplazá horizontalmente para ver todas las columnas.');
+    const hint=document.createElement('p');
+    hint.className='mobile-table-hint';
+    hint.textContent='Deslizá la tabla hacia los lados para ver todas las columnas.';
+    scroll.before(hint);
+  });
   document.querySelectorAll('.tip[aria-describedby]').forEach(tip=>{
     tip.addEventListener('click',event=>{
       event.stopPropagation();
@@ -706,6 +771,11 @@ Capacitador A03: 1">
         code.className='pending-code';
         code.textContent=training['Código'];
         code.title=training['Capacitación'];
+        const name=document.createElement('span');
+        name.className='pending-code-name';
+        const description=training['Capacitación'].replace(training['Código'],'').trim();
+        name.textContent=description?' · '+description:'';
+        code.appendChild(name);
         trainings.appendChild(code);
       });
       row.appendChild(trainings);
