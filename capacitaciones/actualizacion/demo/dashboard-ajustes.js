@@ -125,25 +125,57 @@
     const operational = state.summaryUniverse === 'operativo';
     const courses = d.capacitaciones.filter(c => c.universo === state.summaryUniverse);
     const rows = courses.map(c => ({ course: c, ...calc({ universo: c.universo, codigo: c.codigo }) }));
-    const colors = c => c.semestre === '1er' ? ['#eef1e6','#718052'] : c.semestre === '2do' ? ['#edf2f7','#365d83'] : ['#a7f3d0','#18856f'];
+
+    const colors = c => c.semestre === '1er' ? ['#f7f3df','#b3a66b'] : c.semestre === '2do' ? ['#f2edf0','#a38a98'] : ['#d6e5f0','#245683'];
     const labels = courses.map(c => (operational && c.semestre ? '⚑ ' : '') + c.codigo);
     const hover = rows.map(r => `<b style="font-size:13px">${r.course.codigo} ${r.course.nombre}</b><br>━━━━━━━━━━━━━━━<br>📋 Necesidad: <b>${fmt(r.necesidad)}</b><br>✅ Capacitados: <b>${fmt(r.capacitados)}</b><br>📈 Avance: <b>${pct(r.porcentaje)}</b>`);
     const averageCount = rows.reduce((s, r) => s + r.capacitados, 0) / rows.length;
     const averagePct = rows.reduce((s, r) => s + (r.porcentaje || 0), 0) / rows.length;
     const traces = [
-      { type: 'bar', name: 'Necesidad', x: labels, y: rows.map(r => r.necesidad), marker: { color: courses.map(c => operational ? colors(c)[0] : '#a7f3d0'), line: { color: courses.map(c => operational ? colors(c)[1] : '#6ee7b7'), width: operational ? .13 : 1 } }, hovertext: hover, hoverinfo: 'text' },
-      { type: 'bar', name: 'Capacitados', x: labels, y: rows.map(r => r.capacitados), marker: { color: courses.map(c => operational ? colors(c)[1] : '#18856f'), line: { color: courses.map(c => operational ? colors(c)[1] : '#0f5c4d'), width: operational ? .13 : 1 } }, hovertext: hover, hoverinfo: 'text', text: rows.map(r => pct(r.porcentaje)), textposition: 'outside', textfont: { family: 'Plus Jakarta Sans', color: '#0f5c4d', size: operational ? 10 : 11 } }
+      { type: 'bar', name: 'Necesidad', x: labels, y: rows.map(r => r.necesidad), marker: { color: courses.map(c => operational ? colors(c)[0] : '#d6e5f0'), line: { color: courses.map(c => operational ? colors(c)[1] : '#a9c4d9'), width: operational ? .13 : 1 } }, hovertext: hover, hoverinfo: 'text' },
+      { type: 'bar', name: 'Capacitados', x: labels, y: rows.map(r => r.capacitados), marker: { color: courses.map(c => operational ? colors(c)[1] : '#245683'), line: { color: courses.map(c => operational ? colors(c)[1] : '#18344f'), width: operational ? .13 : 1 } }, hovertext: hover, hoverinfo: 'text', text: rows.map(r => pct(r.porcentaje)), textposition: 'outside', textfont: { family: 'Plus Jakarta Sans', color: '#18344f', size: operational ? 10 : 11 } }
     ];
     const layout = {
       autosize: true, height: operational ? 468 : 378, barmode: 'overlay', font: { family: 'Plus Jakarta Sans', size: 12, color: '#1a2e2b' }, plot_bgcolor: '#fff', paper_bgcolor: '#fff',
-      xaxis: { gridcolor: '#e0eeeb', linecolor: '#b2d8d1', tickfont: { color: '#1a2e2b', size: 11 }, tickangle: operational ? -35 : 0, automargin: true },
-      yaxis: { gridcolor: '#e0eeeb', linecolor: '#b2d8d1', tickfont: { color: '#1a2e2b', size: 11 }, automargin: true },
-      legend: { font: { color: '#1a2e2b', size: 14 }, bgcolor: 'rgba(232,245,242,.85)', bordercolor: '#b2d8d1', borderwidth: 1, orientation: 'h', yanchor: 'bottom', y: 1.02, xanchor: 'right', x: 1 }, margin: { t: 45, b: 18, l: 9, r: 9 },
-      hoverlabel: { bgcolor: '#f0faf7', font: { size: 12, family: 'Plus Jakarta Sans', color: '#1a2e2b' }, bordercolor: '#18856f' },
+      xaxis: { gridcolor: '#d8e1ea', linecolor: '#b8cde0', tickfont: { color: '#1a2e2b', size: 11 }, tickangle: operational ? -35 : 0, automargin: true },
+      yaxis: { gridcolor: '#d8e1ea', linecolor: '#b8cde0', tickfont: { color: '#1a2e2b', size: 11 }, automargin: true },
+      legend: { font: { color: '#1a2e2b', size: 14 }, bgcolor: 'rgba(234,240,246,.85)', bordercolor: '#b8cde0', borderwidth: 1, orientation: 'h', yanchor: 'bottom', y: 1.02, xanchor: 'right', x: 1 }, margin: { t: 45, b: 18, l: 9, r: 9 },
+      hoverlabel: { bgcolor: '#f4f7fa', font: { size: 12, family: 'Plus Jakarta Sans', color: '#1a2e2b' }, bordercolor: '#245683' },
       shapes: [{ type: 'line', xref: 'paper', x0: 0, x1: 1, y0: averageCount, y1: averageCount, line: { color: operational ? '#000' : '#f59e0b', width: 2.5, dash: 'dot' } }],
       annotations: [{ xref: 'paper', x: 1, y: averageCount, yanchor: 'bottom', text: `Promedio ${averagePct.toFixed(1)}%`, showarrow: false, font: { family: 'Plus Jakarta Sans', size: 12, color: operational ? '#080808' : '#b45309' } }]
     };
     window.dashboardChartReady = Plotly.newPlot(panel.querySelector('.needs-chart'), traces, layout, { responsive: true, displaylogo: false, toImageButtonOptions: { filename: 'necesidad-capacitados-sintetico' } });
+  };
+  // Agrupaciones exclusivamente ficticias a partir de las unidades del dataset.
+  window.summaryGrouped = function () {
+    const courses = d.capacitaciones.filter(c => c.universo === state.summaryUniverse);
+    const split = Math.ceil(d.organizaciones.length / 2);
+    const groups = [
+      { name: 'Gerencia ficticia A', organizations: d.organizaciones.slice(0, split) },
+      { name: 'Gerencia ficticia B', organizations: d.organizaciones.slice(split) }
+    ];
+    const range = dates();
+    const formatDate = value => value.split('-').reverse().join('/');
+    const type = state.summaryUniverse === 'operativo' ? 'Operativos' : 'Administrativos';
+    function table(title, rows, heading) {
+      const columns = courses.map(course => `<th colspan="3" title="${course.codigo} ${course.nombre}">${course.codigo}</th>`).join('');
+      const subhead = courses.map(() => '<th>Nec.</th><th>Cap.</th><th>%</th>').join('');
+      const body = rows.map(row => {
+        const cells = courses.map(course => {
+          const parts = row.organizations.map(organizacion => calc({ universo: state.summaryUniverse, organizacion, codigo: course.codigo }));
+          const necesidad = parts.reduce((sum, part) => sum + part.necesidad, 0);
+          const capacitados = parts.reduce((sum, part) => sum + part.capacitados, 0);
+          const progress = necesidad ? capacitados * 100 / necesidad : null;
+          const description = `Capacitados: ${capacitados}; Necesidad: ${necesidad}`;
+          return `<td>${fmt(necesidad)}</td><td>${fmt(capacitados)}</td><td title="${description}" aria-label="${description}">${pill(progress)}</td>`;
+        }).join('');
+        return `<tr><th scope="row">${row.name}</th>${cells}</tr>`;
+      }).join('');
+      return `<article class="panel grouped-panel"><header class="panel-head"><h3>${title} · ${type} · ${formatDate(range.desde)} - ${formatDate(range.hasta)}</h3><p class="caption">Agrupaciones ficticias para la demostración. Nec.: necesidad vigente; Cap.: capacitaciones realizadas en el período.</p>${legend()}</header><div class="table-scroll" tabindex="0" role="region" aria-label="${title}: tabla desplazable horizontalmente"><table class="grouped-table"><thead><tr><th rowspan="2">${heading}</th>${columns}</tr><tr>${subhead}</tr></thead><tbody>${body}</tbody></table></div></article>`;
+    }
+    document.querySelector('#summary-content').innerHTML = state.summaryTab === 'gerencia'
+      ? table('Avance por gerencia', groups, 'Gerencia')
+      : groups.map(group => table(`Avance por zona · ${group.name}`, group.organizations.map(name => ({ name, organizations: [name] })), 'Zona ficticia')).join('');
   };
   render();
 })();

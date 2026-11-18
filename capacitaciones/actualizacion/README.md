@@ -156,7 +156,7 @@ El recorrido tampoco era el único costo. Cada cambio de filtros hacía que el b
 ![Reconstrucción sintética del desplazamiento por los análisis apilados en la pantalla Resumen anterior](./assets/dashboard-resumen-anterior.gif)
 
 > [!NOTE]
-> **Sobre el GIF:** busca ilustrar el recorrido que exigía la pantalla. Se recreó apartir de capturas anteriores del tablero por lo que no refleja fielmente cada detalle visual del tablero anterior.
+> **Sobre el GIF:** ilustra el recorrido que exigía la pantalla. Se recreó con capturas de la demo anterior, por lo que no refleja fielmente cada detalle visual del tablero original.
 
 También podés [explorar la réplica anterior del dashboard](https://jminolli-e.github.io/case-studies/capacitaciones/actualizacion/demo/dashboard.html), construida con datos ficticios.
 
@@ -172,7 +172,7 @@ El menú lateral ya existía; el cambio estuvo en cómo se organizó la informac
 De esta manera, cada persona puede elegir la consulta que necesita sin recorrer todos los análisis anteriores. Podés [explorar el dashboard navegable](https://jminolli-e.github.io/case-studies/capacitaciones/actualizacion/demo/dashboard-actual.html) y probar sus pantallas y secciones con datos ficticios.
 
 > [!NOTE]
-> **Sobre las imágenes y la demo actual:** a diferencia de los mockups de la primera etapa, las capturas actuales se generaron con componentes y estilos del tablero original, utilizando datos ficticios. La demo navegable reproduce parte de esa interfaz en HTML con datos sintéticos; no es el tablero productivo completo. La versión anterior se presenta como una reconstrucción aproximada.
+> **Sobre las imágenes y la demo actual:** las capturas se generaron a partir de las demos con datos ficticios. La demo navegable reproduce parte de la interfaz en HTML con datos sintéticos; no es el tablero productivo completo. La versión anterior se presenta como una reconstrucción aproximada.
 
 ### Una interfaz con más contexto y menos ruido
 
@@ -273,11 +273,11 @@ También disfruté poder dedicar atención a la experiencia de uso. Cuando las r
 
 ## Alcance y privacidad
 
-Este caso excluye nombres de empresa, personas, ubicaciones, correos, rutas, métricas productivas y reglas o consultas SQL corporativas. Las demos, capturas y animaciones utilizan información ficticia y no fueron construidas a partir de una copia anonimizada de la base real. Las capturas actuales usan componentes y estilos del tablero original; la demo navegable reproduce parte de esa interfaz y el reporte adapta el renderer visual productivo, ambos con datos sintéticos y terminología pública.
+Este caso excluye nombres de empresa, personas, ubicaciones, correos, rutas, métricas productivas y reglas o consultas SQL corporativas. Las demos, capturas y animaciones utilizan información ficticia y no fueron construidas a partir de una copia anonimizada de la base real. La demo navegable reproduce parte de la interfaz y el reporte adapta el renderer visual productivo, ambos con datos sintéticos y terminología pública.
 
 ## Comparación visual
 
-Las siguientes capturas utilizan datos ficticios y períodos diferentes. La versión anterior es una reconstrucción y la actual usa componentes y estilos del tablero original. Comparan la organización visual de las interfaces, no los resultados del programa.
+Las siguientes capturas provienen de las demos y utilizan datos ficticios y períodos diferentes. Ambas son reconstrucciones de las interfaces y comparan su organización visual, no los resultados del programa.
 
 <details>
 <summary><strong>Resumen: indicadores y avance por capacitación</strong></summary>
