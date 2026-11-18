@@ -148,7 +148,7 @@
   };
   // Agrupaciones exclusivamente ficticias a partir de las unidades del dataset.
   window.summaryGrouped = function () {
-    const courses = d.capacitaciones.filter(c => c.universo === state.summaryUniverse);
+    const courses = d.capacitaciones.filter(c => c.universo === state.summaryUniverse && (state.summaryUniverse !== 'operativo' || c.semestre));
     const split = Math.ceil(d.organizaciones.length / 2);
     const groups = [
       { name: 'Gerencia ficticia A', organizations: d.organizaciones.slice(0, split) },
@@ -160,6 +160,7 @@
     function table(title, rows, heading) {
       const columns = courses.map(course => `<th colspan="3" title="${course.codigo} ${course.nombre}">${course.codigo}</th>`).join('');
       const subhead = courses.map(() => '<th>Nec.</th><th>Cap.</th><th>%</th>').join('');
+      const colgroup = '<col class="grouped-name">' + courses.map(() => '<col class="grouped-count"><col class="grouped-count"><col class="grouped-percent">').join('');
       const body = rows.map(row => {
         const cells = courses.map(course => {
           const parts = row.organizations.map(organizacion => calc({ universo: state.summaryUniverse, organizacion, codigo: course.codigo }));
@@ -171,7 +172,7 @@
         }).join('');
         return `<tr><th scope="row">${row.name}</th>${cells}</tr>`;
       }).join('');
-      return `<article class="panel grouped-panel"><header class="panel-head"><h3>${title} · ${type} · ${formatDate(range.desde)} - ${formatDate(range.hasta)}</h3><p class="caption">Agrupaciones ficticias para la demostración. Nec.: necesidad vigente; Cap.: capacitaciones realizadas en el período.</p>${legend()}</header><div class="table-scroll" tabindex="0" role="region" aria-label="${title}: tabla desplazable horizontalmente"><table class="grouped-table"><thead><tr><th rowspan="2">${heading}</th>${columns}</tr><tr>${subhead}</tr></thead><tbody>${body}</tbody></table></div></article>`;
+      return `<article class="panel grouped-panel"><header class="panel-head"><h3>${title} · ${type} · ${formatDate(range.desde)} - ${formatDate(range.hasta)}</h3><p class="caption">Agrupaciones ficticias para la demostración. Nec.: necesidad vigente; Cap.: capacitaciones realizadas en el período.</p>${legend()}</header><div class="table-scroll" tabindex="0" role="region" aria-label="${title}: tabla desplazable horizontalmente"><table class="grouped-table" style="width:${190 + courses.length * 188}px"><colgroup>${colgroup}</colgroup><thead><tr><th rowspan="2">${heading}</th>${columns}</tr><tr>${subhead}</tr></thead><tbody>${body}</tbody></table></div></article>`;
     }
     document.querySelector('#summary-content').innerHTML = state.summaryTab === 'gerencia'
       ? table('Avance por gerencia', groups, 'Gerencia')

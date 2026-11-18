@@ -83,6 +83,7 @@
     .sum{color:var(--mute);max-width:56ch;margin:12px 0 0;font-size:15px}
     .list{display:grid;gap:12px;align-content:start}
     .list .document:not(.featured){background:var(--card)}
+    .badge{font-family:var(--sans)}
     .tags span{padding:5px 9px;border-radius:4px;font:500 12px/1.4 var(--sans)}
     .rows{border-top:1px solid var(--ink)}
     .row{display:grid;grid-template-columns:1fr 1.2fr 1.2fr;gap:28px;align-items:center;padding:28px 12px;border-bottom:1px solid var(--line);position:relative;transition:background .35s}
