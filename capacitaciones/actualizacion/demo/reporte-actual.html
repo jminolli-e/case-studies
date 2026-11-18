@@ -43,7 +43,8 @@
     .card h3 { font-size:16px; } .card small { color:var(--muted); font-size:12px; }
     .weighted { text-align:right; display:flex; flex-direction:column; align-items:flex-end; flex:none; }
     .weighted > strong { font-size:26px; line-height:1.1; }
-    .old .weighted > strong,.current .weighted > strong { color:var(--text); }
+    .priority-card.old .weighted > strong { color:var(--semestre-primero-oscuro); }
+    .priority-card.current .weighted > strong { color:var(--semestre-segundo-oscuro); }
     .weighted > .weighted-label { display:inline-flex; align-items:center; gap:5px; color:var(--muted); font-size:10px; text-transform:uppercase; letter-spacing:.06em; }
     .tooltip-wrap { position:relative; display:inline-flex; align-items:center; text-align:left; text-transform:none; letter-spacing:normal; }
     .tip { display:inline-flex; align-items:center; justify-content:center; width:16px; height:16px; padding:0; border:1px solid currentColor; border-radius:50%; background:transparent; color:var(--muted); font:700 10px/1 "Plus Jakarta Sans","Segoe UI",Arial,sans-serif; cursor:help; }
@@ -64,6 +65,7 @@
     .priority-card { position:relative; min-width:0; overflow:visible; } .priority-table { border-top:1px solid var(--border); }
     .priority-table td:first-child { width:56%; }
     .code { display:inline-block; padding:1px 8px; border-radius:6px; font-size:11px; font-weight:700; }
+    .priority-table .code { margin-left:-8px; }
     .old .code { color:var(--semestre-primero-oscuro); background:var(--semestre-primero-fondo); } .current .code { color:var(--semestre-segundo-oscuro); background:var(--semestre-segundo-fondo); }
     .mts-name { display:block; color:var(--muted); font-size:12px; margin-top:3px; line-height:1.35; }
     .number { font-variant-numeric:tabular-nums; }
@@ -286,13 +288,13 @@
         <span>Necesidad <b>353</b></span></div>
       <div class="table-scroll"><table class="priority-table">
         <thead><tr><th>Capacitación</th><th>Capacitados</th><th>Necesidad</th><th>Avance</th></tr></thead>
-        <tbody><tr><td><span class="code">MTS-03</span><span class="mts-name">MTS-03 Orden del espacio de trabajo</span></td><td class="number">61</td><td class="number">92</td><td class="advance" title="Capacitados: 61
+        <tbody><tr><td><span class="code">MTS-03</span><span class="mts-name">Orden del espacio de trabajo</span></td><td class="number">61</td><td class="number">92</td><td class="advance" title="Capacitados: 61
 Necesidad: 92" tabindex="0" aria-label="Avance: 66.3%&#10;Capacitados: 61
-Necesidad: 92"><span class="pill" style="--pill-bg:#f7e9b8;--pill-fg:#6d5510">66.3%</span></td></tr><tr><td><span class="code">MTS-09</span><span class="mts-name">MTS-09 Prevención de caídas</span></td><td class="number">56</td><td class="number">86</td><td class="advance" title="Capacitados: 56
+Necesidad: 92"><span class="pill" style="--pill-bg:#f7e9b8;--pill-fg:#6d5510">66.3%</span></td></tr><tr><td><span class="code">MTS-09</span><span class="mts-name">Prevención de caídas</span></td><td class="number">56</td><td class="number">86</td><td class="advance" title="Capacitados: 56
 Necesidad: 86" tabindex="0" aria-label="Avance: 65.1%&#10;Capacitados: 56
-Necesidad: 86"><span class="pill" style="--pill-bg:#f7e9b8;--pill-fg:#6d5510">65.1%</span></td></tr><tr><td><span class="code">MTS-21</span><span class="mts-name">MTS-21 Manipulación de cargas</span></td><td class="number">64</td><td class="number">89</td><td class="advance" title="Capacitados: 64
+Necesidad: 86"><span class="pill" style="--pill-bg:#f7e9b8;--pill-fg:#6d5510">65.1%</span></td></tr><tr><td><span class="code">MTS-21</span><span class="mts-name">Manipulación de cargas</span></td><td class="number">64</td><td class="number">89</td><td class="advance" title="Capacitados: 64
 Necesidad: 89" tabindex="0" aria-label="Avance: 71.9%&#10;Capacitados: 64
-Necesidad: 89"><span class="pill" style="--pill-bg:#e6efc8;--pill-fg:#526622">71.9%</span></td></tr><tr><td><span class="code">MTS-34</span><span class="mts-name">MTS-34 Control previo a la tarea</span></td><td class="number">60</td><td class="number">86</td><td class="advance" title="Capacitados: 60
+Necesidad: 89"><span class="pill" style="--pill-bg:#e6efc8;--pill-fg:#526622">71.9%</span></td></tr><tr><td><span class="code">MTS-34</span><span class="mts-name">Control previo a la tarea</span></td><td class="number">60</td><td class="number">86</td><td class="advance" title="Capacitados: 60
 Necesidad: 86" tabindex="0" aria-label="Avance: 69.8%&#10;Capacitados: 60
 Necesidad: 86"><span class="pill" style="--pill-bg:#e6efc8;--pill-fg:#526622">69.8%</span></td></tr></tbody>
       </table></div>
@@ -322,13 +324,13 @@ Necesidad: 86"><span class="pill" style="--pill-bg:#e6efc8;--pill-fg:#526622">69
         <span>Necesidad <b>357</b></span></div>
       <div class="table-scroll"><table class="priority-table">
         <thead><tr><th>Capacitación</th><th>Capacitados</th><th>Necesidad</th><th>Avance</th></tr></thead>
-        <tbody><tr><td><span class="code">MTS-04</span><span class="mts-name">MTS-04 Protección de manos</span></td><td class="number">65</td><td class="number">86</td><td class="advance" title="Capacitados: 65
+        <tbody><tr><td><span class="code">MTS-04</span><span class="mts-name">Protección de manos</span></td><td class="number">65</td><td class="number">86</td><td class="advance" title="Capacitados: 65
 Necesidad: 86" tabindex="0" aria-label="Avance: 75.6%&#10;Capacitados: 65
-Necesidad: 86"><span class="pill" style="--pill-bg:#e6efc8;--pill-fg:#526622">75.6%</span></td></tr><tr><td><span class="code">MTS-12</span><span class="mts-name">MTS-12 Desplazamiento seguro</span></td><td class="number">60</td><td class="number">92</td><td class="advance" title="Capacitados: 60
+Necesidad: 86"><span class="pill" style="--pill-bg:#e6efc8;--pill-fg:#526622">75.6%</span></td></tr><tr><td><span class="code">MTS-12</span><span class="mts-name">Desplazamiento seguro</span></td><td class="number">60</td><td class="number">92</td><td class="advance" title="Capacitados: 60
 Necesidad: 92" tabindex="0" aria-label="Avance: 65.2%&#10;Capacitados: 60
-Necesidad: 92"><span class="pill" style="--pill-bg:#f7e9b8;--pill-fg:#6d5510">65.2%</span></td></tr><tr><td><span class="code">MTS-18</span><span class="mts-name">MTS-18 Señalización del área</span></td><td class="number">60</td><td class="number">90</td><td class="advance" title="Capacitados: 60
+Necesidad: 92"><span class="pill" style="--pill-bg:#f7e9b8;--pill-fg:#6d5510">65.2%</span></td></tr><tr><td><span class="code">MTS-18</span><span class="mts-name">Señalización del área</span></td><td class="number">60</td><td class="number">90</td><td class="advance" title="Capacitados: 60
 Necesidad: 90" tabindex="0" aria-label="Avance: 66.7%&#10;Capacitados: 60
-Necesidad: 90"><span class="pill" style="--pill-bg:#f7e9b8;--pill-fg:#6d5510">66.7%</span></td></tr><tr><td><span class="code">MTS-27</span><span class="mts-name">MTS-27 Verificación de herramientas</span></td><td class="number">69</td><td class="number">89</td><td class="advance" title="Capacitados: 69
+Necesidad: 90"><span class="pill" style="--pill-bg:#f7e9b8;--pill-fg:#6d5510">66.7%</span></td></tr><tr><td><span class="code">MTS-27</span><span class="mts-name">Verificación de herramientas</span></td><td class="number">69</td><td class="number">89</td><td class="advance" title="Capacitados: 69
 Necesidad: 89" tabindex="0" aria-label="Avance: 77.5%&#10;Capacitados: 69
 Necesidad: 89"><span class="pill" style="--pill-bg:#e6efc8;--pill-fg:#526622">77.5%</span></td></tr></tbody>
       </table></div>
